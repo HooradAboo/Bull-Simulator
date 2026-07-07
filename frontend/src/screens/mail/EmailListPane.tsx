@@ -12,6 +12,7 @@ interface Props {
 const FOLDER_TITLES: Record<FolderName, string> = {
   inbox: "Inbox",
   deleted: "Deleted Items",
+  junk: "Junk Email",
 };
 
 function previewOf(body: string): string {

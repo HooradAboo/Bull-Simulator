@@ -11,10 +11,11 @@ const RAIL_ICONS = [
 interface Props {
   currentFolder: FolderName;
   deletedCount: number;
+  junkCount: number;
   onSelectFolder: (folder: FolderName) => void;
 }
 
-export function FolderSidebar({ currentFolder, deletedCount, onSelectFolder }: Props) {
+export function FolderSidebar({ currentFolder, deletedCount, junkCount, onSelectFolder }: Props) {
   return (
     <>
       <div className="mail-icon-rail">
@@ -35,6 +36,15 @@ export function FolderSidebar({ currentFolder, deletedCount, onSelectFolder }: P
             📥
           </span>
           Inbox
+        </div>
+        <div
+          className={`folder-row ${currentFolder === "junk" ? "active" : ""}`}
+          onClick={() => onSelectFolder("junk")}
+        >
+          <span className="folder-icon" aria-hidden="true">
+            🚫
+          </span>
+          Junk Email{junkCount > 0 ? ` (${junkCount})` : ""}
         </div>
         <div className="folder-row" title="Not used in this study">
           <span className="folder-icon" aria-hidden="true">

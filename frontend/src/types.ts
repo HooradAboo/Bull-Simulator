@@ -20,4 +20,4 @@ export interface ProcessedInfo {
   confidence: number;
 }
 
-export type FolderName = "inbox" | "deleted";
+export type FolderName = "inbox" | "deleted" | "junk";

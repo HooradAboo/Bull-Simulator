@@ -20,6 +20,7 @@ interface Props {
 
 function folderForAction(action: ActionType | undefined): FolderName {
   if (action === "delete") return "deleted";
+  if (action === "report_phishing") return "junk";
   return "inbox";
 }
 
@@ -121,6 +122,7 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
     !selectedEmail || processed.has(selectedEmail.id) || phase === "confidence";
   const visibleEmails = emails.filter((e) => folderOf(e.id) === currentFolder);
   const deletedCount = emails.filter((e) => folderOf(e.id) === "deleted").length;
+  const junkCount = emails.filter((e) => folderOf(e.id) === "junk").length;
 
   return (
     <div className="mail-shell">
@@ -131,6 +133,7 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
         <FolderSidebar
           currentFolder={currentFolder}
           deletedCount={deletedCount}
+          junkCount={junkCount}
           onSelectFolder={handleSelectFolder}
         />
         <EmailListPane
