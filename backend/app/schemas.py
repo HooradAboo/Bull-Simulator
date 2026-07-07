@@ -21,6 +21,7 @@ class InteractionConfirm(BaseModel):
     answer_changed: bool
     confirmed_at: int
     time_to_decision_ms: int
+    recipient: str | None = None
 
 
 class InteractionConfidence(BaseModel):

@@ -1,4 +1,4 @@
-import type { DummyEmail } from "./types";
+import type { Contact, DummyEmail } from "./types";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -10,6 +10,10 @@ async function get(path: string) {
 
 export function getEmails(): Promise<DummyEmail[]> {
   return get("/emails");
+}
+
+export function getContacts(): Promise<Contact[]> {
+  return get("/contacts");
 }
 
 async function post(path: string, body: unknown) {
@@ -57,13 +61,15 @@ export function confirmInteraction(
   actionTaken: string,
   answerChanged: boolean,
   confirmedAt: number,
-  timeToDecisionMs: number
+  timeToDecisionMs: number,
+  recipient?: string | null
 ) {
   return patch(`/interactions/${interactionId}/confirm`, {
     action_taken: actionTaken,
     answer_changed: answerChanged,
     confirmed_at: confirmedAt,
     time_to_decision_ms: timeToDecisionMs,
+    recipient: recipient ?? null,
   });
 }
 

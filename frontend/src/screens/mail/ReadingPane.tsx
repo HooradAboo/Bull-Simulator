@@ -58,7 +58,8 @@ export function ReadingPane({
 
         {processedInfo && (
           <div className="processed-banner">
-            ✅ You responded: <strong>{ACTION_LABELS[processedInfo.action]}</strong>{" "}
+            ✅ You responded: <strong>{ACTION_LABELS[processedInfo.action]}</strong>
+            {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}{" "}
             (confidence {processedInfo.confidence})
           </div>
         )}

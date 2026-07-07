@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app import models, schemas
+from app.contacts import Contact, load_contacts
 from app.database import Base, engine, get_db
 from app.emails import EmailPublic, load_public_emails
 
@@ -28,6 +29,14 @@ def get_emails():
     try:
         return load_public_emails()
     except (FileNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/contacts", response_model=list[Contact])
+def get_contacts():
+    try:
+        return load_contacts()
+    except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -81,6 +90,7 @@ def confirm_interaction(
     interaction.answer_changed = payload.answer_changed
     interaction.confirmed_at = payload.confirmed_at
     interaction.time_to_decision_ms = payload.time_to_decision_ms
+    interaction.recipient = payload.recipient
     db.commit()
     return {"status": "ok"}
 

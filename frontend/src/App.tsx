@@ -4,10 +4,10 @@ import { ConsentScreen } from "./screens/ConsentScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
 import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
-import { getEmails, startSession } from "./api";
+import { getContacts, getEmails, startSession } from "./api";
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
-import type { DummyEmail } from "./types";
+import type { Contact, DummyEmail } from "./types";
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -25,17 +25,20 @@ function App() {
   const [participantId] = useState<string>(() => crypto.randomUUID());
   const [sessionStarted, setSessionStarted] = useState(false);
   const [emails, setEmails] = useState<DummyEmail[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   useMouseLogger(sessionStarted ? participantId : null);
   useKeystrokeLogger(sessionStarted ? participantId : null);
 
   const handleBegin = async () => {
     const sessionStartTs = Date.now();
-    const [, allEmails] = await Promise.all([
+    const [, allEmails, allContacts] = await Promise.all([
       startSession(participantId, sessionStartTs),
       getEmails(),
+      getContacts(),
     ]);
     setEmails(shuffle(allEmails));
+    setContacts(allContacts);
     setSessionStarted(true);
     setScreen("mail");
   };
@@ -48,6 +51,7 @@ function App() {
         <MailClientScreen
           participantId={participantId}
           emails={emails}
+          contacts={contacts}
           onAllProcessed={() => setScreen("debrief")}
         />
       )}

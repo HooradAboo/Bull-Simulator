@@ -29,6 +29,7 @@ class EmailInteraction(Base):
     confidence_rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
     time_to_decision_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     confirmed_at: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    recipient: Mapped[str | None] = mapped_column(String, nullable=True)
 
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     host: str = "127.0.0.1"
     port: int = 8000
     emails_config_dir: Path = REPO_ROOT / "config" / "emails"
+    contacts_config_path: Path = REPO_ROOT / "config" / "contacts.json"
 
 
 settings = Settings()

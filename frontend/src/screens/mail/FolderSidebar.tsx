@@ -12,10 +12,17 @@ interface Props {
   currentFolder: FolderName;
   deletedCount: number;
   junkCount: number;
+  sentCount: number;
   onSelectFolder: (folder: FolderName) => void;
 }
 
-export function FolderSidebar({ currentFolder, deletedCount, junkCount, onSelectFolder }: Props) {
+export function FolderSidebar({
+  currentFolder,
+  deletedCount,
+  junkCount,
+  sentCount,
+  onSelectFolder,
+}: Props) {
   return (
     <>
       <div className="mail-icon-rail">
@@ -46,11 +53,14 @@ export function FolderSidebar({ currentFolder, deletedCount, junkCount, onSelect
           </span>
           Junk Email{junkCount > 0 ? ` (${junkCount})` : ""}
         </div>
-        <div className="folder-row" title="Not used in this study">
+        <div
+          className={`folder-row ${currentFolder === "sent" ? "active" : ""}`}
+          onClick={() => onSelectFolder("sent")}
+        >
           <span className="folder-icon" aria-hidden="true">
             📤
           </span>
-          Sent Items
+          Sent Items{sentCount > 0 ? ` (${sentCount})` : ""}
         </div>
         <div className="folder-row" title="Not used in this study">
           <span className="folder-icon" aria-hidden="true">

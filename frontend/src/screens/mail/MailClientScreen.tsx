@@ -7,14 +7,25 @@ import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
+import { ForwardModal } from "./ForwardModal";
+import { SentItemsPane } from "./SentItemsPane";
+import { SentItemReadingPane } from "./SentItemReadingPane";
 import { confirmInteraction, logHover, openInteraction, setConfidence } from "../../api";
-import type { ActionType, DummyEmail, FolderName, ProcessedInfo } from "../../types";
+import type {
+  ActionType,
+  Contact,
+  DummyEmail,
+  FolderName,
+  ProcessedInfo,
+  SentItem,
+} from "../../types";
 
-type Phase = "idle" | "confidence";
+type Phase = "idle" | "forwarding" | "confidence";
 
 interface Props {
   participantId: string;
   emails: DummyEmail[];
+  contacts: Contact[];
   onAllProcessed: () => void;
 }
 
@@ -24,15 +35,18 @@ function folderForAction(action: ActionType | undefined): FolderName {
   return "inbox";
 }
 
-export function MailClientScreen({ participantId, emails, onAllProcessed }: Props) {
+export function MailClientScreen({ participantId, emails, contacts, onAllProcessed }: Props) {
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(null);
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
+  const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [confidenceValue, setConfidenceValueState] = useState(50);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
+  const [sentItems, setSentItems] = useState<SentItem[]>([]);
+  const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
 
   const hoverStart = useRef<number | null>(null);
 
@@ -44,6 +58,7 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
     if (isMidFlow) return;
     setCurrentFolder(folder);
     setSelectedEmail(null);
+    setSelectedSentItem(null);
     setInteractionId(null);
     setOpenedAt(null);
     setPendingAction(null);
@@ -71,17 +86,55 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
     setPhase("idle");
   };
 
-  // Selecting an action commits it immediately (no separate confirm step),
-  // so answer_changed is always false - there's no window to revise it.
-  const handleSelectAction = async (action: ActionType) => {
-    if (!selectedEmail || processed.has(selectedEmail.id) || phase === "confidence") return;
-    if (interactionId === null || openedAt === null) return;
+  // Most actions commit immediately (no separate confirm step), so
+  // answer_changed is always false - there's no window to revise them.
+  // Forward is the exception: it needs a recipient first, so it opens a
+  // modal and only commits once that's submitted.
+  const handleSelectAction = (action: ActionType) => {
+    if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
+
+    if (action === "forward") {
+      setPhase("forwarding");
+      return;
+    }
+
+    commitAction(action, null);
+  };
+
+  const commitAction = async (action: ActionType, recipient: string | null) => {
+    if (!selectedEmail || interactionId === null || openedAt === null) return;
     const confirmedAt = Date.now();
     const timeToDecisionMs = confirmedAt - openedAt;
-    await confirmInteraction(interactionId, action, false, confirmedAt, timeToDecisionMs);
+    await confirmInteraction(interactionId, action, false, confirmedAt, timeToDecisionMs, recipient);
     setPendingAction(action);
+    setPendingRecipient(recipient);
     setPhase("confidence");
     setConfidenceValueState(50);
+
+    if (action === "forward" && recipient) {
+      setSentItems((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          originalEmailId: selectedEmail.id,
+          subject: selectedEmail.subject,
+          body: selectedEmail.body,
+          originalSender: selectedEmail.sender,
+          link: selectedEmail.link,
+          attachment: selectedEmail.attachment,
+          recipient,
+          sentAt: confirmedAt,
+        },
+      ]);
+    }
+  };
+
+  const handleForwardSubmit = (recipient: string) => {
+    commitAction("forward", recipient);
+  };
+
+  const handleForwardCancel = () => {
+    setPhase("idle");
   };
 
   const handleSubmitConfidence = async () => {
@@ -89,7 +142,11 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
     await setConfidence(interactionId, confidenceValue);
 
     const updated = new Map(processed);
-    updated.set(selectedEmail.id, { action: pendingAction, confidence: confidenceValue });
+    updated.set(selectedEmail.id, {
+      action: pendingAction,
+      confidence: confidenceValue,
+      recipient: pendingRecipient,
+    });
     setProcessed(updated);
     setPhase("idle");
 
@@ -119,7 +176,7 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
 
   const processedInfo = selectedEmail ? processed.get(selectedEmail.id) ?? null : null;
   const ribbonDisabled =
-    !selectedEmail || processed.has(selectedEmail.id) || phase === "confidence";
+    !selectedEmail || processed.has(selectedEmail.id) || phase !== "idle";
   const visibleEmails = emails.filter((e) => folderOf(e.id) === currentFolder);
   const deletedCount = emails.filter((e) => folderOf(e.id) === "deleted").length;
   const junkCount = emails.filter((e) => folderOf(e.id) === "junk").length;
@@ -134,23 +191,45 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
           currentFolder={currentFolder}
           deletedCount={deletedCount}
           junkCount={junkCount}
+          sentCount={sentItems.length}
           onSelectFolder={handleSelectFolder}
         />
-        <EmailListPane
-          folder={currentFolder}
-          emails={visibleEmails}
-          selectedId={selectedEmail?.id ?? null}
-          processed={processed}
-          onSelect={handleSelectEmail}
-        />
-        <ReadingPane
-          email={selectedEmail}
-          processedInfo={processedInfo}
-          onLinkClick={() => handleSelectAction("click_link")}
-          onLinkHoverStart={handleLinkHoverStart}
-          onLinkHoverEnd={handleLinkHoverEnd}
-        />
+        {currentFolder === "sent" ? (
+          <>
+            <SentItemsPane
+              sentItems={sentItems}
+              selectedId={selectedSentItem?.id ?? null}
+              onSelect={setSelectedSentItem}
+            />
+            <SentItemReadingPane item={selectedSentItem} />
+          </>
+        ) : (
+          <>
+            <EmailListPane
+              folder={currentFolder}
+              emails={visibleEmails}
+              selectedId={selectedEmail?.id ?? null}
+              processed={processed}
+              onSelect={handleSelectEmail}
+            />
+            <ReadingPane
+              email={selectedEmail}
+              processedInfo={processedInfo}
+              onLinkClick={() => handleSelectAction("click_link")}
+              onLinkHoverStart={handleLinkHoverStart}
+              onLinkHoverEnd={handleLinkHoverEnd}
+            />
+          </>
+        )}
       </div>
+
+      {phase === "forwarding" && (
+        <ForwardModal
+          contacts={contacts}
+          onSubmit={handleForwardSubmit}
+          onCancel={handleForwardCancel}
+        />
+      )}
 
       {phase === "confidence" && (
         <ConfidenceModal
