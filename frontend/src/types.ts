@@ -14,3 +14,8 @@ export interface DummyEmail {
   link: string | null;
   attachment: string | null;
 }
+
+export interface ProcessedInfo {
+  action: ActionType;
+  confidence: number;
+}
