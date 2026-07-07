@@ -1,0 +1,58 @@
+.screen {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: left;
+}
+
+.inbox-list {
+  list-style: none;
+  padding: 0;
+}
+
+.inbox-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #444;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.inbox-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.inbox-sender {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.inbox-subject {
+  font-weight: 600;
+}
+
+.email-body {
+  white-space: pre-wrap;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.action-buttons button.selected {
+  outline: 2px solid #6ea8fe;
+}
+
+.confirm-button {
+  display: block;
+  margin-top: 1rem;
+}

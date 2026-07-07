@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PGPASSWORD=devpassword psql *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8000/health --max-time 2)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(curl -s http://127.0.0.1:8000/health)",
+      "Bash(DISPLAY=:1 import -window root /tmp/claude-1001/-home-ciber-Desktop-Simulation/d728bb98-cd21-4d80-9d0e-fa49a3181c4c/scratchpad/screenshot1.png)",
+      "Bash(DISPLAY=:1 xwd -root -silent -out /tmp/claude-1001/-home-ciber-Desktop-Simulation/d728bb98-cd21-4d80-9d0e-fa49a3181c4c/scratchpad/screenshot1.xwd)",
+      "Bash(python3 -c ' *)",
+      "Bash(pip install *)",
+      "Bash(pkill -f \"electron .\")",
+      "Bash(pkill -f \"concurrently\")",
+      "Bash(pkill -f \"vite\")",
+      "Bash(pkill -f \"uvicorn app.main:app\")",
+      "Bash(echo \"exit:$?\")"
+    ]
+  }
+}
