@@ -24,7 +24,6 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
   const [confidenceValue, setConfidenceValueState] = useState(50);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
 
-  const distinctActionsSelected = useRef<Set<ActionType>>(new Set());
   const hoverStart = useRef<number | null>(null);
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
@@ -48,22 +47,17 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
     setOpenedAt(now);
     setPendingAction(null);
     setPhase("idle");
-    distinctActionsSelected.current = new Set();
   };
 
-  const handleSelectAction = (action: ActionType) => {
+  // Selecting an action commits it immediately (no separate confirm step),
+  // so answer_changed is always false - there's no window to revise it.
+  const handleSelectAction = async (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase === "confidence") return;
-    setPendingAction(action);
-    setPhase("pending");
-    distinctActionsSelected.current.add(action);
-  };
-
-  const handleConfirm = async () => {
-    if (!selectedEmail || !pendingAction || interactionId === null || openedAt === null) return;
+    if (interactionId === null || openedAt === null) return;
     const confirmedAt = Date.now();
-    const answerChanged = distinctActionsSelected.current.size > 1;
     const timeToDecisionMs = confirmedAt - openedAt;
-    await confirmInteraction(interactionId, pendingAction, answerChanged, confirmedAt, timeToDecisionMs);
+    await confirmInteraction(interactionId, action, false, confirmedAt, timeToDecisionMs);
+    setPendingAction(action);
     setPhase("confidence");
     setConfidenceValueState(50);
   };
@@ -115,13 +109,11 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
         <ReadingPane
           email={selectedEmail}
           processedInfo={processedInfo}
-          pendingAction={pendingAction}
           phase={phase}
           confidenceValue={confidenceValue}
           onLinkClick={() => handleSelectAction("click_link")}
           onLinkHoverStart={handleLinkHoverStart}
           onLinkHoverEnd={handleLinkHoverEnd}
-          onConfirm={handleConfirm}
           onConfidenceChange={setConfidenceValueState}
           onSubmitConfidence={handleSubmitConfidence}
         />

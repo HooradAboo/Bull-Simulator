@@ -497,28 +497,6 @@
   background: var(--hover);
 }
 
-.pending-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fff8e1;
-  border: 1px solid #e8d9a0;
-  border-radius: 4px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  font-size: 13.5px;
-}
-.pending-bar button {
-  background: var(--usf-green);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 14px;
-  font-size: 13px;
-  cursor: pointer;
-  margin-left: auto;
-}
-
 .confidence-box {
   border: 1px solid var(--border);
   border-radius: 6px;

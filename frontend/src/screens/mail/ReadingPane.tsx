@@ -10,18 +10,16 @@ const ACTION_LABELS: Record<ActionType, string> = {
   ignore: "Ignore",
 };
 
-export type ReadingPhase = "idle" | "pending" | "confidence";
+export type ReadingPhase = "idle" | "confidence";
 
 interface Props {
   email: DummyEmail | null;
   processedInfo: ProcessedInfo | null;
-  pendingAction: ActionType | null;
   phase: ReadingPhase;
   confidenceValue: number;
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
-  onConfirm: () => void;
   onConfidenceChange: (value: number) => void;
   onSubmitConfidence: () => void;
 }
@@ -29,13 +27,11 @@ interface Props {
 export function ReadingPane({
   email,
   processedInfo,
-  pendingAction,
   phase,
   confidenceValue,
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
-  onConfirm,
   onConfidenceChange,
   onSubmitConfidence,
 }: Props) {
@@ -101,13 +97,6 @@ export function ReadingPane({
               📎 {email.attachment}
             </span>
           </p>
-        )}
-
-        {!processedInfo && phase === "pending" && pendingAction && (
-          <div className="pending-bar">
-            Selected: <strong>{ACTION_LABELS[pendingAction]}</strong>
-            <button onClick={onConfirm}>Confirm</button>
-          </div>
         )}
 
         {!processedInfo && phase === "confidence" && (
