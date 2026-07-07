@@ -19,3 +19,5 @@ export interface ProcessedInfo {
   action: ActionType;
   confidence: number;
 }
+
+export type FolderName = "inbox" | "deleted";

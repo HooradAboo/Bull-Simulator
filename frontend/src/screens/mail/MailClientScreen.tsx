@@ -8,7 +8,7 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { confirmInteraction, logHover, openInteraction, setConfidence } from "../../api";
-import type { ActionType, DummyEmail, ProcessedInfo } from "../../types";
+import type { ActionType, DummyEmail, FolderName, ProcessedInfo } from "../../types";
 
 type Phase = "idle" | "confidence";
 
@@ -16,6 +16,11 @@ interface Props {
   participantId: string;
   emails: DummyEmail[];
   onAllProcessed: () => void;
+}
+
+function folderForAction(action: ActionType | undefined): FolderName {
+  if (action === "delete") return "deleted";
+  return "inbox";
 }
 
 export function MailClientScreen({ participantId, emails, onAllProcessed }: Props) {
@@ -26,10 +31,23 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
   const [phase, setPhase] = useState<Phase>("idle");
   const [confidenceValue, setConfidenceValueState] = useState(50);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
+  const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
 
   const hoverStart = useRef<number | null>(null);
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
+
+  const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
+
+  const handleSelectFolder = (folder: FolderName) => {
+    if (isMidFlow) return;
+    setCurrentFolder(folder);
+    setSelectedEmail(null);
+    setInteractionId(null);
+    setOpenedAt(null);
+    setPendingAction(null);
+    setPhase("idle");
+  };
 
   const handleSelectEmail = async (email: DummyEmail) => {
     if (isMidFlow) return;
@@ -74,6 +92,12 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
     setProcessed(updated);
     setPhase("idle");
 
+    // If the action moved the email to a different folder (e.g. delete),
+    // it's no longer part of the folder we're currently viewing.
+    if (folderForAction(pendingAction) !== currentFolder) {
+      setSelectedEmail(null);
+    }
+
     if (updated.size >= emails.length) {
       onAllProcessed();
     }
@@ -95,6 +119,8 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
   const processedInfo = selectedEmail ? processed.get(selectedEmail.id) ?? null : null;
   const ribbonDisabled =
     !selectedEmail || processed.has(selectedEmail.id) || phase === "confidence";
+  const visibleEmails = emails.filter((e) => folderOf(e.id) === currentFolder);
+  const deletedCount = emails.filter((e) => folderOf(e.id) === "deleted").length;
 
   return (
     <div className="mail-shell">
@@ -102,9 +128,14 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
       <TabBar />
       <Ribbon pendingAction={pendingAction} disabled={ribbonDisabled} onSelectAction={handleSelectAction} />
       <div className="mail-body">
-        <FolderSidebar />
+        <FolderSidebar
+          currentFolder={currentFolder}
+          deletedCount={deletedCount}
+          onSelectFolder={handleSelectFolder}
+        />
         <EmailListPane
-          emails={emails}
+          folder={currentFolder}
+          emails={visibleEmails}
           selectedId={selectedEmail?.id ?? null}
           processed={processed}
           onSelect={handleSelectEmail}

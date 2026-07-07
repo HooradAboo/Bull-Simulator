@@ -288,8 +288,11 @@
   gap: 8px;
   padding: 6px 8px;
   border-radius: 4px;
-  cursor: default;
+  cursor: pointer;
   color: var(--text);
+}
+.folder-row:hover {
+  background: var(--hover);
 }
 .folder-row.active {
   background: var(--selected);
