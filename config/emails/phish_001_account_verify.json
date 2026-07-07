@@ -1,0 +1,9 @@
+{
+  "id": "phish_001_account_verify",
+  "sender": "IT Support <it-support@brightwave-secure-verify.com>",
+  "subject": "Urgent: Verify Your Account Within 24 Hours",
+  "body": "Dear Employee,\n\nWe've detected unusual activity on your account. Please verify your credentials immediately by clicking the link below to avoid suspension.\n\nThank you,\nIT Support Team",
+  "link": "http://brightwave-secure-verify.com/verify-account",
+  "attachment": null,
+  "is_phishing": true
+}

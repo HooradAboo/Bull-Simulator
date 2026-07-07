@@ -1,0 +1,9 @@
+{
+  "id": "phish_002_package_delivery",
+  "sender": "Parcel Delivery <notify@parcel-trackr-delivery.net>",
+  "subject": "Your package could not be delivered",
+  "body": "Hello,\n\nOur courier attempted to deliver your package today but was unable to complete delivery due to an incomplete address. Please confirm your delivery details within 48 hours or your package will be returned to sender.\n\nTrack and confirm here.\n\nRegards,\nParcel Delivery Services",
+  "link": "http://parcel-trackr-delivery.net/confirm?id=88213",
+  "attachment": null,
+  "is_phishing": true
+}

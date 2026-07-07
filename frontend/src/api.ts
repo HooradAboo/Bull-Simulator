@@ -1,4 +1,16 @@
+import type { DummyEmail } from "./types";
+
 const BASE_URL = "http://127.0.0.1:8000";
+
+async function get(path: string) {
+  const res = await fetch(`${BASE_URL}${path}`);
+  if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
+  return res.json();
+}
+
+export function getEmails(): Promise<DummyEmail[]> {
+  return get("/emails");
+}
 
 async function post(path: string, body: unknown) {
   const res = await fetch(`${BASE_URL}${path}`, {

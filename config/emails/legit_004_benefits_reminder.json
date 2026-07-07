@@ -1,0 +1,9 @@
+{
+  "id": "legit_004_benefits_reminder",
+  "sender": "HR Benefits <benefits@brightwave.io>",
+  "subject": "Reminder: Benefits enrollment closes Friday",
+  "body": "Hi there,\n\nThis is a friendly reminder that open enrollment for benefits closes this Friday at 5pm. If you haven't reviewed your elections yet, please log in to the benefits portal to make any changes.\n\nIf you have questions, our team is happy to help.\n\nThanks,\nHR Benefits Team",
+  "link": "https://benefits.brightwave.io/enrollment",
+  "attachment": null,
+  "is_phishing": false
+}

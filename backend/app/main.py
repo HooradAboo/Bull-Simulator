@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app import models, schemas
 from app.database import Base, engine, get_db
+from app.emails import EmailPublic, load_public_emails
 
 Base.metadata.create_all(bind=engine)
 
@@ -20,6 +21,14 @@ app.add_middleware(
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/emails", response_model=list[EmailPublic])
+def get_emails():
+    try:
+        return load_public_emails()
+    except (FileNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/session/start")

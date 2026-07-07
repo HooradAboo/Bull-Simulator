@@ -1,0 +1,28 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Env / secrets
+.env
+*.env
+!.env.example
+
+# Electron
+frontend/out/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+
+# Data exports
+*.csv

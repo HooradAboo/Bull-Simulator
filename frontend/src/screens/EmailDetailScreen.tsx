@@ -40,7 +40,7 @@ export function EmailDetailScreen({ email, interactionId, openedAt, onComplete }
     if (hoverStart.current === null) return;
     const start = hoverStart.current;
     hoverStart.current = null;
-    logHover(interactionId, email.link, start, Date.now()).catch((err) =>
+    logHover(interactionId, email.link ?? "", start, Date.now()).catch((err) =>
       console.error("hover log failed", err)
     );
   };
@@ -74,16 +74,28 @@ export function EmailDetailScreen({ email, interactionId, openedAt, onComplete }
             <strong>From:</strong> {email.sender}
           </p>
           <p className="email-body">{email.body}</p>
-          <p>
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
-              onMouseEnter={handleLinkMouseEnter}
-              onMouseLeave={handleLinkMouseLeave}
-            >
-              {email.link}
-            </a>
-          </p>
+          {email.link && (
+            <p>
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                onMouseEnter={handleLinkMouseEnter}
+                onMouseLeave={handleLinkMouseLeave}
+              >
+                {email.link}
+              </a>
+            </p>
+          )}
+          {email.attachment && (
+            <p>
+              <span
+                className="attachment"
+                onClick={(e) => e.preventDefault()}
+              >
+                📎 {email.attachment}
+              </span>
+            </p>
+          )}
 
           <div className="action-buttons">
             {ACTIONS.map((action) => (

@@ -11,5 +11,6 @@ export interface DummyEmail {
   sender: string;
   subject: string;
   body: string;
-  link: string;
+  link: string | null;
+  attachment: string | null;
 }

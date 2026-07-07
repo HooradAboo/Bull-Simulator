@@ -1,0 +1,9 @@
+{
+  "id": "legit_005_expense_receipt",
+  "sender": "Brightwave Expenses <no-reply@expenses.brightwave.io>",
+  "subject": "Your expense report #4471 was approved",
+  "body": "Hi,\n\nYour expense report #4471 for $86.50 (team lunch, Aug 12) has been approved by your manager and will be reimbursed in your next paycheck.\n\nYou can view the details in the expense portal.\n\nThanks,\nBrightwave Expenses",
+  "link": "https://expenses.brightwave.io/reports/4471",
+  "attachment": null,
+  "is_phishing": false
+}
