@@ -5,9 +5,12 @@ import { TabBar } from "./TabBar";
 import { Ribbon } from "./Ribbon";
 import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
-import { ReadingPane, type ReadingPhase } from "./ReadingPane";
+import { ReadingPane } from "./ReadingPane";
+import { ConfidenceModal } from "./ConfidenceModal";
 import { confirmInteraction, logHover, openInteraction, setConfidence } from "../../api";
 import type { ActionType, DummyEmail, ProcessedInfo } from "../../types";
+
+type Phase = "idle" | "confidence";
 
 interface Props {
   participantId: string;
@@ -20,7 +23,7 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
-  const [phase, setPhase] = useState<ReadingPhase>("idle");
+  const [phase, setPhase] = useState<Phase>("idle");
   const [confidenceValue, setConfidenceValueState] = useState(50);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
 
@@ -109,15 +112,19 @@ export function MailClientScreen({ participantId, emails, onAllProcessed }: Prop
         <ReadingPane
           email={selectedEmail}
           processedInfo={processedInfo}
-          phase={phase}
-          confidenceValue={confidenceValue}
           onLinkClick={() => handleSelectAction("click_link")}
           onLinkHoverStart={handleLinkHoverStart}
           onLinkHoverEnd={handleLinkHoverEnd}
-          onConfidenceChange={setConfidenceValueState}
-          onSubmitConfidence={handleSubmitConfidence}
         />
       </div>
+
+      {phase === "confidence" && (
+        <ConfidenceModal
+          confidenceValue={confidenceValue}
+          onConfidenceChange={setConfidenceValueState}
+          onSubmit={handleSubmitConfidence}
+        />
+      )}
     </div>
   );
 }
