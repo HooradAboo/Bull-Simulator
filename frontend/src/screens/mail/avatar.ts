@@ -33,3 +33,8 @@ export function avatarColor(sender: string): string {
 export function senderName(sender: string): string {
   return extractDisplayName(sender);
 }
+
+export function extractEmail(sender: string): string {
+  const match = sender.match(/<([^>]+)>/);
+  return (match ? match[1] : sender).trim();
+}

@@ -22,14 +22,16 @@ export function SentItemReadingPane({ item }: Props) {
   return (
     <div className="mail-reading-pane">
       <div className="reading-content">
-        <div className="reading-subject">FW: {item.subject}</div>
+        <div className="reading-subject">{item.subject}</div>
         <div className="reading-sender-meta">
           To: {item.recipient} — sent {new Date(item.sentAt).toLocaleTimeString()}
         </div>
 
         <hr />
 
-        <div className="reading-sender-meta">From: {item.originalSender}</div>
+        {item.kind === "forward" && (
+          <div className="reading-sender-meta">From: {item.originalSender}</div>
+        )}
         <div className="reading-body">{item.body}</div>
 
         {item.link && <p className="reading-link">{item.link}</p>}

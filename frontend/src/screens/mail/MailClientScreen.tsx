@@ -8,8 +8,10 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ForwardModal } from "./ForwardModal";
+import { ReplyModal } from "./ReplyModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
+import { extractEmail } from "./avatar";
 import { confirmInteraction, logHover, openInteraction, setConfidence } from "../../api";
 import type {
   ActionType,
@@ -20,7 +22,7 @@ import type {
   SentItem,
 } from "../../types";
 
-type Phase = "idle" | "forwarding" | "confidence";
+type Phase = "idle" | "forwarding" | "replying" | "confidence";
 
 interface Props {
   participantId: string;
@@ -88,8 +90,9 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
 
   // Most actions commit immediately (no separate confirm step), so
   // answer_changed is always false - there's no window to revise them.
-  // Forward is the exception: it needs a recipient first, so it opens a
-  // modal and only commits once that's submitted.
+  // Forward and Reply are exceptions: they need more input first (a
+  // recipient, or a composed reply), so they open a modal and only
+  // commit once that's submitted.
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
 
@@ -97,11 +100,19 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
       setPhase("forwarding");
       return;
     }
+    if (action === "reply") {
+      setPhase("replying");
+      return;
+    }
 
     commitAction(action, null);
   };
 
-  const commitAction = async (action: ActionType, recipient: string | null) => {
+  const commitAction = async (
+    action: ActionType,
+    recipient: string | null,
+    composedBody?: string
+  ) => {
     if (!selectedEmail || interactionId === null || openedAt === null) return;
     const confirmedAt = Date.now();
     const timeToDecisionMs = confirmedAt - openedAt;
@@ -117,11 +128,31 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
         {
           id: crypto.randomUUID(),
           originalEmailId: selectedEmail.id,
-          subject: selectedEmail.subject,
+          kind: "forward",
+          subject: `FW: ${selectedEmail.subject}`,
           body: selectedEmail.body,
           originalSender: selectedEmail.sender,
           link: selectedEmail.link,
           attachment: selectedEmail.attachment,
+          recipient,
+          sentAt: confirmedAt,
+        },
+      ]);
+    }
+
+    if (action === "reply" && recipient && composedBody !== undefined) {
+      const quotedBody = `${composedBody}\n\n---------- Original message ----------\nFrom: ${selectedEmail.sender}\nSubject: ${selectedEmail.subject}\n\n${selectedEmail.body}`;
+      setSentItems((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          originalEmailId: selectedEmail.id,
+          kind: "reply",
+          subject: `RE: ${selectedEmail.subject}`,
+          body: quotedBody,
+          originalSender: selectedEmail.sender,
+          link: null,
+          attachment: null,
           recipient,
           sentAt: confirmedAt,
         },
@@ -134,6 +165,15 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
   };
 
   const handleForwardCancel = () => {
+    setPhase("idle");
+  };
+
+  const handleReplySubmit = (body: string) => {
+    if (!selectedEmail) return;
+    commitAction("reply", extractEmail(selectedEmail.sender), body);
+  };
+
+  const handleReplyCancel = () => {
     setPhase("idle");
   };
 
@@ -228,6 +268,15 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
           contacts={contacts}
           onSubmit={handleForwardSubmit}
           onCancel={handleForwardCancel}
+        />
+      )}
+
+      {phase === "replying" && selectedEmail && (
+        <ReplyModal
+          originalSender={selectedEmail.sender}
+          originalSubject={selectedEmail.subject}
+          onSubmit={handleReplySubmit}
+          onCancel={handleReplyCancel}
         />
       )}
 
