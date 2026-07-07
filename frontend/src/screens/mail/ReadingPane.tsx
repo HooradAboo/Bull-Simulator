@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { ActionType, DummyEmail, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
 
@@ -13,18 +14,30 @@ const ACTION_LABELS: Record<ActionType, string> = {
 interface Props {
   email: DummyEmail | null;
   processedInfo: ProcessedInfo | null;
+  replyMode: boolean;
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
+  onReplySubmit: (body: string) => void;
+  onReplyDiscard: () => void;
 }
 
 export function ReadingPane({
   email,
   processedInfo,
+  replyMode,
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
+  onReplySubmit,
+  onReplyDiscard,
 }: Props) {
+  const [replyBody, setReplyBody] = useState("");
+
+  useEffect(() => {
+    if (replyMode) setReplyBody("");
+  }, [replyMode]);
+
   if (!email) {
     return (
       <div className="mail-reading-pane">
@@ -88,6 +101,42 @@ export function ReadingPane({
               📎 {email.attachment}
             </span>
           </p>
+        )}
+
+        {replyMode && (
+          <div className="inline-reply">
+            <div className="inline-reply-row">
+              <span className="inline-reply-label">From:</span> study-participant@lab.local
+            </div>
+            <div className="inline-reply-row inline-reply-to">
+              <span className="inline-reply-label">To</span>
+              <span className="reply-chip">
+                {senderName(email.sender)}
+                <span className="reply-chip-x">×</span>
+              </span>
+              <span className="inline-reply-cc">Cc  Bcc</span>
+            </div>
+            <textarea
+              id="reply-body"
+              className="inline-reply-textarea"
+              value={replyBody}
+              onChange={(e) => setReplyBody(e.target.value)}
+              rows={6}
+              autoFocus
+            />
+            <div className="inline-reply-actions">
+              <button
+                className="inline-reply-send"
+                disabled={replyBody.trim().length === 0}
+                onClick={() => onReplySubmit(replyBody.trim())}
+              >
+                ➤ Send
+              </button>
+              <button className="inline-reply-discard" onClick={onReplyDiscard}>
+                🗑 Discard
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

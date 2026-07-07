@@ -8,7 +8,6 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ForwardModal } from "./ForwardModal";
-import { ReplyModal } from "./ReplyModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { extractEmail } from "./avatar";
@@ -255,9 +254,12 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
             <ReadingPane
               email={selectedEmail}
               processedInfo={processedInfo}
+              replyMode={phase === "replying"}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}
+              onReplySubmit={handleReplySubmit}
+              onReplyDiscard={handleReplyCancel}
             />
           </>
         )}
@@ -268,15 +270,6 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
           contacts={contacts}
           onSubmit={handleForwardSubmit}
           onCancel={handleForwardCancel}
-        />
-      )}
-
-      {phase === "replying" && selectedEmail && (
-        <ReplyModal
-          originalSender={selectedEmail.sender}
-          originalSubject={selectedEmail.subject}
-          onSubmit={handleReplySubmit}
-          onCancel={handleReplyCancel}
         />
       )}
 
