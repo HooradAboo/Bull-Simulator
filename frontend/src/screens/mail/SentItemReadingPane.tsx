@@ -29,9 +29,6 @@ export function SentItemReadingPane({ item }: Props) {
 
         <hr />
 
-        {item.kind === "forward" && (
-          <div className="reading-sender-meta">From: {item.originalSender}</div>
-        )}
         <div className="reading-body">{item.body}</div>
 
         {item.link && <p className="reading-link">{item.link}</p>}

@@ -7,7 +7,6 @@ import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
-import { ForwardModal } from "./ForwardModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { extractEmail } from "./avatar";
@@ -122,6 +121,8 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
     setConfidenceValueState(50);
 
     if (action === "forward" && recipient) {
+      const note = composedBody ? `${composedBody}\n\n` : "";
+      const body = `${note}---------- Forwarded message ----------\nFrom: ${selectedEmail.sender}\nSubject: ${selectedEmail.subject}\n\n${selectedEmail.body}`;
       setSentItems((prev) => [
         ...prev,
         {
@@ -129,7 +130,7 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
           originalEmailId: selectedEmail.id,
           kind: "forward",
           subject: `FW: ${selectedEmail.subject}`,
-          body: selectedEmail.body,
+          body,
           originalSender: selectedEmail.sender,
           link: selectedEmail.link,
           attachment: selectedEmail.attachment,
@@ -159,8 +160,8 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
     }
   };
 
-  const handleForwardSubmit = (recipient: string) => {
-    commitAction("forward", recipient);
+  const handleForwardSubmit = (recipient: string, note: string) => {
+    commitAction("forward", recipient, note.length > 0 ? note : undefined);
   };
 
   const handleForwardCancel = () => {
@@ -255,23 +256,19 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
               email={selectedEmail}
               processedInfo={processedInfo}
               replyMode={phase === "replying"}
+              forwardMode={phase === "forwarding"}
+              contacts={contacts}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}
               onReplySubmit={handleReplySubmit}
               onReplyDiscard={handleReplyCancel}
+              onForwardSubmit={handleForwardSubmit}
+              onForwardDiscard={handleForwardCancel}
             />
           </>
         )}
       </div>
-
-      {phase === "forwarding" && (
-        <ForwardModal
-          contacts={contacts}
-          onSubmit={handleForwardSubmit}
-          onCancel={handleForwardCancel}
-        />
-      )}
 
       {phase === "confidence" && (
         <ConfidenceModal
