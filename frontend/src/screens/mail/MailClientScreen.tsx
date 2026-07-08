@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./mail.css";
+import { useBrowserTabs } from "../browser/BrowserChrome";
 import { TopBar } from "./TopBar";
 import { TabBar } from "./TabBar";
 import { Ribbon } from "./Ribbon";
@@ -21,7 +22,7 @@ import type {
   SentItem,
 } from "../../types";
 
-type Phase = "idle" | "confirming" | "forwarding" | "replying" | "confidence";
+type Phase = "idle" | "confirming" | "forwarding" | "replying" | "link-open" | "confidence";
 
 interface Props {
   participantId: string;
@@ -51,8 +52,20 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
 
   const hoverStart = useRef<number | null>(null);
+  const { openTab, isMailTabActive } = useBrowserTabs();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
+
+  // Clicking a link opens a new browser tab instead of committing
+  // immediately; the click_link action only commits once the
+  // participant comes back (switches to or closes back into the mail
+  // tab), so time_to_decision includes however long they spent there.
+  useEffect(() => {
+    if (phase === "link-open" && isMailTabActive) {
+      commitAction("click_link", null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMailTabActive, phase]);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
 
@@ -93,10 +106,17 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
   // Delete/Report ask for a yes/no confirmation first since they're
   // destructive (move the email out of Inbox). Forward and Reply need
   // more input first (a recipient, or a composed reply), so they open
-  // a modal and only commit once that's submitted.
+  // a modal and only commit once that's submitted. Click Link opens a
+  // new browser tab and defers committing until the participant returns.
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
 
+    if (action === "click_link") {
+      if (!selectedEmail.link) return;
+      openTab(selectedEmail.link);
+      setPhase("link-open");
+      return;
+    }
     if (action === "delete" || action === "report_phishing") {
       setConfirmingAction(action);
       setPhase("confirming");
