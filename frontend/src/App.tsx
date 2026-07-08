@@ -4,6 +4,8 @@ import { ConsentScreen } from "./screens/ConsentScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
 import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
+import { BrowserChrome } from "./screens/browser/BrowserChrome";
+import { PlainTitleBar } from "./screens/browser/PlainTitleBar";
 import { getContacts, getEmails, startSession } from "./api";
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
@@ -43,18 +45,24 @@ function App() {
     setScreen("mail");
   };
 
-  return (
-    <>
-      {screen === "consent" && <ConsentScreen onAccept={() => setScreen("instructions")} />}
-      {screen === "instructions" && <InstructionsScreen onBegin={handleBegin} />}
-      {screen === "mail" && (
+  if (screen === "mail") {
+    return (
+      <BrowserChrome>
         <MailClientScreen
           participantId={participantId}
           emails={emails}
           contacts={contacts}
           onAllProcessed={() => setScreen("debrief")}
         />
-      )}
+      </BrowserChrome>
+    );
+  }
+
+  return (
+    <>
+      <PlainTitleBar />
+      {screen === "consent" && <ConsentScreen onAccept={() => setScreen("instructions")} />}
+      {screen === "instructions" && <InstructionsScreen onBegin={handleBegin} />}
       {screen === "debrief" && <DebriefScreen />}
     </>
   );

@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const { spawn } = require("child_process");
 
@@ -32,11 +32,19 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
     },
+  });
+
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("window:maximized-changed", true);
+  });
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("window:maximized-changed", false);
   });
 
   if (isDev) {
@@ -46,6 +54,20 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, "..", "dist", "index.html"));
   }
 }
+
+ipcMain.on("window:minimize", () => {
+  mainWindow?.minimize();
+});
+
+ipcMain.on("window:toggle-maximize", () => {
+  if (!mainWindow) return;
+  if (mainWindow.isMaximized()) mainWindow.unmaximize();
+  else mainWindow.maximize();
+});
+
+ipcMain.on("window:close", () => {
+  mainWindow?.close();
+});
 
 app.whenReady().then(() => {
   startBackend();

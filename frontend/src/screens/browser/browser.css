@@ -1,0 +1,143 @@
+.browser-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background: #dee1e6;
+  overflow: hidden;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.plain-titlebar {
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  flex-shrink: 0;
+  background: #f3f2f1;
+}
+.plain-titlebar-drag {
+  flex: 1;
+  height: 100%;
+}
+
+.browser-titlebar {
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: flex-end;
+  height: 40px;
+  flex-shrink: 0;
+  padding: 8px 0 0 8px;
+  gap: 4px;
+}
+
+.browser-tabstrip {
+  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.browser-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px 8px 0 0;
+  background: #f1f3f4;
+  color: #5f6368;
+  font-size: 13px;
+  max-width: 240px;
+  min-width: 120px;
+  cursor: default;
+}
+.browser-tab.active {
+  background: #fff;
+  color: #202124;
+}
+.browser-tab-favicon {
+  display: flex;
+  color: #006747;
+  flex-shrink: 0;
+}
+.browser-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-window-controls {
+  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+.browser-window-controls button {
+  width: 46px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+}
+.browser-window-controls button:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+.browser-close-btn:hover {
+  background: #e81123 !important;
+  color: #fff;
+}
+
+.browser-toolbar {
+  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0 12px;
+  background: #fff;
+  border-bottom: 1px solid #dadce0;
+}
+.browser-nav-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  color: #5f6368;
+  cursor: not-allowed;
+}
+.browser-address-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 16px;
+  background: #f1f3f4;
+  color: #3c4043;
+  font-size: 13px;
+}
+.browser-address-bar svg {
+  color: #188038;
+  flex-shrink: 0;
+}
+
+.browser-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
