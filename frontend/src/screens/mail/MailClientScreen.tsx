@@ -7,6 +7,7 @@ import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
+import { ConfirmActionModal } from "./ConfirmActionModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { extractEmail } from "./avatar";
@@ -20,7 +21,7 @@ import type {
   SentItem,
 } from "../../types";
 
-type Phase = "idle" | "forwarding" | "replying" | "confidence";
+type Phase = "idle" | "confirming" | "forwarding" | "replying" | "confidence";
 
 interface Props {
   participantId: string;
@@ -40,6 +41,7 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
+  const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [confidenceValue, setConfidenceValueState] = useState(50);
@@ -88,12 +90,18 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
 
   // Most actions commit immediately (no separate confirm step), so
   // answer_changed is always false - there's no window to revise them.
-  // Forward and Reply are exceptions: they need more input first (a
-  // recipient, or a composed reply), so they open a modal and only
-  // commit once that's submitted.
+  // Delete/Report ask for a yes/no confirmation first since they're
+  // destructive (move the email out of Inbox). Forward and Reply need
+  // more input first (a recipient, or a composed reply), so they open
+  // a modal and only commit once that's submitted.
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
 
+    if (action === "delete" || action === "report_phishing") {
+      setConfirmingAction(action);
+      setPhase("confirming");
+      return;
+    }
     if (action === "forward") {
       setPhase("forwarding");
       return;
@@ -104,6 +112,17 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
     }
 
     commitAction(action, null);
+  };
+
+  const handleConfirmDestructiveAction = () => {
+    if (!confirmingAction) return;
+    commitAction(confirmingAction, null);
+    setConfirmingAction(null);
+  };
+
+  const handleCancelDestructiveAction = () => {
+    setConfirmingAction(null);
+    setPhase("idle");
   };
 
   const commitAction = async (
@@ -269,6 +288,14 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
           </>
         )}
       </div>
+
+      {phase === "confirming" && confirmingAction && (
+        <ConfirmActionModal
+          action={confirmingAction}
+          onConfirm={handleConfirmDestructiveAction}
+          onCancel={handleCancelDestructiveAction}
+        />
+      )}
 
       {phase === "confidence" && (
         <ConfidenceModal
