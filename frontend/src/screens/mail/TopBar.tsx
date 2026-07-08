@@ -1,3 +1,5 @@
+import usfLogo from "../../assets/usf-logo.png";
+
 export function TopBar() {
   return (
     <div className="mail-topbar">
@@ -8,13 +10,7 @@ export function TopBar() {
       </div>
 
       <div className="mail-brand">
-        <div className="crest" aria-hidden="true">
-          USF
-        </div>
-        <div className="brand-text">
-          <div className="line1">UNIVERSITY OF</div>
-          <div className="line2">SOUTH FLORIDA</div>
-        </div>
+        <img src={usfLogo} alt="University of South Florida" className="crest-logo" />
         <div className="outlook-word">Outlook</div>
       </div>
 

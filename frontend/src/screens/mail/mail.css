@@ -53,31 +53,10 @@
   white-space: nowrap;
 }
 
-.mail-brand .crest {
-  width: 26px;
+.mail-brand .crest-logo {
   height: 26px;
-  border-radius: 50%;
-  background: var(--usf-gold);
-  color: var(--usf-green-dark);
-  font-weight: 700;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: auto;
   flex-shrink: 0;
-}
-
-.mail-brand .brand-text {
-  font-size: 12px;
-  line-height: 1.1;
-}
-.mail-brand .brand-text .line1 {
-  color: #fff;
-}
-.mail-brand .brand-text .line2 {
-  color: var(--usf-gold);
-  font-weight: 600;
-  letter-spacing: 0.3px;
 }
 
 .mail-brand .outlook-word {
