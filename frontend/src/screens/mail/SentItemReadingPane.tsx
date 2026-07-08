@@ -1,3 +1,4 @@
+import { Attach20Regular, MailInbox48Regular } from "@fluentui/react-icons";
 import type { SentItem } from "../../types";
 
 interface Props {
@@ -10,7 +11,7 @@ export function SentItemReadingPane({ item }: Props) {
       <div className="mail-reading-pane">
         <div className="reading-empty">
           <div className="envelope" aria-hidden="true">
-            ✉️
+            <MailInbox48Regular />
           </div>
           <div className="primary">Select an item to read</div>
           <div className="secondary">Nothing is selected</div>
@@ -32,7 +33,11 @@ export function SentItemReadingPane({ item }: Props) {
         <div className="reading-body">{item.body}</div>
 
         {item.link && <p className="reading-link">{item.link}</p>}
-        {item.attachment && <p className="reading-attachment">📎 {item.attachment}</p>}
+        {item.attachment && (
+          <p className="reading-attachment">
+            <Attach20Regular /> {item.attachment}
+          </p>
+        )}
       </div>
     </div>
   );

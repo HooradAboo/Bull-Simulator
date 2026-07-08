@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { ArrowForward20Regular, ArrowReply20Regular } from "@fluentui/react-icons";
 import type { SentItem } from "../../types";
 
 interface Props {
@@ -10,9 +12,9 @@ function formatTime(ts: number): string {
   return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
-const KIND_ICON: Record<SentItem["kind"], string> = {
-  forward: "➡️",
-  reply: "↩️",
+const KIND_ICON: Record<SentItem["kind"], ReactNode> = {
+  forward: <ArrowForward20Regular />,
+  reply: <ArrowReply20Regular />,
 };
 
 const KIND_COLOR: Record<SentItem["kind"], string> = {

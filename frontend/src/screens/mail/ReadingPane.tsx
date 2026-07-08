@@ -1,4 +1,11 @@
 import { useEffect, useState } from "react";
+import {
+  Attach20Regular,
+  CheckmarkCircle20Filled,
+  Delete20Regular,
+  MailInbox48Regular,
+  Send20Regular,
+} from "@fluentui/react-icons";
 import type { ActionType, Contact, DummyEmail, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
 
@@ -39,7 +46,11 @@ function QuotedMessage({ email }: { email: DummyEmail }) {
       </div>
       <div className="reading-body">{email.body}</div>
       {email.link && <p className="reading-link">{email.link}</p>}
-      {email.attachment && <p className="reading-attachment">📎 {email.attachment}</p>}
+      {email.attachment && (
+        <p className="reading-attachment">
+          <Attach20Regular /> {email.attachment}
+        </p>
+      )}
     </div>
   );
 }
@@ -78,7 +89,7 @@ export function ReadingPane({
       <div className="mail-reading-pane">
         <div className="reading-empty">
           <div className="envelope" aria-hidden="true">
-            ✉️
+            <MailInbox48Regular />
           </div>
           <div className="primary">Select an item to read</div>
           <div className="secondary">Nothing is selected</div>
@@ -97,10 +108,10 @@ export function ReadingPane({
               disabled={replyBody.trim().length === 0}
               onClick={() => onReplySubmit(replyBody.trim())}
             >
-              ➤ Send
+              <Send20Regular /> Send
             </button>
             <button className="inline-reply-discard" onClick={onReplyDiscard}>
-              🗑 Discard
+              <Delete20Regular /> Discard
             </button>
           </div>
 
@@ -142,10 +153,10 @@ export function ReadingPane({
               disabled={forwardRecipient.trim().length === 0}
               onClick={() => onForwardSubmit(forwardRecipient.trim(), forwardNote.trim())}
             >
-              ➤ Send
+              <Send20Regular /> Send
             </button>
             <button className="inline-reply-discard" onClick={onForwardDiscard}>
-              🗑 Discard
+              <Delete20Regular /> Discard
             </button>
           </div>
 
@@ -209,7 +220,8 @@ export function ReadingPane({
 
         {processedInfo && (
           <div className="processed-banner">
-            ✅ You responded: <strong>{ACTION_LABELS[processedInfo.action]}</strong>
+            <CheckmarkCircle20Filled /> You responded:{" "}
+            <strong>{ACTION_LABELS[processedInfo.action]}</strong>
             {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}{" "}
             (confidence {processedInfo.confidence})
           </div>
@@ -236,7 +248,7 @@ export function ReadingPane({
         {email.attachment && (
           <p>
             <span className="reading-attachment" onClick={(e) => e.preventDefault()}>
-              📎 {email.attachment}
+              <Attach20Regular /> {email.attachment}
             </span>
           </p>
         )}

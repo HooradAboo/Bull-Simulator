@@ -1,3 +1,4 @@
+import { Star20Regular } from "@fluentui/react-icons";
 import type { DummyEmail, FolderName, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
 
@@ -26,7 +27,7 @@ export function EmailListPane({ folder, emails, selectedId, processed, onSelect 
   return (
     <div className="mail-list-pane">
       <div className="mail-list-header">
-        {FOLDER_TITLES[folder]} <span aria-hidden="true">★</span>
+        {FOLDER_TITLES[folder]} <Star20Regular aria-hidden="true" />
         {folder === "inbox" && <span className="count">{remaining} unread</span>}
       </div>
 

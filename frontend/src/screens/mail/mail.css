@@ -97,8 +97,9 @@
   margin-left: auto;
 }
 .mail-topbar-icons .icon {
-  width: 18px;
-  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0.9;
 }
 .mail-avatar {
@@ -174,8 +175,9 @@
   min-width: 52px;
 }
 .ribbon-btn .ribbon-icon {
-  font-size: 15px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .ribbon-btn:hover:not(:disabled) {
   background: var(--hover);
@@ -279,9 +281,10 @@
   font-weight: 600;
 }
 .folder-row .folder-icon {
-  font-size: 14px;
-  width: 16px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
 }
 .account-row {
   margin-top: 14px;
@@ -413,8 +416,11 @@
   gap: 8px;
 }
 .reading-empty .envelope {
-  font-size: 64px;
   opacity: 0.5;
+}
+.reading-empty .envelope svg {
+  width: 64px;
+  height: 64px;
 }
 .reading-empty .primary {
   font-size: 15px;
@@ -470,7 +476,9 @@
   cursor: pointer;
 }
 .reading-attachment {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 6px 10px;
@@ -684,6 +692,9 @@
 }
 
 .inline-reply-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--usf-green);
   color: #fff;
   border: none;
@@ -697,6 +708,9 @@
   cursor: not-allowed;
 }
 .inline-reply-discard {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 4px;

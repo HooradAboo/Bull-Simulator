@@ -1,3 +1,19 @@
+import type { ReactNode } from "react";
+import {
+  Archive20Regular,
+  ArrowForward20Regular,
+  ArrowReply20Regular,
+  ArrowReplyAll20Regular,
+  Broom20Regular,
+  CheckboxChecked20Regular,
+  Delete20Regular,
+  Flag20Regular,
+  Flash20Regular,
+  Folder20Regular,
+  MailAdd20Regular,
+  PeopleTeam20Regular,
+  Prohibited20Regular,
+} from "@fluentui/react-icons";
 import type { ActionType } from "../../types";
 
 interface Props {
@@ -6,7 +22,7 @@ interface Props {
   onSelectAction: (action: ActionType) => void;
 }
 
-function DecorativeButton({ icon, label }: { icon: string; label: string }) {
+function DecorativeButton({ icon, label }: { icon: ReactNode; label: string }) {
   return (
     <button className="ribbon-btn" disabled title="Not used in this study">
       <span className="ribbon-icon" aria-hidden="true">
@@ -18,7 +34,7 @@ function DecorativeButton({ icon, label }: { icon: string; label: string }) {
 }
 
 export function Ribbon({ pendingAction, disabled, onSelectAction }: Props) {
-  const actionButton = (action: ActionType, icon: string, label: string) => (
+  const actionButton = (action: ActionType, icon: ReactNode, label: string) => (
     <button
       className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
       disabled={disabled}
@@ -34,29 +50,29 @@ export function Ribbon({ pendingAction, disabled, onSelectAction }: Props) {
   return (
     <div className="mail-ribbon">
       <button className="ribbon-btn primary" disabled title="Not used in this study">
-        ✉️ New mail
+        <MailAdd20Regular /> New mail
       </button>
 
       <div className="ribbon-divider" />
 
-      {actionButton("delete", "🗑️", "Delete")}
-      <DecorativeButton icon="📦" label="Archive" />
-      {actionButton("report_phishing", "🚩", "Report")}
-      <DecorativeButton icon="🧹" label="Sweep" />
-      <DecorativeButton icon="📁" label="Move to" />
-      {actionButton("ignore", "🚫", "Ignore")}
+      {actionButton("delete", <Delete20Regular />, "Delete")}
+      <DecorativeButton icon={<Archive20Regular />} label="Archive" />
+      {actionButton("report_phishing", <Flag20Regular />, "Report")}
+      <DecorativeButton icon={<Broom20Regular />} label="Sweep" />
+      <DecorativeButton icon={<Folder20Regular />} label="Move to" />
+      {actionButton("ignore", <Prohibited20Regular />, "Ignore")}
 
       <div className="ribbon-divider" />
 
-      {actionButton("reply", "↩️", "Reply")}
-      <DecorativeButton icon="↩️↩️" label="Reply all" />
-      {actionButton("forward", "➡️", "Forward")}
+      {actionButton("reply", <ArrowReply20Regular />, "Reply")}
+      <DecorativeButton icon={<ArrowReplyAll20Regular />} label="Reply all" />
+      {actionButton("forward", <ArrowForward20Regular />, "Forward")}
 
       <div className="ribbon-divider" />
 
-      <DecorativeButton icon="👥" label="Share to Teams" />
-      <DecorativeButton icon="⚡" label="Quick steps" />
-      <DecorativeButton icon="✅" label="Mark all as read" />
+      <DecorativeButton icon={<PeopleTeam20Regular />} label="Share to Teams" />
+      <DecorativeButton icon={<Flash20Regular />} label="Quick steps" />
+      <DecorativeButton icon={<CheckboxChecked20Regular />} label="Mark all as read" />
     </div>
   );
 }

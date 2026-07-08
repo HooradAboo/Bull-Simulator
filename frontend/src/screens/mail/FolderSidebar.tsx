@@ -1,11 +1,24 @@
+import {
+  Calendar20Regular,
+  ChevronDown12Regular,
+  Cloud20Regular,
+  Delete20Regular,
+  DocumentEdit20Regular,
+  Mail20Filled,
+  MailInbox20Regular,
+  People20Regular,
+  Prohibited20Regular,
+  Send20Regular,
+  TaskListSquareLtr20Regular,
+} from "@fluentui/react-icons";
 import type { FolderName } from "../../types";
 
 const RAIL_ICONS = [
-  { icon: "📧", active: true },
-  { icon: "📅", active: false },
-  { icon: "👥", active: false },
-  { icon: "✅", active: false },
-  { icon: "☁️", active: false },
+  { icon: <Mail20Filled />, active: true },
+  { icon: <Calendar20Regular />, active: false },
+  { icon: <People20Regular />, active: false },
+  { icon: <TaskListSquareLtr20Regular />, active: false },
+  { icon: <Cloud20Regular />, active: false },
 ];
 
 interface Props {
@@ -34,13 +47,15 @@ export function FolderSidebar({
       </div>
 
       <div className="mail-folder-sidebar">
-        <div className="folder-section-title">▾ Favorites</div>
+        <div className="folder-section-title">
+          <ChevronDown12Regular /> Favorites
+        </div>
         <div
           className={`folder-row ${currentFolder === "inbox" ? "active" : ""}`}
           onClick={() => onSelectFolder("inbox")}
         >
           <span className="folder-icon" aria-hidden="true">
-            📥
+            <MailInbox20Regular />
           </span>
           Inbox
         </div>
@@ -49,7 +64,7 @@ export function FolderSidebar({
           onClick={() => onSelectFolder("junk")}
         >
           <span className="folder-icon" aria-hidden="true">
-            🚫
+            <Prohibited20Regular />
           </span>
           Junk Email{junkCount > 0 ? ` (${junkCount})` : ""}
         </div>
@@ -58,13 +73,13 @@ export function FolderSidebar({
           onClick={() => onSelectFolder("sent")}
         >
           <span className="folder-icon" aria-hidden="true">
-            📤
+            <Send20Regular />
           </span>
           Sent Items{sentCount > 0 ? ` (${sentCount})` : ""}
         </div>
         <div className="folder-row" title="Not used in this study">
           <span className="folder-icon" aria-hidden="true">
-            📝
+            <DocumentEdit20Regular />
           </span>
           Drafts
         </div>
@@ -73,7 +88,7 @@ export function FolderSidebar({
           onClick={() => onSelectFolder("deleted")}
         >
           <span className="folder-icon" aria-hidden="true">
-            🗑️
+            <Delete20Regular />
           </span>
           Deleted Items{deletedCount > 0 ? ` (${deletedCount})` : ""}
         </div>
