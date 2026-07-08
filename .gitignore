@@ -25,4 +25,5 @@ frontend/out/
 *.log
 
 # Data exports
+exports/
 *.csv
