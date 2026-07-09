@@ -1,4 +1,4 @@
-import type { Contact, DummyEmail, TaskConfig } from "./types";
+import type { Contact, Credential, DummyEmail, TaskConfig } from "./types";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -121,4 +121,46 @@ export interface MouseEventLog {
 export function logMouseEvents(events: MouseEventLog[]) {
   if (events.length === 0) return Promise.resolve();
   return post("/events/mouse", { events });
+}
+
+interface CredentialResponse {
+  id: number;
+  website: string;
+  email: string;
+  password: string;
+  mfa_enabled: boolean;
+}
+
+function toCredential(data: CredentialResponse): Credential {
+  return {
+    id: data.id,
+    website: data.website,
+    email: data.email,
+    password: data.password,
+    mfaEnabled: data.mfa_enabled,
+  };
+}
+
+export async function createCredential(
+  participantId: string,
+  website: string,
+  email: string,
+  password: string
+): Promise<Credential> {
+  const data = await post("/credentials", {
+    participant_id: participantId,
+    website,
+    email,
+    password,
+    mfa_enabled: false,
+  });
+  return toCredential(data);
+}
+
+export async function updateCredentialPassword(
+  credentialId: number,
+  password: string
+): Promise<Credential> {
+  const data = await patch(`/credentials/${credentialId}`, { password });
+  return toCredential(data);
 }

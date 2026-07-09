@@ -1,12 +1,20 @@
 import { useState } from "react";
 import "./App.css";
+import { ResearcherSetupScreen } from "./screens/ResearcherSetupScreen";
 import { ConsentScreen } from "./screens/ConsentScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
 import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
 import { BrowserChrome } from "./screens/browser/BrowserChrome";
 import { PlainTitleBar } from "./screens/browser/PlainTitleBar";
-import { getContacts, getEmails, getTasks, startSession } from "./api";
+import { LoginFlow } from "./screens/login/LoginFlow";
+import {
+  createCredential,
+  getContacts,
+  getEmails,
+  getTasks,
+  startSession,
+} from "./api";
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
 import { TaskProgressProvider } from "./taskProgress";
@@ -21,12 +29,15 @@ function shuffle<T>(items: T[]): T[] {
   return result;
 }
 
-type Screen = "consent" | "instructions" | "mail" | "debrief";
+type Screen = "researcher-setup" | "consent" | "instructions" | "mail" | "debrief";
 
 function App() {
-  const [screen, setScreen] = useState<Screen>("consent");
+  const [screen, setScreen] = useState<Screen>("researcher-setup");
   const [participantId] = useState<string>(() => crypto.randomUUID());
+  const [participantEmail, setParticipantEmail] = useState("");
   const [sessionStarted, setSessionStarted] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [credentialId, setCredentialId] = useState<number | null>(null);
   const [emails, setEmails] = useState<DummyEmail[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [tasks, setTasks] = useState<TaskConfig[]>([]);
@@ -34,17 +45,24 @@ function App() {
   useMouseLogger(sessionStarted ? participantId : null);
   useKeystrokeLogger(sessionStarted ? participantId : null);
 
+  const derivedPassword = participantEmail.split("@")[0];
+
   const handleBegin = async () => {
     const sessionStartTs = Date.now();
-    const [, allEmails, allContacts, allTasks] = await Promise.all([
-      startSession(participantId, sessionStartTs),
+    // createCredential requires the participant row to already exist
+    // (foreign key), so session/start must complete first, not run
+    // concurrently with it.
+    await startSession(participantId, sessionStartTs);
+    const [allEmails, allContacts, allTasks, credential] = await Promise.all([
       getEmails(),
       getContacts(),
       getTasks(),
+      createCredential(participantId, "USF Email (Outlook)", participantEmail, derivedPassword),
     ]);
     setEmails(shuffle(allEmails));
     setContacts(allContacts);
     setTasks(allTasks);
+    setCredentialId(credential.id);
     setSessionStarted(true);
     setScreen("mail");
   };
@@ -52,14 +70,27 @@ function App() {
   if (screen === "mail") {
     return (
       <TaskProgressProvider>
-        <BrowserChrome tasks={tasks}>
-          <MailClientScreen
-            participantId={participantId}
-            emails={emails}
-            contacts={contacts}
-            tasks={tasks}
-            onAllProcessed={() => setScreen("debrief")}
-          />
+        <BrowserChrome
+          tasks={tasks}
+          primaryTabTitle={loggedIn ? undefined : "Sign in"}
+          primaryTabUrl={loggedIn ? undefined : "login.microsoftonline.com"}
+        >
+          {loggedIn ? (
+            <MailClientScreen
+              participantId={participantId}
+              emails={emails}
+              contacts={contacts}
+              tasks={tasks}
+              onAllProcessed={() => setScreen("debrief")}
+            />
+          ) : (
+            <LoginFlow
+              credentialId={credentialId!}
+              expectedEmail={participantEmail}
+              expectedPassword={derivedPassword}
+              onComplete={() => setLoggedIn(true)}
+            />
+          )}
         </BrowserChrome>
       </TaskProgressProvider>
     );
@@ -68,6 +99,14 @@ function App() {
   return (
     <>
       <PlainTitleBar />
+      {screen === "researcher-setup" && (
+        <ResearcherSetupScreen
+          onContinue={(email) => {
+            setParticipantEmail(email);
+            setScreen("consent");
+          }}
+        />
+      )}
       {screen === "consent" && <ConsentScreen onAccept={() => setScreen("instructions")} />}
       {screen === "instructions" && <InstructionsScreen onBegin={handleBegin} />}
       {screen === "debrief" && <DebriefScreen />}

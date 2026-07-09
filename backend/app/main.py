@@ -149,3 +149,35 @@ def log_mouse(payload: schemas.MouseBatch, db: Session = Depends(get_db)):
     )
     db.commit()
     return {"status": "ok", "count": len(payload.events)}
+
+
+@app.post("/credentials", response_model=schemas.CredentialOut)
+def create_credential(payload: schemas.CredentialCreate, db: Session = Depends(get_db)):
+    if not db.get(models.Participant, payload.participant_id):
+        raise HTTPException(status_code=404, detail="unknown participant_id")
+
+    credential = models.Credential(
+        participant_id=payload.participant_id,
+        website=payload.website,
+        email=payload.email,
+        password=payload.password,
+        mfa_enabled=payload.mfa_enabled,
+    )
+    db.add(credential)
+    db.commit()
+    db.refresh(credential)
+    return credential
+
+
+@app.patch("/credentials/{credential_id}", response_model=schemas.CredentialOut)
+def update_credential(
+    credential_id: int, payload: schemas.CredentialUpdate, db: Session = Depends(get_db)
+):
+    credential = db.get(models.Credential, credential_id)
+    if not credential:
+        raise HTTPException(status_code=404, detail="unknown credential_id")
+
+    credential.password = payload.password
+    db.commit()
+    db.refresh(credential)
+    return credential

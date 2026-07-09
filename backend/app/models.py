@@ -72,6 +72,26 @@ class MouseEvent(Base):
     timestamp_ms: Mapped[int] = mapped_column(BigInteger)
 
 
+class Credential(Base):
+    """Simulated password-manager entry. Starts as email/derived-password
+    at login; password gets overwritten if the participant chooses to
+    change it after logging in.
+    """
+
+    __tablename__ = "credentials"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    participant_id: Mapped[str] = mapped_column(ForeignKey("participants.id"))
+    website: Mapped[str] = mapped_column(String)
+    email: Mapped[str] = mapped_column(String)
+    password: Mapped[str] = mapped_column(String)
+    mfa_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
 class SessionEvent(Base):
     """Transition-point markers (session start/end, email opened).
     Populated fully in build step 5 (visible sync markers); step 1 only

@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from "react";
@@ -49,21 +50,38 @@ function hostnameOf(url: string): string {
   }
 }
 
-const MAIL_TAB: BrowserTab = {
-  id: MAIL_TAB_ID,
-  title: "Inbox - Outlook",
-  url: "outlook.office.com/mail/inbox",
-  kind: "mail",
-};
+const DEFAULT_PRIMARY_TITLE = "Inbox - Outlook";
+const DEFAULT_PRIMARY_URL = "outlook.office.com/mail/inbox";
 
 interface Props {
   children: ReactNode;
   tasks: TaskConfig[];
+  primaryTabTitle?: string;
+  primaryTabUrl?: string;
 }
 
-export function BrowserChrome({ children, tasks }: Props) {
-  const [tabs, setTabs] = useState<BrowserTab[]>([MAIL_TAB]);
+export function BrowserChrome({ children, tasks, primaryTabTitle, primaryTabUrl }: Props) {
+  const [tabs, setTabs] = useState<BrowserTab[]>([
+    {
+      id: MAIL_TAB_ID,
+      title: primaryTabTitle ?? DEFAULT_PRIMARY_TITLE,
+      url: primaryTabUrl ?? DEFAULT_PRIMARY_URL,
+      kind: "mail",
+    },
+  ]);
   const [activeTabId, setActiveTabId] = useState(MAIL_TAB_ID);
+
+  // The primary tab's title/url can be overridden (e.g. to show a login
+  // page's URL before the participant signs in, then switch to Outlook's).
+  useEffect(() => {
+    setTabs((prev) =>
+      prev.map((t) =>
+        t.id === MAIL_TAB_ID
+          ? { ...t, title: primaryTabTitle ?? DEFAULT_PRIMARY_TITLE, url: primaryTabUrl ?? DEFAULT_PRIMARY_URL }
+          : t
+      )
+    );
+  }, [primaryTabTitle, primaryTabUrl]);
 
   const openTab = (url: string) => {
     const id = crypto.randomUUID();
@@ -76,7 +94,7 @@ export function BrowserChrome({ children, tasks }: Props) {
     setActiveTabId(MAIL_TAB_ID);
   };
 
-  const activeTab = tabs.find((t) => t.id === activeTabId) ?? MAIL_TAB;
+  const activeTab = tabs.find((t) => t.id === activeTabId) ?? tabs[0];
 
   return (
     <BrowserTabsContext.Provider

@@ -97,6 +97,19 @@ def export_mouse_events(db, output_dir: Path):
     )
 
 
+def export_credentials(db, output_dir: Path):
+    credentials = db.query(models.Credential).order_by(models.Credential.id).all()
+    rows = [
+        [c.id, c.participant_id, c.website, c.email, c.password, c.mfa_enabled, c.created_at, c.updated_at]
+        for c in credentials
+    ]
+    export_table(
+        db, output_dir, "credentials.csv",
+        ["id", "participant_id", "website", "email", "password", "mfa_enabled", "created_at", "updated_at"],
+        rows,
+    )
+
+
 def export_session_events(db, output_dir: Path):
     events = db.query(models.SessionEvent).order_by(models.SessionEvent.id).all()
     rows = [
@@ -128,6 +141,7 @@ def main():
         export_keystroke_events(db, output_dir)
         export_mouse_events(db, output_dir)
         export_session_events(db, output_dir)
+        export_credentials(db, output_dir)
     finally:
         db.close()
 

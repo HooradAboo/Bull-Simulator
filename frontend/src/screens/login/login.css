@@ -1,0 +1,113 @@
+.login-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #00543a, #1b1a19);
+  position: relative;
+  box-sizing: border-box;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.login-card {
+  width: 440px;
+  max-width: 90vw;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  padding: 44px 44px 32px;
+  box-sizing: border-box;
+}
+
+.login-wordmark {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 28px;
+}
+.login-wordmark-line1 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1b1a19;
+  letter-spacing: 0.5px;
+}
+.login-wordmark-line2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #006747;
+  letter-spacing: 0.5px;
+}
+
+.login-heading {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 20px;
+  color: #1b1a19;
+}
+
+.login-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 4px;
+  margin-bottom: 16px;
+  border: none;
+  border-bottom: 1px solid #666;
+  font-size: 15px;
+  outline: none;
+  font-family: inherit;
+}
+.login-input:focus {
+  border-bottom: 2px solid #006747;
+}
+
+.login-error {
+  color: #a80000;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.login-help-link {
+  display: block;
+  color: #0563c1;
+  font-size: 13px;
+  text-decoration: none;
+  margin-bottom: 28px;
+}
+.login-help-link:hover {
+  text-decoration: underline;
+}
+
+.login-submit-row {
+  display: flex;
+  justify-content: flex-end;
+}
+.login-submit {
+  background: #0067b8;
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.login-submit:hover {
+  background: #005ba1;
+}
+
+.login-footer {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  text-align: center;
+  max-width: 440px;
+  padding: 0 12px;
+}
+.login-footer a {
+  color: #fff;
+  text-decoration: underline;
+}

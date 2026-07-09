@@ -57,3 +57,25 @@ class MouseEventIn(BaseModel):
 
 class MouseBatch(BaseModel):
     events: list[MouseEventIn]
+
+
+class CredentialCreate(BaseModel):
+    participant_id: str
+    website: str
+    email: str
+    password: str
+    mfa_enabled: bool = False
+
+
+class CredentialUpdate(BaseModel):
+    password: str
+
+
+class CredentialOut(BaseModel):
+    id: int
+    website: str
+    email: str
+    password: str
+    mfa_enabled: bool
+
+    model_config = {"from_attributes": True}

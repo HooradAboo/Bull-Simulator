@@ -53,3 +53,11 @@ export interface TaskConfig {
   title: string;
   subtasks: Subtask[];
 }
+
+export interface Credential {
+  id: number;
+  website: string;
+  email: string;
+  password: string;
+  mfaEnabled: boolean;
+}
