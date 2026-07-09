@@ -1,4 +1,4 @@
-.mail-shell {
+:root {
   --usf-green: #006747;
   --usf-green-dark: #00432e;
   --usf-gold: #cfc493;
@@ -7,7 +7,9 @@
   --text-muted: #605e5c;
   --hover: #f3f2f1;
   --selected: #eaf3ef;
+}
 
+.mail-shell {
   display: flex;
   flex-direction: column;
   height: 100%;
