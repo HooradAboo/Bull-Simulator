@@ -58,9 +58,16 @@ interface Props {
   tasks: TaskConfig[];
   primaryTabTitle?: string;
   primaryTabUrl?: string;
+  showTaskList?: boolean;
 }
 
-export function BrowserChrome({ children, tasks, primaryTabTitle, primaryTabUrl }: Props) {
+export function BrowserChrome({
+  children,
+  tasks,
+  primaryTabTitle,
+  primaryTabUrl,
+  showTaskList = true,
+}: Props) {
   const [tabs, setTabs] = useState<BrowserTab[]>([
     {
       id: MAIL_TAB_ID,
@@ -171,7 +178,7 @@ export function BrowserChrome({ children, tasks, primaryTabTitle, primaryTabUrl 
             ))}
         </div>
 
-        <FloatingTaskList tasks={tasks} />
+        {showTaskList && <FloatingTaskList tasks={tasks} />}
       </div>
     </BrowserTabsContext.Provider>
   );
