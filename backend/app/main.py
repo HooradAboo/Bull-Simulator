@@ -6,6 +6,7 @@ from app import models, schemas
 from app.contacts import Contact, load_contacts
 from app.database import Base, engine, get_db
 from app.emails import EmailPublic, load_public_emails
+from app.tasks import TaskConfig, load_tasks
 
 Base.metadata.create_all(bind=engine)
 
@@ -36,6 +37,14 @@ def get_emails():
 def get_contacts():
     try:
         return load_contacts()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/tasks", response_model=list[TaskConfig])
+def get_tasks():
+    try:
+        return load_tasks()
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

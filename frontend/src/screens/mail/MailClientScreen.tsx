@@ -9,10 +9,12 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
+import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { extractEmail } from "./avatar";
 import { confirmInteraction, logHover, openInteraction, setConfidence } from "../../api";
+import { useTaskProgress } from "../../taskProgress";
 import type {
   ActionType,
   Contact,
@@ -20,6 +22,7 @@ import type {
   FolderName,
   ProcessedInfo,
   SentItem,
+  TaskConfig,
 } from "../../types";
 
 type Phase = "idle" | "confirming" | "forwarding" | "replying" | "link-open" | "confidence";
@@ -28,6 +31,7 @@ interface Props {
   participantId: string;
   emails: DummyEmail[];
   contacts: Contact[];
+  tasks: TaskConfig[];
   onAllProcessed: () => void;
 }
 
@@ -37,7 +41,16 @@ function folderForAction(action: ActionType | undefined): FolderName {
   return "inbox";
 }
 
-export function MailClientScreen({ participantId, emails, contacts, onAllProcessed }: Props) {
+const ACTION_LABELS: Record<ActionType, string> = {
+  click_link: "Click a link",
+  reply: "Reply",
+  forward: "Forward",
+  report_phishing: "Report as Phishing",
+  delete: "Delete",
+  ignore: "Ignore",
+};
+
+export function MailClientScreen({ participantId, emails, contacts, tasks, onAllProcessed }: Props) {
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(null);
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
@@ -50,11 +63,48 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
+  const [requirementNotice, setRequirementNotice] = useState<string[] | null>(null);
 
   const hoverStart = useRef<number | null>(null);
   const { openTab, isMailTabActive } = useBrowserTabs();
+  const { reportProgress } = useTaskProgress();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
+  const usedActionTypes = new Set(Array.from(processed.values()).map((p) => p.action));
+
+  // Required action types come from the tasks config (any "action_used"
+  // subtask, across all tasks) rather than being hardcoded, so editing
+  // config/tasks.json changes what's enforced without a code change.
+  const requiredActions = tasks
+    .flatMap((t) => t.subtasks)
+    .filter((s) => s.type === "action_used" && s.action)
+    .map((s) => s.action as ActionType);
+
+  useEffect(() => {
+    reportProgress({
+      processedCount: processed.size,
+      totalEmails: emails.length,
+      usedActions: usedActionTypes,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [processed, emails.length]);
+
+  // If choosing this action would leave more required action types unused
+  // than there are remaining emails to use them on, it's about to become
+  // impossible to finish the task list - reject it instead of committing.
+  const computeBlockedNotice = (action: ActionType): string[] | null => {
+    if (!selectedEmail) return null;
+    const remainingOtherEmails = emails.filter(
+      (e) => e.id !== selectedEmail.id && !processed.has(e.id)
+    ).length;
+    const usedAfter = new Set(usedActionTypes);
+    usedAfter.add(action);
+    const stillNeeded = requiredActions.filter((a) => !usedAfter.has(a));
+    if (stillNeeded.length > remainingOtherEmails) {
+      return stillNeeded.map((a) => ACTION_LABELS[a]);
+    }
+    return null;
+  };
 
   // Clicking a link opens a new browser tab instead of committing
   // immediately; the click_link action only commits once the
@@ -110,6 +160,12 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
   // new browser tab and defers committing until the participant returns.
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
+
+    const blocked = computeBlockedNotice(action);
+    if (blocked) {
+      setRequirementNotice(blocked);
+      return;
+    }
 
     if (action === "click_link") {
       if (!selectedEmail.link) return;
@@ -308,6 +364,13 @@ export function MailClientScreen({ participantId, emails, contacts, onAllProcess
           </>
         )}
       </div>
+
+      {requirementNotice && (
+        <RequirementNoticeModal
+          neededLabels={requirementNotice}
+          onDismiss={() => setRequirementNotice(null)}
+        />
+      )}
 
       {phase === "confirming" && confirmingAction && (
         <ConfirmActionModal

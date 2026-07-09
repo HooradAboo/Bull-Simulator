@@ -1,4 +1,4 @@
-import type { Contact, DummyEmail } from "./types";
+import type { Contact, DummyEmail, TaskConfig } from "./types";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -14,6 +14,10 @@ export function getEmails(): Promise<DummyEmail[]> {
 
 export function getContacts(): Promise<Contact[]> {
   return get("/contacts");
+}
+
+export function getTasks(): Promise<TaskConfig[]> {
+  return get("/tasks");
 }
 
 async function post(path: string, body: unknown) {

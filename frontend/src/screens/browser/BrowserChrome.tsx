@@ -15,6 +15,8 @@ import {
   MoreHorizontal20Regular,
 } from "@fluentui/react-icons";
 import { WindowControls } from "./WindowControls";
+import { FloatingTaskList } from "./FloatingTaskList";
+import type { TaskConfig } from "../../types";
 import "./browser.css";
 
 const MAIL_TAB_ID = "mail";
@@ -56,9 +58,10 @@ const MAIL_TAB: BrowserTab = {
 
 interface Props {
   children: ReactNode;
+  tasks: TaskConfig[];
 }
 
-export function BrowserChrome({ children }: Props) {
+export function BrowserChrome({ children, tasks }: Props) {
   const [tabs, setTabs] = useState<BrowserTab[]>([MAIL_TAB]);
   const [activeTabId, setActiveTabId] = useState(MAIL_TAB_ID);
 
@@ -149,6 +152,8 @@ export function BrowserChrome({ children }: Props) {
               </div>
             ))}
         </div>
+
+        <FloatingTaskList tasks={tasks} />
       </div>
     </BrowserTabsContext.Provider>
   );

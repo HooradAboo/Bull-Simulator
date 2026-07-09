@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     port: int = 8000
     emails_config_dir: Path = REPO_ROOT / "config" / "emails"
     contacts_config_path: Path = REPO_ROOT / "config" / "contacts.json"
+    tasks_config_path: Path = REPO_ROOT / "config" / "tasks.json"
 
 
 settings = Settings()

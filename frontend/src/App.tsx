@@ -6,10 +6,11 @@ import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
 import { BrowserChrome } from "./screens/browser/BrowserChrome";
 import { PlainTitleBar } from "./screens/browser/PlainTitleBar";
-import { getContacts, getEmails, startSession } from "./api";
+import { getContacts, getEmails, getTasks, startSession } from "./api";
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
-import type { Contact, DummyEmail } from "./types";
+import { TaskProgressProvider } from "./taskProgress";
+import type { Contact, DummyEmail, TaskConfig } from "./types";
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -28,33 +29,39 @@ function App() {
   const [sessionStarted, setSessionStarted] = useState(false);
   const [emails, setEmails] = useState<DummyEmail[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [tasks, setTasks] = useState<TaskConfig[]>([]);
 
   useMouseLogger(sessionStarted ? participantId : null);
   useKeystrokeLogger(sessionStarted ? participantId : null);
 
   const handleBegin = async () => {
     const sessionStartTs = Date.now();
-    const [, allEmails, allContacts] = await Promise.all([
+    const [, allEmails, allContacts, allTasks] = await Promise.all([
       startSession(participantId, sessionStartTs),
       getEmails(),
       getContacts(),
+      getTasks(),
     ]);
     setEmails(shuffle(allEmails));
     setContacts(allContacts);
+    setTasks(allTasks);
     setSessionStarted(true);
     setScreen("mail");
   };
 
   if (screen === "mail") {
     return (
-      <BrowserChrome>
-        <MailClientScreen
-          participantId={participantId}
-          emails={emails}
-          contacts={contacts}
-          onAllProcessed={() => setScreen("debrief")}
-        />
-      </BrowserChrome>
+      <TaskProgressProvider>
+        <BrowserChrome tasks={tasks}>
+          <MailClientScreen
+            participantId={participantId}
+            emails={emails}
+            contacts={contacts}
+            tasks={tasks}
+            onAllProcessed={() => setScreen("debrief")}
+          />
+        </BrowserChrome>
+      </TaskProgressProvider>
     );
   }
 

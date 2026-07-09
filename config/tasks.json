@@ -1,0 +1,15 @@
+[
+  {
+    "id": "task_1_process_inbox",
+    "title": "Take action on every email in the inbox",
+    "subtasks": [
+      { "id": "process_all", "label": "Process every email", "type": "process_all_emails" },
+      { "id": "use_reply", "label": "Use \"Reply\" at least once", "type": "action_used", "action": "reply" },
+      { "id": "use_forward", "label": "Use \"Forward\" at least once", "type": "action_used", "action": "forward" },
+      { "id": "use_report_phishing", "label": "Use \"Report as Phishing\" at least once", "type": "action_used", "action": "report_phishing" },
+      { "id": "use_delete", "label": "Use \"Delete\" at least once", "type": "action_used", "action": "delete" },
+      { "id": "use_ignore", "label": "Use \"Ignore\" at least once", "type": "action_used", "action": "ignore" },
+      { "id": "use_click_link", "label": "Use \"Click a link\" at least once", "type": "action_used", "action": "click_link" }
+    ]
+  }
+]
