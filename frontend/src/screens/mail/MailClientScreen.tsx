@@ -12,8 +12,16 @@ import { ConfirmActionModal } from "./ConfirmActionModal";
 import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
+import { ChangePasswordPrompt } from "../login/ChangePasswordPrompt";
+import { ChangePasswordForm } from "../login/ChangePasswordForm";
 import { extractEmail } from "./avatar";
-import { confirmInteraction, logHover, openInteraction, setConfidence } from "../../api";
+import {
+  confirmInteraction,
+  logHover,
+  openInteraction,
+  setConfidence,
+  updateCredentialPassword,
+} from "../../api";
 import { useTaskProgress } from "../../taskProgress";
 import type {
   ActionType,
@@ -27,8 +35,11 @@ import type {
 
 type Phase = "idle" | "confirming" | "forwarding" | "replying" | "link-open" | "confidence";
 
+type PasswordStep = "ask" | "form" | "done";
+
 interface Props {
   participantId: string;
+  credentialId: number;
   emails: DummyEmail[];
   contacts: Contact[];
   tasks: TaskConfig[];
@@ -50,7 +61,17 @@ const ACTION_LABELS: Record<ActionType, string> = {
   ignore: "Ignore",
 };
 
-export function MailClientScreen({ participantId, emails, contacts, tasks, onAllProcessed }: Props) {
+export function MailClientScreen({
+  participantId,
+  credentialId,
+  emails,
+  contacts,
+  tasks,
+  onAllProcessed,
+}: Props) {
+  // Mounting this screen means login just succeeded, so the change-password
+  // prompt opens on top of the inbox right away instead of on the login page.
+  const [passwordStep, setPasswordStep] = useState<PasswordStep>("ask");
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(null);
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
@@ -385,6 +406,23 @@ export function MailClientScreen({ participantId, emails, contacts, tasks, onAll
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
           onSubmit={handleSubmitConfidence}
+        />
+      )}
+
+      {passwordStep === "ask" && (
+        <ChangePasswordPrompt
+          onYes={() => setPasswordStep("form")}
+          onNo={() => setPasswordStep("done")}
+        />
+      )}
+
+      {passwordStep === "form" && (
+        <ChangePasswordForm
+          onCancel={() => setPasswordStep("done")}
+          onSubmit={async (newPassword) => {
+            await updateCredentialPassword(credentialId, newPassword);
+            setPasswordStep("done");
+          }}
         />
       )}
     </div>

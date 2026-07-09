@@ -7,7 +7,7 @@ import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
 import { BrowserChrome } from "./screens/browser/BrowserChrome";
 import { PlainTitleBar } from "./screens/browser/PlainTitleBar";
-import { LoginFlow } from "./screens/login/LoginFlow";
+import { LoginScreen } from "./screens/login/LoginScreen";
 import {
   createCredential,
   getContacts,
@@ -79,17 +79,17 @@ function App() {
           {loggedIn ? (
             <MailClientScreen
               participantId={participantId}
+              credentialId={credentialId!}
               emails={emails}
               contacts={contacts}
               tasks={tasks}
               onAllProcessed={() => setScreen("debrief")}
             />
           ) : (
-            <LoginFlow
-              credentialId={credentialId!}
+            <LoginScreen
               expectedEmail={participantEmail}
               expectedPassword={derivedPassword}
-              onComplete={() => setLoggedIn(true)}
+              onSuccess={() => setLoggedIn(true)}
             />
           )}
         </BrowserChrome>
