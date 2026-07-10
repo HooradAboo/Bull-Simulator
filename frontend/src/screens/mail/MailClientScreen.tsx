@@ -39,6 +39,7 @@ type PasswordStep = "ask" | "form" | "done";
 
 interface Props {
   participantId: string;
+  participantEmail: string;
   credentialId: number;
   emails: DummyEmail[];
   contacts: Contact[];
@@ -63,6 +64,7 @@ const ACTION_LABELS: Record<ActionType, string> = {
 
 export function MailClientScreen({
   participantId,
+  participantEmail,
   credentialId,
   emails,
   contacts,
@@ -339,7 +341,7 @@ export function MailClientScreen({
 
   return (
     <div className="mail-shell">
-      <TopBar />
+      <TopBar participantEmail={participantEmail} />
       <TabBar />
       <Ribbon pendingAction={pendingAction} disabled={ribbonDisabled} onSelectAction={handleSelectAction} />
       <div className="mail-body">
@@ -348,6 +350,7 @@ export function MailClientScreen({
           deletedCount={deletedCount}
           junkCount={junkCount}
           sentCount={sentItems.length}
+          participantEmail={participantEmail}
           onSelectFolder={handleSelectFolder}
         />
         {currentFolder === "sent" ? (
@@ -374,6 +377,7 @@ export function MailClientScreen({
               replyMode={phase === "replying"}
               forwardMode={phase === "forwarding"}
               contacts={contacts}
+              participantEmail={participantEmail}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}

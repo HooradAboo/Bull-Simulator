@@ -7,7 +7,12 @@ import {
 } from "@fluentui/react-icons";
 import usfLogo from "../../assets/usf-logo.png";
 
-export function TopBar() {
+interface Props {
+  participantEmail: string;
+}
+
+export function TopBar({ participantEmail }: Props) {
+  const initial = participantEmail.trim().charAt(0).toUpperCase() || "P";
   return (
     <div className="mail-topbar">
       <div className="waffle" aria-hidden="true">
@@ -39,7 +44,7 @@ export function TopBar() {
         <span className="icon" aria-hidden="true">
           <Settings20Regular />
         </span>
-        <div className="mail-avatar">P</div>
+        <div className="mail-avatar">{initial}</div>
       </div>
     </div>
   );

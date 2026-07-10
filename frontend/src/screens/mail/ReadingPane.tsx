@@ -24,6 +24,7 @@ interface Props {
   replyMode: boolean;
   forwardMode: boolean;
   contacts: Contact[];
+  participantEmail: string;
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
@@ -61,6 +62,7 @@ export function ReadingPane({
   replyMode,
   forwardMode,
   contacts,
+  participantEmail,
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
@@ -116,7 +118,7 @@ export function ReadingPane({
           </div>
 
           <div className="inline-reply-row">
-            <span className="inline-reply-label">From:</span> study-participant@lab.local
+            <span className="inline-reply-label">From:</span> {participantEmail}
           </div>
           <div className="inline-reply-row inline-reply-to">
             <span className="inline-reply-label">To</span>
@@ -161,7 +163,7 @@ export function ReadingPane({
           </div>
 
           <div className="inline-reply-row">
-            <span className="inline-reply-label">From:</span> study-participant@lab.local
+            <span className="inline-reply-label">From:</span> {participantEmail}
           </div>
           <div className="inline-reply-row inline-reply-to">
             <span className="inline-reply-label">To</span>

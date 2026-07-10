@@ -79,6 +79,7 @@ function App() {
           {loggedIn ? (
             <MailClientScreen
               participantId={participantId}
+              participantEmail={participantEmail}
               credentialId={credentialId!}
               emails={emails}
               contacts={contacts}

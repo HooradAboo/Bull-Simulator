@@ -26,6 +26,7 @@ interface Props {
   deletedCount: number;
   junkCount: number;
   sentCount: number;
+  participantEmail: string;
   onSelectFolder: (folder: FolderName) => void;
 }
 
@@ -34,6 +35,7 @@ export function FolderSidebar({
   deletedCount,
   junkCount,
   sentCount,
+  participantEmail,
   onSelectFolder,
 }: Props) {
   return (
@@ -93,7 +95,7 @@ export function FolderSidebar({
           Deleted Items{deletedCount > 0 ? ` (${deletedCount})` : ""}
         </div>
 
-        <div className="account-row">study-participant@lab.local</div>
+        <div className="account-row">{participantEmail}</div>
         <div className="groups-link">Go to Groups</div>
       </div>
     </>
