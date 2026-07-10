@@ -13,7 +13,14 @@
       "Bash(pkill -f \"concurrently\")",
       "Bash(pkill -f \"vite\")",
       "Bash(pkill -f \"uvicorn app.main:app\")",
-      "Bash(echo \"exit:$?\")"
+      "Bash(echo \"exit:$?\")",
+      "Bash(cat pyvenv.cfg)",
+      "Bash(find . -maxdepth 1 -iname \"venv\" -o -iname \".venv\")",
+      "Bash(.venv/bin/python /tmp/claude-1001/-home-ciber-Desktop-Simulation/d728bb98-cd21-4d80-9d0e-fa49a3181c4c/scratchpad/cdp_reset_pw.py)",
+      "Bash(.venv/bin/python *)",
+      "Bash(pkill -9 -f \"vite\")",
+      "Bash(pkill -9 -f \"uvicorn app.main:app\")",
+      "Bash(pkill -9 -f \"electron/main.cjs\")"
     ]
   }
 }

@@ -89,6 +89,7 @@ function App() {
             <LoginScreen
               expectedEmail={participantEmail}
               expectedPassword={derivedPassword}
+              credentialId={credentialId!}
               onSuccess={() => setLoggedIn(true)}
             />
           )}

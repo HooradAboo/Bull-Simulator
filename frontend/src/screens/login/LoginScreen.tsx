@@ -1,16 +1,20 @@
 import { useState } from "react";
 import "./login.css";
+import { ResetPasswordModal } from "./ResetPasswordModal";
+import { updateCredentialPassword } from "../../api";
 
 interface Props {
   expectedEmail: string;
   expectedPassword: string;
+  credentialId: number;
   onSuccess: () => void;
 }
 
-export function LoginScreen({ expectedEmail, expectedPassword, onSuccess }: Props) {
+export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [showReset, setShowReset] = useState(false);
 
   const handleSubmit = () => {
     const emailMatches = email.trim().toLowerCase() === expectedEmail.trim().toLowerCase();
@@ -56,8 +60,15 @@ export function LoginScreen({ expectedEmail, expectedPassword, onSuccess }: Prop
 
         {error && <div className="login-error">{error}</div>}
 
-        <a className="login-help-link" href="#" onClick={(e) => e.preventDefault()}>
-          Can't access your account?
+        <a
+          className="login-help-link"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowReset(true);
+          }}
+        >
+          Reset password
         </a>
 
         <div className="login-submit-row">
@@ -74,6 +85,16 @@ export function LoginScreen({ expectedEmail, expectedPassword, onSuccess }: Prop
         </a>
         .
       </div>
+
+      {showReset && (
+        <ResetPasswordModal
+          expectedEmail={expectedEmail}
+          onReset={async (netId) => {
+            await updateCredentialPassword(credentialId, netId);
+          }}
+          onClose={() => setShowReset(false)}
+        />
+      )}
     </div>
   );
 }
