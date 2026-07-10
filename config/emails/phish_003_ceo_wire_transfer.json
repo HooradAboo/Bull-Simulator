@@ -1,9 +1,9 @@
 {
   "id": "phish_003_ceo_wire_transfer",
-  "sender": "David Chen <d.chen.ceo@brightwave-corp-office.com>",
+  "sender": "Dr. Michael Torres <m.torres.usf@usf-faculty-mail.com>",
   "subject": "Quick favor - need this handled today",
-  "body": "Hi,\n\nI'm heading into back-to-back meetings and need you to process an urgent wire transfer to a new vendor before end of day. I'll send the banking details separately. Please confirm you're available and can keep this confidential for now.\n\nThanks,\nDavid Chen\nCEO, Brightwave",
-  "link": "http://brightwave-corp-office.com/vendor-payment-portal",
+  "body": "Hi,\n\nI'm heading into back-to-back meetings and need a quick favor. Can you pick up some Google Play gift cards for a department event and send me the codes? I'll reimburse you right away. Please keep this between us for now until I can explain in person.\n\nThanks,\nDr. Torres",
+  "link": null,
   "attachment": null,
   "is_phishing": true
 }

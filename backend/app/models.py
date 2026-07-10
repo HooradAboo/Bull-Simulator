@@ -10,6 +10,8 @@ class Participant(Base):
     __tablename__ = "participants"
 
     id: Mapped[str] = mapped_column(String, primary_key=True)
+    first_name: Mapped[str] = mapped_column(String)
+    last_name: Mapped[str] = mapped_column(String)
     session_start_ts: Mapped[int] = mapped_column(BigInteger)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

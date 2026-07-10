@@ -3,6 +3,8 @@ from pydantic import BaseModel
 
 class SessionStart(BaseModel):
     participant_id: str
+    participant_first_name: str
+    participant_last_name: str
     session_start_ts: int
 
 

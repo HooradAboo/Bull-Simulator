@@ -1,9 +1,9 @@
 {
   "id": "legit_004_benefits_reminder",
-  "sender": "HR Benefits <benefits@brightwave.io>",
-  "subject": "Reminder: Benefits enrollment closes Friday",
-  "body": "Hi there,\n\nThis is a friendly reminder that open enrollment for benefits closes this Friday at 5pm. If you haven't reviewed your elections yet, please log in to the benefits portal to make any changes.\n\nIf you have questions, our team is happy to help.\n\nThanks,\nHR Benefits Team",
-  "link": "https://benefits.brightwave.io/enrollment",
+  "sender": "USF Student Health Insurance <ship@usf.edu>",
+  "subject": "Reminder: Health insurance waiver deadline is Friday",
+  "body": "Hi there,\n\nThis is a friendly reminder that the waiver deadline for the Student Health Insurance Plan (SHIP) closes this Friday at 5pm. If you already have other coverage and haven't submitted your waiver yet, please log in to the insurance portal to do so.\n\nIf you have questions, our office is happy to help.\n\nThanks,\nUSF Student Health Insurance",
+  "link": "https://www.usf.edu/ship/waiver",
   "attachment": null,
   "is_phishing": false
 }

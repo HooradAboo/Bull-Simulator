@@ -35,6 +35,8 @@ function App() {
   const [screen, setScreen] = useState<Screen>("researcher-setup");
   const [participantId] = useState<string>(() => crypto.randomUUID());
   const [participantEmail, setParticipantEmail] = useState("");
+  const [participantFirstName, setParticipantFirstName] = useState("");
+  const [participantLastName, setParticipantLastName] = useState("");
   const [sessionStarted, setSessionStarted] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [credentialId, setCredentialId] = useState<number | null>(null);
@@ -52,9 +54,9 @@ function App() {
     // createCredential requires the participant row to already exist
     // (foreign key), so session/start must complete first, not run
     // concurrently with it.
-    await startSession(participantId, sessionStartTs);
+    await startSession(participantId, participantFirstName, participantLastName, sessionStartTs);
     const [allEmails, allContacts, allTasks, credential] = await Promise.all([
-      getEmails(),
+      getEmails(participantId),
       getContacts(),
       getTasks(),
       createCredential(participantId, "USF Email (Outlook)", participantEmail, derivedPassword),
@@ -104,8 +106,10 @@ function App() {
       <PlainTitleBar />
       {screen === "researcher-setup" && (
         <ResearcherSetupScreen
-          onContinue={(email) => {
+          onContinue={(email, firstName, lastName) => {
             setParticipantEmail(email);
+            setParticipantFirstName(firstName);
+            setParticipantLastName(lastName);
             setScreen("consent");
           }}
         />

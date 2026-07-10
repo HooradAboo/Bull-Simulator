@@ -20,7 +20,14 @@
       "Bash(.venv/bin/python *)",
       "Bash(pkill -9 -f \"vite\")",
       "Bash(pkill -9 -f \"uvicorn app.main:app\")",
-      "Bash(pkill -9 -f \"electron/main.cjs\")"
+      "Bash(pkill -9 -f \"electron/main.cjs\")",
+      "Bash(xargs -I{} echo {})",
+      "Bash(curl -s http://127.0.0.1:9222/json)",
+      "Bash(python3 -m json.tool)",
+      "Bash(/home/ciber/Desktop/Simulation/backend/.venv/bin/python *)",
+      "Bash(pgrep *)",
+      "Bash(kill -9 106975 107084 107085 108447 108455)",
+      "Bash(ps *)"
     ]
   }
 }

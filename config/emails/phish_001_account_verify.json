@@ -1,9 +1,9 @@
 {
   "id": "phish_001_account_verify",
-  "sender": "IT Support <it-support@brightwave-secure-verify.com>",
-  "subject": "Urgent: Verify Your Account Within 24 Hours",
-  "body": "Dear Employee,\n\nWe've detected unusual activity on your account. Please verify your credentials immediately by clicking the link below to avoid suspension.\n\nThank you,\nIT Support Team",
-  "link": "http://brightwave-secure-verify.com/verify-account",
+  "sender": "USF IT Support <it-support@usf-secureaccount.com>",
+  "subject": "Urgent: Verify Your NetID Within 24 Hours",
+  "body": "Dear {{participant_name}},\n\nWe detected an unusual sign-in to your USF NetID account on {{login_time}}. Please verify your credentials immediately by clicking the link below to avoid suspension of your account.\n\nThank you,\nUSF IT Support Team",
+  "link": "http://usf-secureaccount.com/verify-account",
   "attachment": null,
   "is_phishing": true
 }

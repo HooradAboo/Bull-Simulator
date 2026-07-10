@@ -1,9 +1,9 @@
 {
   "id": "phish_004_shared_document",
-  "sender": "Google Drive <drive-share-notification@docs-share-view.com>",
-  "subject": "\"Q3_Budget_Review.xlsx\" has been shared with you",
-  "body": "A document has been shared with you:\n\nQ3_Budget_Review.xlsx\n\nShared by: finance-team@brightwave.io\n\nClick below to view the document. This link will expire in 24 hours.",
-  "link": "http://docs-share-view.com/d/Q3_Budget_Review",
+  "sender": "Google Drive <drive-share-notification@docs-usf-share.com>",
+  "subject": "\"Group_Project_Notes.docx\" has been shared with you",
+  "body": "A document has been shared with you:\n\nGroup_Project_Notes.docx\n\nShared by: pnair@usf.edu\n\nClick below to view the document. This link will expire in 24 hours.",
+  "link": "http://docs-usf-share.com/d/Group_Project_Notes",
   "attachment": null,
   "is_phishing": true
 }

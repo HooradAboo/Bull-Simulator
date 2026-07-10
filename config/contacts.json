@@ -1,8 +1,8 @@
 [
-  { "name": "Priya Nair", "email": "priya.nair@brightwave.io" },
-  { "name": "David Chen", "email": "d.chen@brightwave.io" },
-  { "name": "IT Support", "email": "it-support@brightwave.io" },
-  { "name": "HR Benefits", "email": "benefits@brightwave.io" },
-  { "name": "People Team", "email": "people@brightwave.io" },
-  { "name": "Brightwave Expenses", "email": "no-reply@expenses.brightwave.io" }
+  { "name": "Priya Nair", "email": "pnair@usf.edu" },
+  { "name": "Dr. Michael Torres", "email": "mtorres@usf.edu" },
+  { "name": "USF IT Help Desk", "email": "ithelp@usf.edu" },
+  { "name": "USF Student Health Insurance", "email": "ship@usf.edu" },
+  { "name": "Dean of Students", "email": "deanofstudents@usf.edu" },
+  { "name": "USF Student Government Finance", "email": "sg-finance@usf.edu" }
 ]

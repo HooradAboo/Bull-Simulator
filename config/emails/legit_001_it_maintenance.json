@@ -1,9 +1,9 @@
 {
   "id": "legit_001_it_maintenance",
-  "sender": "IT Support <it-support@brightwave.io>",
+  "sender": "USF IT Help Desk <ithelp@usf.edu>",
   "subject": "Scheduled maintenance this Saturday, 10pm-2am",
-  "body": "Hi all,\n\nWe'll be performing scheduled maintenance on the internal network this Saturday from 10pm to 2am. VPN and internal tools may be briefly unavailable during this window. No action is needed on your part.\n\nQuestions? Reply to this email or reach out on the #it-help channel.\n\nThanks,\nIT Support",
-  "link": "https://status.brightwave.io/maintenance",
+  "body": "Hi all,\n\nWe'll be performing scheduled maintenance on MyUSF and Canvas this Saturday from 10pm to 2am. Both systems may be briefly unavailable during this window. No action is needed on your part.\n\nQuestions? Reply to this email or visit the IT Help Desk in the library.\n\nThanks,\nUSF IT Help Desk",
+  "link": "https://www.usf.edu/it/status",
   "attachment": null,
   "is_phishing": false
 }

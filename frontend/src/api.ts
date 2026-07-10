@@ -8,8 +8,8 @@ async function get(path: string) {
   return res.json();
 }
 
-export function getEmails(): Promise<DummyEmail[]> {
-  return get("/emails");
+export function getEmails(participantId: string): Promise<DummyEmail[]> {
+  return get(`/emails?participant_id=${encodeURIComponent(participantId)}`);
 }
 
 export function getContacts(): Promise<Contact[]> {
@@ -40,9 +40,16 @@ async function patch(path: string, body: unknown) {
   return res.json();
 }
 
-export function startSession(participantId: string, sessionStartTs: number) {
+export function startSession(
+  participantId: string,
+  participantFirstName: string,
+  participantLastName: string,
+  sessionStartTs: number
+) {
   return post("/session/start", {
     participant_id: participantId,
+    participant_first_name: participantFirstName,
+    participant_last_name: participantLastName,
     session_start_ts: sessionStartTs,
   });
 }

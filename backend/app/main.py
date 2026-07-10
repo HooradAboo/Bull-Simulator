@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from app.contacts import Contact, load_contacts
 from app.database import Base, engine, get_db
-from app.emails import EmailPublic, load_public_emails
+from app.emails import EmailPublic, build_template_context, load_public_emails
 from app.tasks import TaskConfig, load_tasks
 
 Base.metadata.create_all(bind=engine)
@@ -26,9 +26,17 @@ def health():
 
 
 @app.get("/emails", response_model=list[EmailPublic])
-def get_emails():
+def get_emails(participant_id: str | None = None, db: Session = Depends(get_db)):
     try:
-        return load_public_emails()
+        context = None
+        if participant_id is not None:
+            participant = db.get(models.Participant, participant_id)
+            if not participant:
+                raise HTTPException(status_code=404, detail="unknown participant_id")
+            context = build_template_context(
+                participant.first_name, participant.last_name, participant.session_start_ts
+            )
+        return load_public_emails(context)
     except (FileNotFoundError, ValueError) as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -57,6 +65,8 @@ def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
 
     participant = models.Participant(
         id=payload.participant_id,
+        first_name=payload.participant_first_name,
+        last_name=payload.participant_last_name,
         session_start_ts=payload.session_start_ts,
     )
     db.add(participant)

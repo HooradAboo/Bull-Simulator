@@ -1,9 +1,9 @@
 {
   "id": "legit_003_allhands_announcement",
-  "sender": "People Team <people@brightwave.io>",
-  "subject": "All-hands meeting next Tuesday at 11am",
-  "body": "Hi everyone,\n\nJoin us next Tuesday at 11am for our quarterly all-hands. We'll be sharing updates on Q3 results and upcoming product launches. The meeting will be recorded for anyone who can't attend live.\n\nSee you there,\nThe People Team",
-  "link": "https://brightwave.io/allhands",
+  "sender": "Dean of Students <deanofstudents@usf.edu>",
+  "subject": "Student Town Hall next Tuesday at 11am",
+  "body": "Hi everyone,\n\nJoin us next Tuesday at 11am for our quarterly Student Town Hall. We'll be sharing updates on campus dining, housing, and upcoming events. The meeting will be recorded for anyone who can't attend live.\n\nSee you there,\nThe Dean of Students Office",
+  "link": "https://www.usf.edu/student-affairs/townhall",
   "attachment": null,
   "is_phishing": false
 }

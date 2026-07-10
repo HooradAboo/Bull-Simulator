@@ -1,9 +1,9 @@
 {
   "id": "phish_005_invoice_overdue",
-  "sender": "Billing Dept <billing@brightwave-invoices-payment.com>",
-  "subject": "Invoice #90142 is overdue - action required",
-  "body": "Dear Customer,\n\nOur records show that invoice #90142 for $1,240.00 is now 15 days overdue. To avoid service interruption, please review the attached invoice and submit payment immediately.\n\nAttached: Invoice_90142.pdf\n\nBrightwave Billing Department",
-  "link": "http://brightwave-invoices-payment.com/pay-now",
-  "attachment": "Invoice_90142.pdf",
+  "sender": "USF Student Financial Services <billing@usf-tuition-payments.com>",
+  "subject": "Your tuition balance is overdue - action required",
+  "body": "Dear Student,\n\nOur records show that your tuition balance of $1,240.00 is now 15 days overdue. To avoid a registration hold, please review the attached statement and submit payment immediately.\n\nAttached: Tuition_Balance_Statement.pdf\n\nUSF Student Financial Services",
+  "link": "http://usf-tuition-payments.com/pay-now",
+  "attachment": "Tuition_Balance_Statement.pdf",
   "is_phishing": true
 }
