@@ -23,6 +23,7 @@ const RAIL_ICONS = [
 
 interface Props {
   currentFolder: FolderName;
+  unreadCount: number;
   deletedCount: number;
   junkCount: number;
   sentCount: number;
@@ -32,6 +33,7 @@ interface Props {
 
 export function FolderSidebar({
   currentFolder,
+  unreadCount,
   deletedCount,
   junkCount,
   sentCount,
@@ -59,7 +61,7 @@ export function FolderSidebar({
           <span className="folder-icon" aria-hidden="true">
             <MailInbox20Regular />
           </span>
-          Inbox
+          Inbox{unreadCount > 0 ? ` (${unreadCount})` : ""}
         </div>
         <div
           className={`folder-row ${currentFolder === "junk" ? "active" : ""}`}

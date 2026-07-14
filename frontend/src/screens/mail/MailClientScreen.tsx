@@ -338,6 +338,9 @@ export function MailClientScreen({
   const visibleEmails = emails.filter((e) => folderOf(e.id) === currentFolder);
   const deletedCount = emails.filter((e) => folderOf(e.id) === "deleted").length;
   const junkCount = emails.filter((e) => folderOf(e.id) === "junk").length;
+  const unreadInboxCount = emails.filter(
+    (e) => folderOf(e.id) === "inbox" && !processed.has(e.id)
+  ).length;
 
   return (
     <div className="mail-shell">
@@ -347,6 +350,7 @@ export function MailClientScreen({
       <div className="mail-body">
         <FolderSidebar
           currentFolder={currentFolder}
+          unreadCount={unreadInboxCount}
           deletedCount={deletedCount}
           junkCount={junkCount}
           sentCount={sentItems.length}

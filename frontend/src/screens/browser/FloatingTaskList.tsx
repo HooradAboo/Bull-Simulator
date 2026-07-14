@@ -59,12 +59,16 @@ export function FloatingTaskList({ tasks }: Props) {
             <div className="floating-task-title">{task.title}</div>
             {task.subtasks.map((subtask) => {
               const done = isSubtaskDone(subtask, progress);
+              const label =
+                subtask.type === "process_all_emails"
+                  ? `${subtask.label} (${progress.processedCount}/${progress.totalEmails})`
+                  : subtask.label;
               return (
                 <div key={subtask.id} className="floating-task-item">
                   <span className="floating-task-icon" aria-hidden="true">
                     {done ? <CheckmarkCircle16Filled /> : <Circle16Regular />}
                   </span>
-                  {subtask.label}
+                  {label}
                 </div>
               );
             })}
