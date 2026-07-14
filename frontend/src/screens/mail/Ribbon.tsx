@@ -11,8 +11,8 @@ import {
   Flash20Regular,
   Folder20Regular,
   MailAdd20Regular,
+  MailRead20Regular,
   PeopleTeam20Regular,
-  Prohibited20Regular,
 } from "@fluentui/react-icons";
 import type { ActionType } from "../../types";
 
@@ -60,7 +60,7 @@ export function Ribbon({ pendingAction, disabled, onSelectAction }: Props) {
       {actionButton("report_phishing", <Flag20Regular />, "Report")}
       <DecorativeButton icon={<Broom20Regular />} label="Sweep" />
       <DecorativeButton icon={<Folder20Regular />} label="Move to" />
-      {actionButton("ignore", <Prohibited20Regular />, "Ignore")}
+      {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
 
       <div className="ribbon-divider" />
 

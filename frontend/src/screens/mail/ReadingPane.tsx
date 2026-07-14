@@ -15,7 +15,7 @@ const ACTION_LABELS: Record<ActionType, string> = {
   forward: "Forward",
   report_phishing: "Report as Phishing",
   delete: "Delete",
-  ignore: "Ignore",
+  ignore: "Mark as read",
 };
 
 interface Props {
