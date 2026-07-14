@@ -553,16 +553,47 @@
   text-decoration: underline;
   cursor: pointer;
 }
+.reading-attachment-top {
+  margin-bottom: 18px;
+}
 .reading-attachment {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 8px 10px;
   font-size: 13px;
   cursor: pointer;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  width: 240px;
+  box-sizing: border-box;
+}
+.reading-attachment:hover {
   background: var(--hover);
+}
+.reading-attachment-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  color: #fff;
+}
+.reading-attachment-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+.reading-attachment-chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
 }
 
 .modal-backdrop {

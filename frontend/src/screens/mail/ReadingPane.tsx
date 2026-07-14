@@ -1,13 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Attach20Regular,
   CheckmarkCircle20Filled,
+  ChevronDown20Regular,
   Delete20Regular,
+  DocumentPdf20Filled,
+  FolderZip20Filled,
   MailInbox48Regular,
   Send20Regular,
 } from "@fluentui/react-icons";
 import type { ActionType, Contact, DummyEmail, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
+
+function attachmentVisual(filename: string): { icon: ReactNode; color: string } {
+  const ext = filename.split(".").pop()?.toLowerCase();
+  if (ext === "pdf") return { icon: <DocumentPdf20Filled />, color: "#c8262f" };
+  if (ext === "zip") return { icon: <FolderZip20Filled />, color: "#8a8886" };
+  return { icon: <Attach20Regular />, color: "#605e5c" };
+}
 
 const ACTION_LABELS: Record<ActionType, string> = {
   click_link: "Click Link",
@@ -222,6 +232,27 @@ export function ReadingPane({
           </div>
         </div>
 
+        {email.attachment && (
+          <div className="reading-attachment-top">
+            <span
+              className="reading-attachment"
+              onClick={(e) => {
+                e.preventDefault();
+                onAttachmentClick();
+              }}
+            >
+              <span
+                className="reading-attachment-icon"
+                style={{ background: attachmentVisual(email.attachment).color }}
+              >
+                {attachmentVisual(email.attachment).icon}
+              </span>
+              <span className="reading-attachment-name">{email.attachment}</span>
+              <ChevronDown20Regular className="reading-attachment-chevron" />
+            </span>
+          </div>
+        )}
+
         {processedInfo && (
           <div className="processed-banner">
             <CheckmarkCircle20Filled /> You responded:{" "}
@@ -245,20 +276,6 @@ export function ReadingPane({
               onMouseLeave={onLinkHoverEnd}
             >
               {email.link}
-            </span>
-          </p>
-        )}
-
-        {email.attachment && (
-          <p>
-            <span
-              className="reading-attachment"
-              onClick={(e) => {
-                e.preventDefault();
-                onAttachmentClick();
-              }}
-            >
-              <Attach20Regular /> {email.attachment}
             </span>
           </p>
         )}
