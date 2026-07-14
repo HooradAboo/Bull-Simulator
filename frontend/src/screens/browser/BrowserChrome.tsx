@@ -7,9 +7,11 @@ import {
 } from "react";
 import {
   ArrowClockwise16Regular,
+  ArrowDownload16Regular,
   ArrowLeft16Regular,
   ArrowRight16Regular,
   CheckmarkCircle48Regular,
+  CheckmarkCircle16Filled,
   Dismiss12Regular,
   Globe16Regular,
   LockClosed16Regular,
@@ -31,6 +33,7 @@ interface BrowserTab {
 interface BrowserTabsApi {
   openTab: (url: string) => void;
   isMailTabActive: boolean;
+  triggerDownload: (filename: string) => void;
 }
 
 const BrowserTabsContext = createContext<BrowserTabsApi | null>(null);
@@ -68,6 +71,17 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
     },
   ]);
   const [activeTabId, setActiveTabId] = useState(MAIL_TAB_ID);
+  const [downloadFile, setDownloadFile] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!downloadFile) return;
+    const timer = setTimeout(() => setDownloadFile(null), 8000);
+    return () => clearTimeout(timer);
+  }, [downloadFile]);
+
+  const triggerDownload = (filename: string) => {
+    setDownloadFile(filename);
+  };
 
   // The primary tab's title/url can be overridden (e.g. to show a login
   // page's URL before the participant signs in, then switch to Outlook's).
@@ -96,7 +110,7 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
 
   return (
     <BrowserTabsContext.Provider
-      value={{ openTab, isMailTabActive: activeTabId === MAIL_TAB_ID }}
+      value={{ openTab, isMailTabActive: activeTabId === MAIL_TAB_ID, triggerDownload }}
     >
       <div className="browser-shell">
         <div className="browser-titlebar">
@@ -145,6 +159,30 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
           <button className="browser-nav-btn" disabled title="More">
             <MoreHorizontal20Regular />
           </button>
+
+          <div className="download-indicator-wrap">
+            <span
+              className={`browser-nav-btn download-icon-btn ${downloadFile ? "active" : ""}`}
+              title="Downloads"
+            >
+              <ArrowDownload16Regular />
+            </span>
+            {downloadFile && (
+              <div className="download-popup">
+                <div className="download-popup-row">
+                  <ArrowDownload16Regular className="download-popup-icon" />
+                  <span className="download-popup-filename">{downloadFile}</span>
+                  <span className="download-popup-close" onClick={() => setDownloadFile(null)}>
+                    <Dismiss12Regular />
+                  </span>
+                </div>
+                <div className="download-popup-message">
+                  <CheckmarkCircle16Filled className="download-popup-message-icon" /> This action
+                  has been recorded. You can ignore this message and continue your tasks.
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="browser-content">

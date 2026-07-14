@@ -28,6 +28,7 @@ interface Props {
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
+  onAttachmentClick: () => void;
   onReplySubmit: (body: string) => void;
   onReplyDiscard: () => void;
   onForwardSubmit: (recipient: string, note: string) => void;
@@ -66,6 +67,7 @@ export function ReadingPane({
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
+  onAttachmentClick,
   onReplySubmit,
   onReplyDiscard,
   onForwardSubmit,
@@ -249,7 +251,13 @@ export function ReadingPane({
 
         {email.attachment && (
           <p>
-            <span className="reading-attachment" onClick={(e) => e.preventDefault()}>
+            <span
+              className="reading-attachment"
+              onClick={(e) => {
+                e.preventDefault();
+                onAttachmentClick();
+              }}
+            >
               <Attach20Regular /> {email.attachment}
             </span>
           </p>

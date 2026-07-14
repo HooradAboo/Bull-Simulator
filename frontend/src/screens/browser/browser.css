@@ -153,6 +153,67 @@
   flex-shrink: 0;
 }
 
+.download-indicator-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.download-icon-btn.active {
+  color: #006747;
+  cursor: default;
+}
+.download-popup {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  z-index: 30;
+  width: 300px;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  color: #1b1a19;
+  font-size: 13px;
+  padding: 12px;
+}
+.download-popup-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.download-popup-icon {
+  color: #006747;
+  flex-shrink: 0;
+}
+.download-popup-filename {
+  font-weight: 600;
+  flex: 1;
+}
+.download-popup-close {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #605e5c;
+}
+.download-popup-close:hover {
+  color: #1b1a19;
+}
+.download-popup-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e1dfdd;
+  color: #605e5c;
+  line-height: 1.35;
+}
+.download-popup-message-icon {
+  color: #006747;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 .browser-content {
   flex: 1;
   min-height: 0;

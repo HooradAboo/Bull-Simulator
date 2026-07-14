@@ -89,7 +89,7 @@ export function MailClientScreen({
   const [requirementNotice, setRequirementNotice] = useState<string[] | null>(null);
 
   const hoverStart = useRef<number | null>(null);
-  const { openTab, isMailTabActive } = useBrowserTabs();
+  const { openTab, isMailTabActive, triggerDownload } = useBrowserTabs();
   const { reportProgress } = useTaskProgress();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
@@ -386,6 +386,11 @@ export function MailClientScreen({
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}
+              onAttachmentClick={() => {
+                if (selectedEmail?.attachment && !processed.has(selectedEmail.id)) {
+                  triggerDownload(selectedEmail.attachment);
+                }
+              }}
               onReplySubmit={handleReplySubmit}
               onReplyDiscard={handleReplyCancel}
               onForwardSubmit={handleForwardSubmit}
