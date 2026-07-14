@@ -1,9 +1,0 @@
-{
-  "id": "legit_006_signin_notification",
-  "sender": "Microsoft Account Team <account-security-noreply@accountprotection.microsoft.com>",
-  "subject": "New sign-in to your account",
-  "body": "Hi {{first_name}},\n\nWe noticed a new sign-in to your USF NetID account on {{login_time}}.\n\nDevice: Windows, Chrome\nLocation: Tampa, FL\n\nIf this was you, no action is needed. If you don't recognize this activity, review your recent sign-in activity.\n\nThanks,\nMicrosoft Account Team",
-  "link": "https://account.microsoft.com/activity",
-  "attachment": null,
-  "is_phishing": false
-}

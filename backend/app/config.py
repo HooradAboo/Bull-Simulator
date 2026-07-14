@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     emails_config_dir: Path = REPO_ROOT / "config" / "emails"
     contacts_config_path: Path = REPO_ROOT / "config" / "contacts.json"
     tasks_config_path: Path = REPO_ROOT / "config" / "tasks.json"
+    departments_config_path: Path = REPO_ROOT / "config" / "departments.json"
 
 
 settings = Settings()

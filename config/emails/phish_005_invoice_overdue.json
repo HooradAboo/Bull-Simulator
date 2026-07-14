@@ -1,9 +1,0 @@
-{
-  "id": "phish_005_invoice_overdue",
-  "sender": "USF Student Financial Services <billing@usf-tuition-payments.com>",
-  "subject": "Your tuition balance is overdue - action required",
-  "body": "Dear Student,\n\nOur records show that your tuition balance of $1,240.00 is now 15 days overdue. To avoid a registration hold, please review the attached statement and submit payment immediately.\n\nAttached: Tuition_Balance_Statement.pdf\n\nUSF Student Financial Services",
-  "link": "http://usf-tuition-payments.com/pay-now",
-  "attachment": "Tuition_Balance_Statement.pdf",
-  "is_phishing": true
-}

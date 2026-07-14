@@ -1,0 +1,9 @@
+{
+  "id": "phish_002_rnicrosoft_reset",
+  "sender": "Microsoft Account Team <account-security@rnicrosoft.com>",
+  "subject": "Your Microsoft account password needs to be reset",
+  "body": "Dear {{participant_fname}} {{participant_lname}},\n\nWe've detected unusual sign-in activity on the Microsoft account linked to your USF Office 365 email. For your security, please reset your password immediately.\n\nReset Password Now\n\nIf you don't reset within 24 hours, your account will be temporarily locked.\n\nMicrosoft Account Team",
+  "link": "http://rnicrosoft.com/reset",
+  "attachment": null,
+  "is_phishing": true
+}

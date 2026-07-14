@@ -20,6 +20,10 @@ export function getTasks(): Promise<TaskConfig[]> {
   return get("/tasks");
 }
 
+export function getDepartments(): Promise<string[]> {
+  return get("/departments");
+}
+
 async function post(path: string, body: unknown) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
@@ -44,12 +48,14 @@ export function startSession(
   participantId: string,
   participantFirstName: string,
   participantLastName: string,
+  participantDepartment: string,
   sessionStartTs: number
 ) {
   return post("/session/start", {
     participant_id: participantId,
     participant_first_name: participantFirstName,
     participant_last_name: participantLastName,
+    participant_department: participantDepartment,
     session_start_ts: sessionStartTs,
   });
 }

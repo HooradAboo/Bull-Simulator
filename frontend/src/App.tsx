@@ -37,6 +37,7 @@ function App() {
   const [participantEmail, setParticipantEmail] = useState("");
   const [participantFirstName, setParticipantFirstName] = useState("");
   const [participantLastName, setParticipantLastName] = useState("");
+  const [participantDepartment, setParticipantDepartment] = useState("");
   const [sessionStarted, setSessionStarted] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [credentialId, setCredentialId] = useState<number | null>(null);
@@ -54,7 +55,13 @@ function App() {
     // createCredential requires the participant row to already exist
     // (foreign key), so session/start must complete first, not run
     // concurrently with it.
-    await startSession(participantId, participantFirstName, participantLastName, sessionStartTs);
+    await startSession(
+      participantId,
+      participantFirstName,
+      participantLastName,
+      participantDepartment,
+      sessionStartTs
+    );
     const [allEmails, allContacts, allTasks, credential] = await Promise.all([
       getEmails(participantId),
       getContacts(),
@@ -106,10 +113,11 @@ function App() {
       <PlainTitleBar />
       {screen === "researcher-setup" && (
         <ResearcherSetupScreen
-          onContinue={(email, firstName, lastName) => {
+          onContinue={(email, firstName, lastName, department) => {
             setParticipantEmail(email);
             setParticipantFirstName(firstName);
             setParticipantLastName(lastName);
+            setParticipantDepartment(department);
             setScreen("consent");
           }}
         />

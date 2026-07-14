@@ -4,6 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from app.config import settings
+from app.departments import get_department, personal_lookalike_email
 
 
 class EmailConfig(BaseModel):
@@ -52,13 +53,22 @@ def format_login_time(session_start_ts: int) -> str:
     return dt.strftime("%B %-d, %Y at %-I:%M %p")
 
 
-def build_template_context(first_name: str, last_name: str, session_start_ts: int) -> dict[str, str]:
-    return {
-        "first_name": first_name,
-        "last_name": last_name,
-        "participant_name": f"{first_name} {last_name}",
+def build_template_context(
+    first_name: str, last_name: str, department: str, session_start_ts: int
+) -> dict[str, str]:
+    context = {
+        "participant_fname": first_name,
+        "participant_lname": last_name,
         "login_time": format_login_time(session_start_ts),
     }
+
+    dept = get_department(department)
+    if dept:
+        context["department_advisor"] = dept.advisor_name
+        context["department_advisor_email"] = dept.advisor_email
+        context["department_advisor_personal_email"] = personal_lookalike_email(dept.advisor_name)
+
+    return context
 
 
 def render_template(text: str, context: dict[str, str]) -> str:
@@ -71,14 +81,15 @@ def render_template(text: str, context: dict[str, str]) -> str:
 def load_public_emails(context: dict[str, str] | None = None) -> list[EmailPublic]:
     """Same as load_emails() but strips is_phishing before it reaches the client.
 
-    When context is given, {{participant_name}}/{{login_time}}-style
-    placeholders in subject/body are filled in - most emails don't have any
-    and pass through unchanged.
+    When context is given, {{participant_fname}}/{{login_time}}-style
+    placeholders in sender/subject/body are filled in - most emails don't
+    have any and pass through unchanged.
     """
     result = []
     for email in load_emails():
         data = email.model_dump(exclude={"is_phishing"})
         if context:
+            data["sender"] = render_template(data["sender"], context)
             data["subject"] = render_template(data["subject"], context)
             data["body"] = render_template(data["body"], context)
         result.append(EmailPublic(**data))

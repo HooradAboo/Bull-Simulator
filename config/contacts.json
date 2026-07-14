@@ -1,8 +1,7 @@
 [
-  { "name": "Priya Nair", "email": "pnair@usf.edu" },
-  { "name": "Dr. Michael Torres", "email": "mtorres@usf.edu" },
-  { "name": "USF IT Help Desk", "email": "ithelp@usf.edu" },
-  { "name": "USF Student Health Insurance", "email": "ship@usf.edu" },
-  { "name": "Dean of Students", "email": "deanofstudents@usf.edu" },
-  { "name": "USF Student Government Finance", "email": "sg-finance@usf.edu" }
+  { "name": "Jordan Alvarez", "email": "jalvarez3@usf.edu" },
+  { "name": "USF Office of Technology Services", "email": "notify@usf.edu" },
+  { "name": "USF Department Announcements", "email": "announcements@usf.edu" },
+  { "name": "USF Office of Student Affairs", "email": "studentaffairs@usf.edu" },
+  { "name": "CIBER Lab", "email": "COENG-ciberlab@usf.edu" }
 ]

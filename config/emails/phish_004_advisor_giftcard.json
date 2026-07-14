@@ -1,0 +1,9 @@
+{
+  "id": "phish_004_advisor_giftcard",
+  "sender": "{{department_advisor}} <{{department_advisor_personal_email}}>",
+  "subject": "Quick ask, {{participant_fname}}",
+  "body": "Hi {{participant_fname}},\n\nI'm in back-to-back meetings all day and need a favor. Can you pick up a few gift cards for a student appreciation event, Amazon or Target, $50 each, three total? Scratch off the back and text me the codes, I'll reimburse you as soon as I'm free. If you can get to it in the next hour that would really help me out.\n\nThanks so much,\n{{department_advisor}}",
+  "link": null,
+  "attachment": null,
+  "is_phishing": true
+}

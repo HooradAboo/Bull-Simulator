@@ -1,0 +1,9 @@
+{
+  "id": "phish_005_it_compliance",
+  "sender": "USF IT Security Compliance <compliance@usf-itsecurity-check.com>",
+  "subject": "Required: Install Security Update by Friday",
+  "body": "Dear Student,\n\nAs part of a university-wide security compliance initiative, all students are required to install the attached security client on any device used to access USF systems. Failure to install by Friday may result in restricted access to Canvas and email.\n\nUSF IT Security Compliance",
+  "link": null,
+  "attachment": "SecureUSF_Client_Install.zip",
+  "is_phishing": true
+}

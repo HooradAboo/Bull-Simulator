@@ -1,9 +1,0 @@
-{
-  "id": "phish_003_ceo_wire_transfer",
-  "sender": "Dr. Michael Torres <m.torres.usf@usf-faculty-mail.com>",
-  "subject": "Quick favor - need this handled today",
-  "body": "Hi,\n\nI'm heading into back-to-back meetings and need a quick favor. Can you pick up some Google Play gift cards for a department event and send me the codes? I'll reimburse you right away. Please keep this between us for now until I can explain in person.\n\nThanks,\nDr. Torres",
-  "link": null,
-  "attachment": null,
-  "is_phishing": true
-}

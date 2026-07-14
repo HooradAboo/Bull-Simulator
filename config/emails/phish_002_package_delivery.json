@@ -1,9 +1,0 @@
-{
-  "id": "phish_002_package_delivery",
-  "sender": "Campus Mail Services <notify@usf-mailcenter-delivery.net>",
-  "subject": "Your package could not be delivered to your residence hall mailroom",
-  "body": "Hello,\n\nOur courier attempted to deliver your package to your residence hall mailroom today but was unable to complete delivery due to an incomplete address. Please confirm your delivery details within 48 hours or your package will be returned to sender.\n\nTrack and confirm here.\n\nRegards,\nCampus Mail Services",
-  "link": "http://usf-mailcenter-delivery.net/confirm?id=88213",
-  "attachment": null,
-  "is_phishing": true
-}

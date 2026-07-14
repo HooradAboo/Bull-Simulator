@@ -1,0 +1,9 @@
+{
+  "id": "legit_005_boa_purchase_alert",
+  "sender": "Bank of America Alerts <alerts@bankofamerica.com>",
+  "subject": "Unusual Purchase Activity on Your Card",
+  "body": "Hi {{participant_fname}} {{participant_lname}},\n\nWe noticed a purchase on your Bank of America card that's outside your typical spending pattern:\n\nMerchant: Home Depot\nLocation: Denver, CO\nAmount: $342.17\nTime: 3:47 AM EST\n\nIf this was you, no action is needed. If you don't recognize this charge, reply YES or NO to this alert, or call the number on the back of your card.\n\nBank of America Fraud Prevention",
+  "link": null,
+  "attachment": null,
+  "is_phishing": false
+}

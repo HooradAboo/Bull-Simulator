@@ -1,0 +1,9 @@
+{
+  "id": "legit_006_friend_notes",
+  "sender": "Jordan Alvarez <jalvarez3@usf.edu>",
+  "subject": "notes from today?",
+  "body": "Hey {{participant_fname}},\n\nI had to leave stats class early today, missed the last 20 minutes. Did you catch what she said about the take-home problem set, is it due Monday or Wednesday? Also, want to meet up before the exam to go over chapter 6 together?\n\nLet me know when you get a sec.\n\nJordan",
+  "link": null,
+  "attachment": null,
+  "is_phishing": false
+}

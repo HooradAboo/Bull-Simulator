@@ -1,0 +1,9 @@
+{
+  "id": "legit_008_recruiter_interest",
+  "sender": "Taylor Brooks, Talent Acquisition <t.brooks@technovarecruiting.com>",
+  "subject": "Part-Time Technical Lead Role (up to $50/hr, 12-month contract)",
+  "body": "Hi {{participant_fname}},\n\nI came across your profile while looking for candidates for our upcoming internship cohort and thought your coursework and experience could be a strong fit. Would you be open to a short call this week to talk through the role?\n\nBest,\nTaylor Brooks\nTalent Acquisition",
+  "link": null,
+  "attachment": null,
+  "is_phishing": false
+}

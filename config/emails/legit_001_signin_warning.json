@@ -1,0 +1,9 @@
+{
+  "id": "legit_001_signin_warning",
+  "sender": "USF Office of Technology Services <notify@usf.edu>",
+  "subject": "New Sign-in to Your USF Account",
+  "body": "Hello {{participant_fname}},\n\nWe noticed a new sign-in to your USF NetID account.\n\nDevice: Windows PC\nLocation: Tampa, FL\nTime: {{login_time}}\n\nIf this was you, no action is needed. If you don't recognize this activity, change your password through the official USF Account Management portal (netid.usf.edu) or contact the OTS Help Desk.\n\nUSF Office of Technology Services",
+  "link": "https://netid.usf.edu",
+  "attachment": null,
+  "is_phishing": false
+}

@@ -1,0 +1,9 @@
+{
+  "id": "phish_001_hoorad_urgent",
+  "sender": "Hoorad <hoorad.k2024@gmail.com>",
+  "subject": "Need to talk today, urgent",
+  "body": "Hi {{participant_fname}},\n\nSomething time-sensitive came up and I need to loop you in before end of day. My university email is acting up right now, so can you send me your phone number? I'll call you directly, it'll be faster than going back and forth over email.\n\nTalk soon,\nHoorad",
+  "link": null,
+  "attachment": null,
+  "is_phishing": true
+}
