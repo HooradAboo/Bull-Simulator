@@ -9,6 +9,7 @@ import {
   ArrowClockwise16Regular,
   ArrowLeft16Regular,
   ArrowRight16Regular,
+  CheckmarkCircle48Regular,
   Dismiss12Regular,
   Globe16Regular,
   LockClosed16Regular,
@@ -161,9 +162,13 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
                 className="browser-tab-panel blank-page"
                 style={{ display: tab.id === activeTabId ? "flex" : "none" }}
               >
-                <span className="blank-page-placeholder">
-                  {hostnameOf(tab.url)} — page content not yet designed
-                </span>
+                <div className="blank-page-content">
+                  <CheckmarkCircle48Regular className="blank-page-icon" />
+                  <div className="blank-page-title">This action has been recorded</div>
+                  <div className="blank-page-subtitle">
+                    You can ignore this page and return to the Mail tab.
+                  </div>
+                </div>
               </div>
             ))}
         </div>

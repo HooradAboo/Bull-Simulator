@@ -170,7 +170,23 @@
   justify-content: center;
   background: #fff;
 }
-.blank-page-placeholder {
-  color: #9aa0a6;
+.blank-page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+.blank-page-icon {
+  color: #006747;
+  margin-bottom: 6px;
+}
+.blank-page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1b1a19;
+}
+.blank-page-subtitle {
   font-size: 13px;
+  color: #605e5c;
 }
