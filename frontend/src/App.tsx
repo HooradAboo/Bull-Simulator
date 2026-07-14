@@ -29,6 +29,17 @@ function shuffle<T>(items: T[]): T[] {
   return result;
 }
 
+// The sign-in warning always leads the inbox (a fresh login is the most
+// recent thing that happened), rather than being shuffled in with the rest.
+const PINNED_TO_TOP_EMAIL_ID = "legit_001_signin_warning";
+
+function shuffleWithPinnedTop(emails: DummyEmail[]): DummyEmail[] {
+  const pinned = emails.find((e) => e.id === PINNED_TO_TOP_EMAIL_ID);
+  const rest = emails.filter((e) => e.id !== PINNED_TO_TOP_EMAIL_ID);
+  const shuffledRest = shuffle(rest);
+  return pinned ? [pinned, ...shuffledRest] : shuffledRest;
+}
+
 type Screen = "researcher-setup" | "consent" | "instructions" | "mail" | "debrief";
 
 function App() {
@@ -68,7 +79,7 @@ function App() {
       getTasks(),
       createCredential(participantId, "USF Email (Outlook)", participantEmail, derivedPassword),
     ]);
-    setEmails(shuffle(allEmails));
+    setEmails(shuffleWithPinnedTop(allEmails));
     setContacts(allContacts);
     setTasks(allTasks);
     setCredentialId(credential.id);
