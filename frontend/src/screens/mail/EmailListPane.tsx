@@ -1,4 +1,4 @@
-import { Attach16Regular, Star20Regular } from "@fluentui/react-icons";
+import { Attach20Regular, Star20Regular } from "@fluentui/react-icons";
 import type { DummyEmail, FolderName, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
 
@@ -48,13 +48,15 @@ export function EmailListPane({ folder, emails, selectedId, processed, onSelect 
               {initials(email.sender)}
             </div>
             <div className="mail-row-body">
-              <div className="mail-row-subject">{email.subject}</div>
+              <div className="mail-row-subject">
+                <span className="mail-row-subject-text">{email.subject}</span>
+                {email.attachment && (
+                  <Attach20Regular className="mail-row-attachment-icon" aria-hidden="true" />
+                )}
+              </div>
               <div className="mail-row-sender">{senderName(email.sender)}</div>
               <div className="mail-row-preview">{previewOf(email.body)}</div>
             </div>
-            {email.attachment && (
-              <Attach16Regular className="mail-row-attachment-badge" aria-hidden="true" />
-            )}
           </div>
         );
       })}
