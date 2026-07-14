@@ -80,10 +80,8 @@ function App() {
     return (
       <TaskProgressProvider>
         <BrowserChrome
-          tasks={tasks}
           primaryTabTitle={loggedIn ? undefined : "Sign in"}
           primaryTabUrl={loggedIn ? undefined : "login.microsoftonline.com"}
-          showTaskList={loggedIn}
         >
           {loggedIn ? (
             <MailClientScreen

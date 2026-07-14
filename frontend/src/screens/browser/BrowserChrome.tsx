@@ -16,8 +16,6 @@ import {
   MoreHorizontal20Regular,
 } from "@fluentui/react-icons";
 import { WindowControls } from "./WindowControls";
-import { FloatingTaskList } from "./FloatingTaskList";
-import type { TaskConfig } from "../../types";
 import "./browser.css";
 
 const MAIL_TAB_ID = "mail";
@@ -55,19 +53,11 @@ const DEFAULT_PRIMARY_URL = "outlook.office.com/mail/inbox";
 
 interface Props {
   children: ReactNode;
-  tasks: TaskConfig[];
   primaryTabTitle?: string;
   primaryTabUrl?: string;
-  showTaskList?: boolean;
 }
 
-export function BrowserChrome({
-  children,
-  tasks,
-  primaryTabTitle,
-  primaryTabUrl,
-  showTaskList = true,
-}: Props) {
+export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Props) {
   const [tabs, setTabs] = useState<BrowserTab[]>([
     {
       id: MAIL_TAB_ID,
@@ -177,8 +167,6 @@ export function BrowserChrome({
               </div>
             ))}
         </div>
-
-        {showTaskList && <FloatingTaskList tasks={tasks} />}
       </div>
     </BrowserTabsContext.Provider>
   );

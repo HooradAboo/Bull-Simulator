@@ -355,6 +355,7 @@ export function MailClientScreen({
           junkCount={junkCount}
           sentCount={sentItems.length}
           participantEmail={participantEmail}
+          tasks={tasks}
           onSelectFolder={handleSelectFolder}
         />
         {currentFolder === "sent" ? (
