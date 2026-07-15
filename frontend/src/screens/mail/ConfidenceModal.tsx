@@ -16,6 +16,10 @@ export function ConfidenceModal({ confidenceValue, onConfidenceChange, onSubmit 
           value={confidenceValue}
           onChange={(e) => onConfidenceChange(Number(e.target.value))}
         />
+        <div className="confidence-scale-labels">
+          <span>Not at all confident</span>
+          <span>Extremely confident</span>
+        </div>
         <div className="value">{confidenceValue}</div>
         <button onClick={onSubmit}>Submit</button>
       </div>
