@@ -7,12 +7,12 @@ import {
   Broom20Regular,
   CheckboxChecked20Regular,
   Delete20Regular,
-  Flag20Regular,
   Flash20Regular,
   Folder20Regular,
   MailAdd20Regular,
   MailRead20Regular,
   PeopleTeam20Regular,
+  ShieldError20Regular,
 } from "@fluentui/react-icons";
 import type { ActionType } from "../../types";
 
@@ -57,7 +57,7 @@ export function Ribbon({ pendingAction, disabled, onSelectAction }: Props) {
 
       {actionButton("delete", <Delete20Regular />, "Delete")}
       <DecorativeButton icon={<Archive20Regular />} label="Archive" />
-      {actionButton("report_phishing", <Flag20Regular />, "Report")}
+      {actionButton("report_phishing", <ShieldError20Regular />, "Report")}
       <DecorativeButton icon={<Broom20Regular />} label="Sweep" />
       <DecorativeButton icon={<Folder20Regular />} label="Move to" />
       {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
