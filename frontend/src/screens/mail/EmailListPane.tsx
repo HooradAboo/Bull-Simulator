@@ -23,13 +23,21 @@ function decodeHtmlEntities(text: string): string {
   return el.value;
 }
 
+const PREVIEW_MAX_LENGTH = 120;
+
 function previewOf(body: string): string {
   const withLineBreaks = body.replace(/<\/(p|div|br)\s*\/?>/gi, "\n");
   const plainText = withLineBreaks.replace(/<[^>]+>/g, "");
-  const lines = plainText.split("\n").map((line) => decodeHtmlEntities(line).trim());
-  // Skip lines that are just a lone icon/symbol glyph (e.g. an inline SVG-free
-  // pencil icon rendered as an HTML entity) rather than real preview text.
-  return lines.find((line) => /\w{2}/.test(line)) ?? "";
+  const lines = plainText
+    .split("\n")
+    .map((line) => decodeHtmlEntities(line).trim())
+    // Skip lines that are just a lone icon/symbol glyph (e.g. an inline
+    // SVG-free pencil icon rendered as an HTML entity) rather than real text.
+    .filter((line) => /\w{2}/.test(line));
+  // Join across line breaks (rather than stopping at the first one, which is
+  // usually just "Hi,") so the preview shows more than a two-word greeting;
+  // the CSS ellipsis still clips it to a single visual line.
+  return lines.join(" ").slice(0, PREVIEW_MAX_LENGTH);
 }
 
 export function EmailListPane({ folder, emails, selectedId, processed, onSelect }: Props) {
