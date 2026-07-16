@@ -142,13 +142,6 @@
 .mail-tabbar .spacer {
   flex: 1;
 }
-.mail-tabbar .focus-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
 
 /* ---- Ribbon ---- */
 .mail-ribbon {
@@ -295,12 +288,6 @@
   color: var(--text-muted);
   font-size: 12.5px;
   border-top: 1px solid var(--border);
-}
-.groups-link {
-  margin-top: 10px;
-  padding: 6px 8px;
-  color: var(--text-muted);
-  font-size: 12.5px;
 }
 
 .sidebar-task-list {

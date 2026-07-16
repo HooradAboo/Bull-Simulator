@@ -1,4 +1,4 @@
-import { Calendar20Regular, Navigation20Regular } from "@fluentui/react-icons";
+import { Navigation20Regular } from "@fluentui/react-icons";
 
 export function TabBar() {
   return (
@@ -9,9 +9,6 @@ export function TabBar() {
       <div className="tab">View</div>
       <div className="tab">Help</div>
       <div className="spacer" />
-      <div className="focus-note">
-        <Calendar20Regular aria-hidden="true" /> Focus
-      </div>
     </div>
   );
 }

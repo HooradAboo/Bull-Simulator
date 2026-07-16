@@ -101,7 +101,6 @@ export function FolderSidebar({
         </div>
 
         <div className="account-row">{participantEmail}</div>
-        <div className="groups-link">Go to Groups</div>
 
         <TaskList tasks={tasks} />
       </div>
