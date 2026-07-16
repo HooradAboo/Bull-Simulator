@@ -19,7 +19,7 @@ import {
   confirmInteraction,
   logHover,
   openInteraction,
-  setConfidence,
+  submitInteractionRatings,
   updateCredentialPassword,
 } from "../../api";
 import { useTaskProgress } from "../../taskProgress";
@@ -82,6 +82,9 @@ export function MailClientScreen({
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [confidenceValue, setConfidenceValueState] = useState(50);
+  const [difficultyValue, setDifficultyValue] = useState(50);
+  const [selectedCues, setSelectedCues] = useState<string[]>([]);
+  const [otherCueText, setOtherCueText] = useState("");
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -247,6 +250,9 @@ export function MailClientScreen({
     setPendingRecipient(recipient);
     setPhase("confidence");
     setConfidenceValueState(50);
+    setDifficultyValue(50);
+    setSelectedCues([]);
+    setOtherCueText("");
 
     if (action === "forward" && recipient) {
       const note = composedBody ? `${composedBody}\n\n` : "";
@@ -305,9 +311,20 @@ export function MailClientScreen({
     setPhase("idle");
   };
 
+  const handleToggleCue = (cueKey: string) => {
+    setSelectedCues((prev) =>
+      prev.includes(cueKey) ? prev.filter((c) => c !== cueKey) : [...prev, cueKey]
+    );
+  };
+
   const handleSubmitConfidence = async () => {
     if (!selectedEmail || !pendingAction || interactionId === null) return;
-    await setConfidence(interactionId, confidenceValue);
+    await submitInteractionRatings(interactionId, {
+      confidenceRating: confidenceValue,
+      difficultyRating: difficultyValue,
+      cuesNoticed: selectedCues,
+      cuesOtherText: selectedCues.includes("other") ? otherCueText : null,
+    });
 
     const updated = new Map(processed);
     updated.set(selectedEmail.id, {
@@ -433,6 +450,12 @@ export function MailClientScreen({
         <ConfidenceModal
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
+          difficultyValue={difficultyValue}
+          onDifficultyChange={setDifficultyValue}
+          selectedCues={selectedCues}
+          onToggleCue={handleToggleCue}
+          otherCueText={otherCueText}
+          onOtherCueTextChange={setOtherCueText}
           onSubmit={handleSubmitConfidence}
         />
       )}

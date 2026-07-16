@@ -97,9 +97,19 @@ export function confirmInteraction(
   });
 }
 
-export function setConfidence(interactionId: number, confidenceRating: number) {
-  return patch(`/interactions/${interactionId}/confidence`, {
-    confidence_rating: confidenceRating,
+export interface InteractionRatings {
+  confidenceRating: number;
+  difficultyRating: number;
+  cuesNoticed: string[];
+  cuesOtherText: string | null;
+}
+
+export function submitInteractionRatings(interactionId: number, ratings: InteractionRatings) {
+  return patch(`/interactions/${interactionId}/ratings`, {
+    confidence_rating: ratings.confidenceRating,
+    difficulty_rating: ratings.difficultyRating,
+    cues_noticed: ratings.cuesNoticed,
+    cues_other_text: ratings.cuesOtherText,
   });
 }
 

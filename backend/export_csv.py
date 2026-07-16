@@ -63,6 +63,9 @@ def export_email_interactions(db, output_dir: Path):
         rows.append([
             i.id, i.participant_id, i.email_id, is_phishing,
             i.opened_at, i.action_taken, i.answer_changed, i.confidence_rating,
+            i.difficulty_rating,
+            ",".join(i.cues_noticed) if i.cues_noticed else "",
+            i.cues_other_text,
             i.time_to_decision_ms, i.confirmed_at, i.recipient, i.created_at,
         ])
     export_table(
@@ -70,6 +73,7 @@ def export_email_interactions(db, output_dir: Path):
         [
             "interaction_id", "participant_id", "email_id", "is_phishing",
             "opened_at", "action_taken", "answer_changed", "confidence_rating",
+            "difficulty_rating", "cues_noticed", "cues_other_text",
             "time_to_decision_ms", "confirmed_at", "recipient", "created_at",
         ],
         rows,

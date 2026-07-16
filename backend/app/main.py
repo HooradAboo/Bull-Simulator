@@ -133,15 +133,18 @@ def confirm_interaction(
     return {"status": "ok"}
 
 
-@app.patch("/interactions/{interaction_id}/confidence")
-def set_confidence(
-    interaction_id: int, payload: schemas.InteractionConfidence, db: Session = Depends(get_db)
+@app.patch("/interactions/{interaction_id}/ratings")
+def set_interaction_ratings(
+    interaction_id: int, payload: schemas.InteractionRatings, db: Session = Depends(get_db)
 ):
     interaction = db.get(models.EmailInteraction, interaction_id)
     if not interaction:
         raise HTTPException(status_code=404, detail="unknown interaction_id")
 
     interaction.confidence_rating = payload.confidence_rating
+    interaction.difficulty_rating = payload.difficulty_rating
+    interaction.cues_noticed = payload.cues_noticed
+    interaction.cues_other_text = payload.cues_other_text
     db.commit()
     return {"status": "ok"}
 

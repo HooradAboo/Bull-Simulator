@@ -33,8 +33,11 @@ class InteractionConfirm(BaseModel):
     recipient: str | None = None
 
 
-class InteractionConfidence(BaseModel):
+class InteractionRatings(BaseModel):
     confidence_rating: int
+    difficulty_rating: int
+    cues_noticed: list[str]
+    cues_other_text: str | None = None
 
 
 class HoverEventIn(BaseModel):
