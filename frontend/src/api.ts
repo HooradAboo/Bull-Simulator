@@ -1,4 +1,4 @@
-import type { Contact, Credential, DummyEmail, TaskConfig } from "./types";
+import type { Contact, Credential, DummyEmail, SelfEfficacyRatings, TaskConfig } from "./types";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -49,6 +49,7 @@ export function startSession(
   participantFirstName: string,
   participantLastName: string,
   participantDepartment: string,
+  selfEfficacy: SelfEfficacyRatings,
   sessionStartTs: number
 ) {
   return post("/session/start", {
@@ -56,6 +57,12 @@ export function startSession(
     participant_first_name: participantFirstName,
     participant_last_name: participantLastName,
     participant_department: participantDepartment,
+    self_efficacy_recognize_links: selfEfficacy.recognizeLinks,
+    self_efficacy_verify_legitimacy: selfEfficacy.verifyLegitimacy,
+    self_efficacy_avoid_suspicious: selfEfficacy.avoidSuspicious,
+    self_efficacy_verify_trusted_source: selfEfficacy.verifyTrustedSource,
+    self_efficacy_report_phishing: selfEfficacy.reportPhishing,
+    self_efficacy_recovery_steps: selfEfficacy.recoverySteps,
     session_start_ts: sessionStartTs,
   });
 }

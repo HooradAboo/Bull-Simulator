@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { ResearcherSetupScreen } from "./screens/ResearcherSetupScreen";
 import { ConsentScreen } from "./screens/ConsentScreen";
+import { SelfEfficacyScreen } from "./screens/SelfEfficacyScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
 import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
@@ -18,7 +19,7 @@ import {
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
 import { TaskProgressProvider } from "./taskProgress";
-import type { Contact, DummyEmail, TaskConfig } from "./types";
+import type { Contact, DummyEmail, SelfEfficacyRatings, TaskConfig } from "./types";
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -40,7 +41,13 @@ function shuffleWithPinnedTop(emails: DummyEmail[]): DummyEmail[] {
   return pinned ? [pinned, ...shuffledRest] : shuffledRest;
 }
 
-type Screen = "researcher-setup" | "consent" | "instructions" | "mail" | "debrief";
+type Screen =
+  | "researcher-setup"
+  | "consent"
+  | "self-efficacy"
+  | "instructions"
+  | "mail"
+  | "debrief";
 
 function App() {
   const [screen, setScreen] = useState<Screen>("researcher-setup");
@@ -49,6 +56,7 @@ function App() {
   const [participantFirstName, setParticipantFirstName] = useState("");
   const [participantLastName, setParticipantLastName] = useState("");
   const [participantDepartment, setParticipantDepartment] = useState("");
+  const [selfEfficacy, setSelfEfficacy] = useState<SelfEfficacyRatings | null>(null);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [credentialId, setCredentialId] = useState<number | null>(null);
@@ -71,6 +79,7 @@ function App() {
       participantFirstName,
       participantLastName,
       participantDepartment,
+      selfEfficacy!,
       sessionStartTs
     );
     const [allEmails, allContacts, allTasks, credential] = await Promise.all([
@@ -131,7 +140,17 @@ function App() {
           }}
         />
       )}
-      {screen === "consent" && <ConsentScreen onAccept={() => setScreen("instructions")} />}
+      {screen === "consent" && (
+        <ConsentScreen onAccept={() => setScreen("self-efficacy")} />
+      )}
+      {screen === "self-efficacy" && (
+        <SelfEfficacyScreen
+          onContinue={(ratings) => {
+            setSelfEfficacy(ratings);
+            setScreen("instructions");
+          }}
+        />
+      )}
       {screen === "instructions" && <InstructionsScreen onBegin={handleBegin} />}
       {screen === "debrief" && <DebriefScreen />}
     </>

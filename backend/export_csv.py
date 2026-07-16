@@ -28,10 +28,25 @@ def export_table(db, output_dir: Path, filename: str, header: list[str], rows: l
 
 def export_participants(db, output_dir: Path):
     participants = db.query(models.Participant).order_by(models.Participant.id).all()
-    rows = [[p.id, p.session_start_ts, p.created_at] for p in participants]
+    rows = [
+        [
+            p.id, p.first_name, p.last_name, p.department,
+            p.self_efficacy_recognize_links, p.self_efficacy_verify_legitimacy,
+            p.self_efficacy_avoid_suspicious, p.self_efficacy_verify_trusted_source,
+            p.self_efficacy_report_phishing, p.self_efficacy_recovery_steps,
+            p.session_start_ts, p.created_at,
+        ]
+        for p in participants
+    ]
     export_table(
         db, output_dir, "participants.csv",
-        ["participant_id", "session_start_ts", "created_at"],
+        [
+            "participant_id", "first_name", "last_name", "department",
+            "self_efficacy_recognize_links", "self_efficacy_verify_legitimacy",
+            "self_efficacy_avoid_suspicious", "self_efficacy_verify_trusted_source",
+            "self_efficacy_report_phishing", "self_efficacy_recovery_steps",
+            "session_start_ts", "created_at",
+        ],
         rows,
     )
 

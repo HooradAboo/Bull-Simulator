@@ -61,3 +61,12 @@ export interface Credential {
   password: string;
   mfaEnabled: boolean;
 }
+
+export interface SelfEfficacyRatings {
+  recognizeLinks: number;
+  verifyLegitimacy: number;
+  avoidSuspicious: number;
+  verifyTrustedSource: number;
+  reportPhishing: number;
+  recoverySteps: number;
+}

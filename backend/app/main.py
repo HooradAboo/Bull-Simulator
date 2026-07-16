@@ -80,6 +80,12 @@ def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
         first_name=payload.participant_first_name,
         last_name=payload.participant_last_name,
         department=payload.participant_department,
+        self_efficacy_recognize_links=payload.self_efficacy_recognize_links,
+        self_efficacy_verify_legitimacy=payload.self_efficacy_verify_legitimacy,
+        self_efficacy_avoid_suspicious=payload.self_efficacy_avoid_suspicious,
+        self_efficacy_verify_trusted_source=payload.self_efficacy_verify_trusted_source,
+        self_efficacy_report_phishing=payload.self_efficacy_report_phishing,
+        self_efficacy_recovery_steps=payload.self_efficacy_recovery_steps,
         session_start_ts=payload.session_start_ts,
     )
     db.add(participant)

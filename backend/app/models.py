@@ -13,6 +13,14 @@ class Participant(Base):
     first_name: Mapped[str] = mapped_column(String)
     last_name: Mapped[str] = mapped_column(String)
     department: Mapped[str] = mapped_column(String)
+    # Pre-task self-efficacy ratings (Bandura 0-100 scale), one per statement
+    # on the self-efficacy screen shown right after consent.
+    self_efficacy_recognize_links: Mapped[int] = mapped_column(Integer)
+    self_efficacy_verify_legitimacy: Mapped[int] = mapped_column(Integer)
+    self_efficacy_avoid_suspicious: Mapped[int] = mapped_column(Integer)
+    self_efficacy_verify_trusted_source: Mapped[int] = mapped_column(Integer)
+    self_efficacy_report_phishing: Mapped[int] = mapped_column(Integer)
+    self_efficacy_recovery_steps: Mapped[int] = mapped_column(Integer)
     session_start_ts: Mapped[int] = mapped_column(BigInteger)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

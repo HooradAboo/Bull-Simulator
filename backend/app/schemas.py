@@ -6,6 +6,12 @@ class SessionStart(BaseModel):
     participant_first_name: str
     participant_last_name: str
     participant_department: str
+    self_efficacy_recognize_links: int
+    self_efficacy_verify_legitimacy: int
+    self_efficacy_avoid_suspicious: int
+    self_efficacy_verify_trusted_source: int
+    self_efficacy_report_phishing: int
+    self_efficacy_recovery_steps: int
     session_start_ts: int
 
 
