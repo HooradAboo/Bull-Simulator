@@ -17,8 +17,19 @@ const FOLDER_TITLES: Record<FolderName, string> = {
   sent: "Sent Items",
 };
 
+function decodeHtmlEntities(text: string): string {
+  const el = document.createElement("textarea");
+  el.innerHTML = text;
+  return el.value;
+}
+
 function previewOf(body: string): string {
-  return body.split("\n").find((line) => line.trim().length > 0) ?? "";
+  const withLineBreaks = body.replace(/<\/(p|div|br)\s*\/?>/gi, "\n");
+  const plainText = withLineBreaks.replace(/<[^>]+>/g, "");
+  const lines = plainText.split("\n").map((line) => decodeHtmlEntities(line).trim());
+  // Skip lines that are just a lone icon/symbol glyph (e.g. an inline SVG-free
+  // pencil icon rendered as an HTML entity) rather than real preview text.
+  return lines.find((line) => /\w{2}/.test(line)) ?? "";
 }
 
 export function EmailListPane({ folder, emails, selectedId, processed, onSelect }: Props) {

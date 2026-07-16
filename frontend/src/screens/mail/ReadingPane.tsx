@@ -56,8 +56,10 @@ function QuotedMessage({ email }: { email: DummyEmail }) {
           <strong>Subject:</strong> {email.subject}
         </div>
       </div>
-      <div className="reading-body">{email.body}</div>
-      {email.link && <p className="reading-link">{email.link}</p>}
+      <div className="reading-body" dangerouslySetInnerHTML={{ __html: email.body }} />
+      {email.link && !email.body.includes("data-tracked-link") && (
+        <p className="reading-link">{email.link}</p>
+      )}
       {email.attachment && (
         <p className="reading-attachment">
           <Attach20Regular /> {email.attachment}
@@ -262,9 +264,27 @@ export function ReadingPane({
           </div>
         )}
 
-        <div className="reading-body">{email.body}</div>
+        <div
+          className="reading-body"
+          dangerouslySetInnerHTML={{ __html: email.body }}
+          onClick={(e) => {
+            const target = (e.target as HTMLElement).closest("[data-tracked-link]");
+            if (target) {
+              e.preventDefault();
+              if (!processedInfo) onLinkClick();
+            }
+          }}
+          onMouseOver={(e) => {
+            if ((e.target as HTMLElement).closest("[data-tracked-link]")) onLinkHoverStart();
+          }}
+          onMouseOut={(e) => {
+            const related = e.relatedTarget as HTMLElement | null;
+            const target = (e.target as HTMLElement).closest("[data-tracked-link]");
+            if (target && !(related && target.contains(related))) onLinkHoverEnd();
+          }}
+        />
 
-        {email.link && (
+        {email.link && !email.body.includes("data-tracked-link") && (
           <p>
             <span
               className="reading-link"

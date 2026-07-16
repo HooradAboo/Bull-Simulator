@@ -548,6 +548,13 @@
   line-height: 1.6;
   margin-bottom: 16px;
 }
+.reading-body img {
+  max-width: 100%;
+  height: auto;
+}
+.reading-body [data-tracked-link] {
+  cursor: pointer;
+}
 .reading-link {
   color: #0563c1;
   text-decoration: underline;

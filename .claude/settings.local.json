@@ -27,7 +27,9 @@
       "Bash(/home/ciber/Desktop/Simulation/backend/.venv/bin/python *)",
       "Bash(pgrep *)",
       "Bash(kill -9 106975 107084 107085 108447 108455)",
-      "Bash(ps *)"
+      "Bash(ps *)",
+      "Bash(python3 -c \"import json; json.load\\(open\\('/home/ciber/Desktop/Simulation/config/emails/phish_007_docusign_consent.json'\\)\\)\")",
+      "Bash(python3 -c \"import json; json.load\\(open\\('/home/ciber/Desktop/Simulation/config/contacts.json'\\)\\)\")"
     ]
   }
 }
