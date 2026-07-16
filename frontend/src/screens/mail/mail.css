@@ -418,6 +418,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding-right: 22px;
 }
 .mail-row-sender {
   font-size: 13.5px;
@@ -469,6 +470,27 @@
 .mail-row-attachment-icon {
   flex-shrink: 0;
   color: var(--text-muted);
+}
+.mail-row-pin-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  opacity: 0;
+  cursor: pointer;
+}
+.mail-row:hover .mail-row-pin-btn {
+  opacity: 1;
+}
+.mail-row-pin-btn.pinned {
+  opacity: 1;
+  color: var(--usf-green);
+}
+.mail-row-pin-btn:hover {
+  color: var(--usf-green);
 }
 
 /* ---- Reading pane ---- */

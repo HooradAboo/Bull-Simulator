@@ -87,6 +87,7 @@ export function MailClientScreen({
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
   const [requirementNotice, setRequirementNotice] = useState<string[] | null>(null);
+  const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
   const hoverStart = useRef<number | null>(null);
   const { openTab, isMailTabActive, triggerDownload } = useBrowserTabs();
@@ -151,6 +152,15 @@ export function MailClientScreen({
     setOpenedAt(null);
     setPendingAction(null);
     setPhase("idle");
+  };
+
+  const handleTogglePin = (emailId: string) => {
+    setPinnedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(emailId)) next.delete(emailId);
+      else next.add(emailId);
+      return next;
+    });
   };
 
   const handleSelectEmail = async (email: DummyEmail) => {
@@ -335,7 +345,9 @@ export function MailClientScreen({
   const processedInfo = selectedEmail ? processed.get(selectedEmail.id) ?? null : null;
   const ribbonDisabled =
     !selectedEmail || processed.has(selectedEmail.id) || phase !== "idle";
-  const visibleEmails = emails.filter((e) => folderOf(e.id) === currentFolder);
+  const visibleEmails = emails
+    .filter((e) => folderOf(e.id) === currentFolder)
+    .sort((a, b) => Number(pinnedIds.has(b.id)) - Number(pinnedIds.has(a.id)));
   const deletedCount = emails.filter((e) => folderOf(e.id) === "deleted").length;
   const junkCount = emails.filter((e) => folderOf(e.id) === "junk").length;
   const unreadInboxCount = emails.filter(
@@ -374,7 +386,9 @@ export function MailClientScreen({
               emails={visibleEmails}
               selectedId={selectedEmail?.id ?? null}
               processed={processed}
+              pinnedIds={pinnedIds}
               onSelect={handleSelectEmail}
+              onTogglePin={handleTogglePin}
             />
             <ReadingPane
               email={selectedEmail}

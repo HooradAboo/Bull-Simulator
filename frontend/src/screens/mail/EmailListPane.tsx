@@ -1,4 +1,4 @@
-import { Attach20Regular, Star20Regular } from "@fluentui/react-icons";
+import { Attach20Regular, Pin16Filled, Pin16Regular, Star20Regular } from "@fluentui/react-icons";
 import type { DummyEmail, FolderName, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
 
@@ -7,7 +7,9 @@ interface Props {
   emails: DummyEmail[];
   selectedId: string | null;
   processed: Map<string, ProcessedInfo>;
+  pinnedIds: Set<string>;
   onSelect: (email: DummyEmail) => void;
+  onTogglePin: (emailId: string) => void;
 }
 
 const FOLDER_TITLES: Record<FolderName, string> = {
@@ -40,7 +42,15 @@ function previewOf(body: string): string {
   return lines.join(" ").slice(0, PREVIEW_MAX_LENGTH);
 }
 
-export function EmailListPane({ folder, emails, selectedId, processed, onSelect }: Props) {
+export function EmailListPane({
+  folder,
+  emails,
+  selectedId,
+  processed,
+  pinnedIds,
+  onSelect,
+  onTogglePin,
+}: Props) {
   const remaining = emails.filter((e) => !processed.has(e.id)).length;
 
   return (
@@ -52,6 +62,7 @@ export function EmailListPane({ folder, emails, selectedId, processed, onSelect 
 
       {emails.map((email) => {
         const isProcessed = processed.has(email.id);
+        const isPinned = pinnedIds.has(email.id);
         return (
           <div
             key={email.id}
@@ -76,6 +87,16 @@ export function EmailListPane({ folder, emails, selectedId, processed, onSelect 
               <div className="mail-row-sender">{senderName(email.sender)}</div>
               <div className="mail-row-preview">{previewOf(email.body)}</div>
             </div>
+            <span
+              className={`mail-row-pin-btn ${isPinned ? "pinned" : ""}`}
+              title={isPinned ? "Unpin" : "Pin"}
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePin(email.id);
+              }}
+            >
+              {isPinned ? <Pin16Filled /> : <Pin16Regular />}
+            </span>
           </div>
         );
       })}
