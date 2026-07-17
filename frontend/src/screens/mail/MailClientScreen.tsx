@@ -91,6 +91,7 @@ export function MailClientScreen({
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
   const [requirementNotice, setRequirementNotice] = useState<string[] | null>(null);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
+  const [attachmentOpened, setAttachmentOpened] = useState(false);
 
   const hoverStart = useRef<number | null>(null);
   const { openTab, isMailTabActive, triggerDownload } = useBrowserTabs();
@@ -112,9 +113,10 @@ export function MailClientScreen({
       processedCount: processed.size,
       totalEmails: emails.length,
       usedActions: usedActionTypes,
+      attachmentOpened,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [processed, emails.length]);
+  }, [processed, emails.length, attachmentOpened]);
 
   // If choosing this action would leave more required action types unused
   // than there are remaining emails to use them on, it's about to become
@@ -420,6 +422,7 @@ export function MailClientScreen({
               onAttachmentClick={() => {
                 if (selectedEmail?.attachment && !processed.has(selectedEmail.id)) {
                   triggerDownload(selectedEmail.attachment);
+                  setAttachmentOpened(true);
                 }
               }}
               onReplySubmit={handleReplySubmit}

@@ -5,6 +5,7 @@ interface TaskProgress {
   processedCount: number;
   totalEmails: number;
   usedActions: Set<ActionType>;
+  attachmentOpened: boolean;
 }
 
 interface TaskProgressApi extends TaskProgress {
@@ -15,6 +16,7 @@ const DEFAULT_PROGRESS: TaskProgress = {
   processedCount: 0,
   totalEmails: 0,
   usedActions: new Set(),
+  attachmentOpened: false,
 };
 
 const TaskProgressContext = createContext<TaskProgressApi | null>(null);

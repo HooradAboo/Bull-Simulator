@@ -44,7 +44,7 @@ export interface SentItem {
 export interface Subtask {
   id: string;
   label: string;
-  type: "process_all_emails" | "action_used";
+  type: "process_all_emails" | "action_used" | "attachment_opened";
   action?: ActionType;
 }
 

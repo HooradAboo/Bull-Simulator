@@ -8,13 +8,21 @@ interface Props {
 
 function isSubtaskDone(
   subtask: Subtask,
-  progress: { processedCount: number; totalEmails: number; usedActions: Set<string> }
+  progress: {
+    processedCount: number;
+    totalEmails: number;
+    usedActions: Set<string>;
+    attachmentOpened: boolean;
+  }
 ): boolean {
   if (subtask.type === "process_all_emails") {
     return progress.totalEmails > 0 && progress.processedCount >= progress.totalEmails;
   }
   if (subtask.type === "action_used" && subtask.action) {
     return progress.usedActions.has(subtask.action);
+  }
+  if (subtask.type === "attachment_opened") {
+    return progress.attachmentOpened;
   }
   return false;
 }
@@ -35,7 +43,8 @@ export function TaskList({ tasks }: Props) {
                 subtask.type === "process_all_emails"
                   ? `${subtask.label} (${progress.processedCount}/${progress.totalEmails})`
                   : subtask.label;
-              const indented = subtask.type === "action_used";
+              const indented =
+                subtask.type === "action_used" || subtask.type === "attachment_opened";
               return (
                 <div
                   key={subtask.id}
