@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from app.contacts import Contact, load_contacts
 from app.database import Base, engine, get_db
-from app.departments import load_departments
 from app.emails import EmailPublic, build_template_context, load_public_emails
+from app.participant_profile import ParticipantProfile, load_participant_profile
 from app.self_efficacy import SelfEfficacyQuestion, load_self_efficacy_questions
 from app.tasks import TaskConfig, load_tasks
 
@@ -35,23 +35,25 @@ def get_emails(participant_id: str | None = None, db: Session = Depends(get_db))
             participant = db.get(models.Participant, participant_id)
             if not participant:
                 raise HTTPException(status_code=404, detail="unknown participant_id")
+            profile = load_participant_profile(participant.netid)
             context = build_template_context(
                 participant.first_name,
                 participant.last_name,
-                participant.department,
                 participant.session_start_ts,
+                contacts=profile.contacts if profile else None,
+                variables=profile.variables if profile else None,
             )
         return load_public_emails(context)
     except (FileNotFoundError, ValueError) as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/departments", response_model=list[str])
-def get_departments():
-    try:
-        return [d.department for d in load_departments()]
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.get("/participant-profile/{netid}", response_model=ParticipantProfile)
+def get_participant_profile(netid: str):
+    profile = load_participant_profile(netid)
+    if not profile:
+        raise HTTPException(status_code=404, detail="no profile found for this netid")
+    return profile
 
 
 @app.get("/self-efficacy-questions", response_model=list[SelfEfficacyQuestion])
@@ -88,7 +90,7 @@ def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
         id=payload.participant_id,
         first_name=payload.participant_first_name,
         last_name=payload.participant_last_name,
-        department=payload.participant_department,
+        netid=payload.netid,
         self_efficacy_recognize_links=payload.self_efficacy_recognize_links,
         self_efficacy_verify_legitimacy=payload.self_efficacy_verify_legitimacy,
         self_efficacy_avoid_suspicious=payload.self_efficacy_avoid_suspicious,

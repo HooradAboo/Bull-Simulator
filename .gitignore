@@ -27,3 +27,6 @@ frontend/out/
 # Data exports
 exports/
 *.csv
+
+# Confidential participant profiles (real names/emails/contacts - never commit)
+confidential/participants/*.json

@@ -5,7 +5,7 @@ class SessionStart(BaseModel):
     participant_id: str
     participant_first_name: str
     participant_last_name: str
-    participant_department: str
+    netid: str
     self_efficacy_recognize_links: int
     self_efficacy_verify_legitimacy: int
     self_efficacy_avoid_suspicious: int

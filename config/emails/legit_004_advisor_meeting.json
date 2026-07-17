@@ -1,8 +1,8 @@
 {
   "id": "legit_004_advisor_meeting",
-  "sender": "{{department_advisor}} <{{department_advisor_email}}>",
+  "sender": "{{advisor_name}} <{{advisor_email}}>",
   "subject": "Meeting Invitation: Advising Check-in",
-  "body": "Hi {{participant_fname}},\n\nLet's meet to go over your progress this semester. Use the link below to grab a time that works best for you:\n\nSchedule via Outlook Bookings\n\nPick whatever slot fits your schedule, it'll add automatically to both our calendars.\n\n{{department_advisor}}",
+  "body": "Hi {{participant_fname}},\n\nLet's meet to go over your progress this semester. Use the link below to grab a time that works best for you:\n\nSchedule via Outlook Bookings\n\nPick whatever slot fits your schedule, it'll add automatically to both our calendars.\n\n{{advisor_name}}",
   "link": "https://outlook.office.com/bookwithme/user/advisor-booking-id/meetingtype/meeting-type-id",
   "attachment": null,
   "is_phishing": false

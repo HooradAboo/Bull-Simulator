@@ -57,7 +57,7 @@ function App() {
   const [participantEmail, setParticipantEmail] = useState("");
   const [participantFirstName, setParticipantFirstName] = useState("");
   const [participantLastName, setParticipantLastName] = useState("");
-  const [participantDepartment, setParticipantDepartment] = useState("");
+  const [participantNetid, setParticipantNetid] = useState("");
   const [selfEfficacy, setSelfEfficacy] = useState<SelfEfficacyRatings | null>(null);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -80,7 +80,7 @@ function App() {
       participantId,
       participantFirstName,
       participantLastName,
-      participantDepartment,
+      participantNetid,
       selfEfficacy!,
       sessionStartTs
     );
@@ -133,11 +133,11 @@ function App() {
       <PlainTitleBar />
       {screen === "researcher-setup" && (
         <ResearcherSetupScreen
-          onContinue={(email, firstName, lastName, department) => {
+          onContinue={(email, firstName, lastName, netid) => {
             setParticipantEmail(email);
             setParticipantFirstName(firstName);
             setParticipantLastName(lastName);
-            setParticipantDepartment(department);
+            setParticipantNetid(netid);
             setScreen("consent");
           }}
         />

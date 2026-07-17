@@ -20,8 +20,18 @@ export function getTasks(): Promise<TaskConfig[]> {
   return get("/tasks");
 }
 
-export function getDepartments(): Promise<string[]> {
-  return get("/departments");
+export interface ParticipantProfile {
+  netid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export async function getParticipantProfile(netid: string): Promise<ParticipantProfile | null> {
+  const res = await fetch(`${BASE_URL}/participant-profile/${encodeURIComponent(netid)}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GET /participant-profile/${netid} failed: ${res.status}`);
+  return res.json();
 }
 
 export interface SelfEfficacyQuestion {
@@ -57,7 +67,7 @@ export function startSession(
   participantId: string,
   participantFirstName: string,
   participantLastName: string,
-  participantDepartment: string,
+  netid: string,
   selfEfficacy: SelfEfficacyRatings,
   sessionStartTs: number
 ) {
@@ -65,7 +75,7 @@ export function startSession(
     participant_id: participantId,
     participant_first_name: participantFirstName,
     participant_last_name: participantLastName,
-    participant_department: participantDepartment,
+    netid: netid,
     self_efficacy_recognize_links: selfEfficacy.recognizeLinks,
     self_efficacy_verify_legitimacy: selfEfficacy.verifyLegitimacy,
     self_efficacy_avoid_suspicious: selfEfficacy.avoidSuspicious,

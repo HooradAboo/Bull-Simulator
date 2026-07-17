@@ -1,8 +1,0 @@
-[
-  { "department": "Computer Science and Engineering", "advisor_name": "Dr. Elena Ruiz", "advisor_email": "eruiz@usf.edu" },
-  { "department": "Business Analytics", "advisor_name": "Dr. Samuel Okafor", "advisor_email": "sokafor@usf.edu" },
-  { "department": "Psychology", "advisor_name": "Dr. Angela Whitfield", "advisor_email": "awhitfield@usf.edu" },
-  { "department": "Mechanical Engineering", "advisor_name": "Dr. Marcus Delgado", "advisor_email": "mdelgado@usf.edu" },
-  { "department": "Nursing", "advisor_name": "Dr. Rachel Kim", "advisor_email": "rkim@usf.edu" },
-  { "department": "Biology", "advisor_name": "Dr. Daniel Brooks", "advisor_email": "dbrooks@usf.edu" }
-]

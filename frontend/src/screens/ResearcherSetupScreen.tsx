@@ -1,91 +1,66 @@
-import { useEffect, useState } from "react";
-import { getDepartments } from "../api";
+import { useState } from "react";
+import { getParticipantProfile } from "../api";
 
 interface Props {
   onContinue: (
     participantEmail: string,
     firstName: string,
     lastName: string,
-    department: string
+    netid: string
   ) => void;
 }
 
 export function ResearcherSetupScreen({ onContinue }: Props) {
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [department, setDepartment] = useState("");
-  const [departments, setDepartments] = useState<string[]>([]);
+  const [netid, setNetid] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    getDepartments().then(setDepartments);
-  }, []);
+  const isValid = netid.trim().length > 0;
 
-  const isValid =
-    email.trim().length > 0 &&
-    email.includes("@") &&
-    firstName.trim().length > 0 &&
-    lastName.trim().length > 0 &&
-    department.length > 0;
+  const handleSubmit = async () => {
+    const trimmed = netid.trim();
+    setLoading(true);
+    setError(null);
+    try {
+      const profile = await getParticipantProfile(trimmed);
+      if (!profile) {
+        setError(
+          `No profile found for NetID "${trimmed}". Create confidential/participants/${trimmed}.json first.`
+        );
+        return;
+      }
+      onContinue(profile.email, profile.firstName, profile.lastName, profile.netid);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load participant profile.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="screen">
       <h1>Researcher Setup</h1>
       <p>
-        Enter the participant's name, department, and USF email address
-        before handing over the laptop. The email is used as their login
-        username for the simulated email task; the name and department are
-        used to personalize some of the emails. None of this is shown to the
-        participant beforehand.
+        Enter the participant's NetID before handing over the laptop. Their
+        profile (name, email, and personalization details) is loaded from a
+        confidential file that never leaves this machine. None of this is
+        shown to the participant beforehand.
       </p>
-      <label htmlFor="participant-first-name">Participant's first name</label>
+      <label htmlFor="participant-netid">Participant's NetID</label>
       <input
-        id="participant-first-name"
+        id="participant-netid"
         type="text"
-        placeholder="Alex"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
+        placeholder="jsmith123"
+        value={netid}
+        onChange={(e) => setNetid(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && isValid && !loading) handleSubmit();
+        }}
         style={{ display: "block", width: "100%", margin: "0.5rem 0 1rem", padding: "0.5rem" }}
       />
-      <label htmlFor="participant-last-name">Participant's last name</label>
-      <input
-        id="participant-last-name"
-        type="text"
-        placeholder="Rivera"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        style={{ display: "block", width: "100%", margin: "0.5rem 0 1rem", padding: "0.5rem" }}
-      />
-      <label htmlFor="participant-email">Participant's USF email address</label>
-      <input
-        id="participant-email"
-        type="email"
-        placeholder="netid@usf.edu"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ display: "block", width: "100%", margin: "0.5rem 0 1rem", padding: "0.5rem" }}
-      />
-      <label htmlFor="participant-department">Participant's department</label>
-      <select
-        id="participant-department"
-        value={department}
-        onChange={(e) => setDepartment(e.target.value)}
-        style={{ display: "block", width: "100%", margin: "0.5rem 0 1rem", padding: "0.5rem" }}
-      >
-        <option value="" disabled>
-          Select a department
-        </option>
-        {departments.map((d) => (
-          <option key={d} value={d}>
-            {d}
-          </option>
-        ))}
-      </select>
-      <button
-        disabled={!isValid}
-        onClick={() => onContinue(email.trim(), firstName.trim(), lastName.trim(), department)}
-      >
-        Continue
+      {error && <p style={{ color: "#b00020" }}>{error}</p>}
+      <button disabled={!isValid || loading} onClick={handleSubmit}>
+        {loading ? "Loading..." : "Continue"}
       </button>
     </div>
   );

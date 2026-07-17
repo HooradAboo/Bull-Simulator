@@ -12,7 +12,7 @@ class Participant(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True)
     first_name: Mapped[str] = mapped_column(String)
     last_name: Mapped[str] = mapped_column(String)
-    department: Mapped[str] = mapped_column(String)
+    netid: Mapped[str] = mapped_column(String)
     # Pre-task self-efficacy ratings (Bandura 0-100 scale), one per statement
     # on the self-efficacy screen shown right after consent.
     self_efficacy_recognize_links: Mapped[int] = mapped_column(Integer)

@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from app.config import settings
-from app.departments import get_department, personal_lookalike_email
+from app.participant_profile import ContactProfile
 
 
 class EmailConfig(BaseModel):
@@ -53,8 +53,22 @@ def format_login_time(session_start_ts: int) -> str:
     return dt.strftime("%B %-d, %Y at %-I:%M %p")
 
 
+def personal_lookalike_email(full_name: str) -> str:
+    """Derives a plausible-looking but fake personal email from a contact's
+    name, e.g. "Elena Ruiz" -> "elena.ruiz99@outlook.com" - used by phishing
+    emails that impersonate a real contact from a mismatched personal domain
+    instead of their real usf.edu address.
+    """
+    parts = [p.lower() for p in full_name.replace(".", "").split()]
+    return f"{'.'.join(parts)}99@outlook.com"
+
+
 def build_template_context(
-    first_name: str, last_name: str, department: str, session_start_ts: int
+    first_name: str,
+    last_name: str,
+    session_start_ts: int,
+    contacts: dict[str, ContactProfile] | None = None,
+    variables: dict[str, str] | None = None,
 ) -> dict[str, str]:
     context = {
         "participant_fname": first_name,
@@ -62,11 +76,16 @@ def build_template_context(
         "login_time": format_login_time(session_start_ts),
     }
 
-    dept = get_department(department)
-    if dept:
-        context["department_advisor"] = dept.advisor_name
-        context["department_advisor_email"] = dept.advisor_email
-        context["department_advisor_personal_email"] = personal_lookalike_email(dept.advisor_name)
+    for role, contact in (contacts or {}).items():
+        full_name = f"{contact.firstName} {contact.lastName}"
+        context[f"{role}_first_name"] = contact.firstName
+        context[f"{role}_last_name"] = contact.lastName
+        context[f"{role}_name"] = full_name
+        context[f"{role}_email"] = contact.email
+        context[f"{role}_personal_email"] = personal_lookalike_email(full_name)
+
+    for key, value in (variables or {}).items():
+        context[key] = value
 
     return context
 
