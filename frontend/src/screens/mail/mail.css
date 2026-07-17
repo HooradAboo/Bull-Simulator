@@ -529,8 +529,20 @@
 .reading-sender-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
   margin-bottom: 18px;
+}
+.reading-sender-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.reading-received-time {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .reading-sender-avatar {
   width: 38px;

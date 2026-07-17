@@ -65,6 +65,7 @@ function App() {
   const [emails, setEmails] = useState<DummyEmail[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [tasks, setTasks] = useState<TaskConfig[]>([]);
+  const [sessionStartTs, setSessionStartTs] = useState<number | null>(null);
 
   useMouseLogger(sessionStarted ? participantId : null);
   useKeystrokeLogger(sessionStarted ? participantId : null);
@@ -72,7 +73,7 @@ function App() {
   const derivedPassword = participantEmail.split("@")[0];
 
   const handleBegin = async () => {
-    const sessionStartTs = Date.now();
+    const startTs = Date.now();
     // createCredential requires the participant row to already exist
     // (foreign key), so session/start must complete first, not run
     // concurrently with it.
@@ -82,7 +83,7 @@ function App() {
       participantLastName,
       participantNetid,
       selfEfficacy!,
-      sessionStartTs
+      startTs
     );
     const [allEmails, allContacts, allTasks, credential] = await Promise.all([
       getEmails(participantId),
@@ -94,6 +95,7 @@ function App() {
     setContacts(allContacts);
     setTasks(allTasks);
     setCredentialId(credential.id);
+    setSessionStartTs(startTs);
     setSessionStarted(true);
     setScreen("mail");
   };
@@ -113,6 +115,7 @@ function App() {
               emails={emails}
               contacts={contacts}
               tasks={tasks}
+              sessionStartTs={sessionStartTs!}
               onAllProcessed={() => setScreen("self-efficacy-post")}
             />
           ) : (

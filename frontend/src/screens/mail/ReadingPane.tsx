@@ -19,6 +19,29 @@ function attachmentVisual(filename: string): { icon: ReactNode; color: string } 
   return { icon: <Attach20Regular />, color: "#605e5c" };
 }
 
+// Inbox emails have no real arrival time (they're static config, not sent
+// live), so each one gets a stable pseudo-received time derived from its id -
+// somewhere in the hours before the session started - instead of every
+// email in the inbox showing the exact same instant.
+function receivedTimestamp(emailId: string, sessionStartTs: number): number {
+  let hash = 0;
+  for (let i = 0; i < emailId.length; i++) {
+    hash = (hash * 31 + emailId.charCodeAt(i)) >>> 0;
+  }
+  const minutesBefore = 5 + (hash % 600);
+  return sessionStartTs - minutesBefore * 60 * 1000;
+}
+
+function formatReceivedTime(ts: number): string {
+  return new Date(ts).toLocaleString(undefined, {
+    weekday: "short",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 const ACTION_LABELS: Record<ActionType, string> = {
   click_link: "Click Link",
   reply: "Reply",
@@ -35,6 +58,7 @@ interface Props {
   forwardMode: boolean;
   contacts: Contact[];
   participantEmail: string;
+  sessionStartTs: number;
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
@@ -76,6 +100,7 @@ export function ReadingPane({
   forwardMode,
   contacts,
   participantEmail,
+  sessionStartTs,
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
@@ -177,15 +202,20 @@ export function ReadingPane({
       <div className="reading-content">
         <div className="reading-subject">{email.subject}</div>
         <div className="reading-sender-row">
-          <div
-            className="reading-sender-avatar"
-            style={{ background: avatarColor(email.sender) }}
-          >
-            {initials(email.sender)}
+          <div className="reading-sender-left">
+            <div
+              className="reading-sender-avatar"
+              style={{ background: avatarColor(email.sender) }}
+            >
+              {initials(email.sender)}
+            </div>
+            <div>
+              <div className="reading-sender-name">{senderName(email.sender)}</div>
+              <div className="reading-sender-meta">{email.sender}</div>
+            </div>
           </div>
-          <div>
-            <div className="reading-sender-name">{senderName(email.sender)}</div>
-            <div className="reading-sender-meta">{email.sender}</div>
+          <div className="reading-received-time">
+            {formatReceivedTime(receivedTimestamp(email.id, sessionStartTs))}
           </div>
         </div>
 
