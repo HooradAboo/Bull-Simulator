@@ -67,6 +67,17 @@ export function startSession(
   });
 }
 
+export function submitPostSelfEfficacy(participantId: string, ratings: SelfEfficacyRatings) {
+  return patch(`/participants/${participantId}/self-efficacy-post`, {
+    self_efficacy_post_recognize_links: ratings.recognizeLinks,
+    self_efficacy_post_verify_legitimacy: ratings.verifyLegitimacy,
+    self_efficacy_post_avoid_suspicious: ratings.avoidSuspicious,
+    self_efficacy_post_verify_trusted_source: ratings.verifyTrustedSource,
+    self_efficacy_post_report_phishing: ratings.reportPhishing,
+    self_efficacy_post_recovery_steps: ratings.recoverySteps,
+  });
+}
+
 export async function openInteraction(
   participantId: string,
   emailId: string,

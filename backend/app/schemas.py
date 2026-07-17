@@ -15,6 +15,15 @@ class SessionStart(BaseModel):
     session_start_ts: int
 
 
+class SelfEfficacyPost(BaseModel):
+    self_efficacy_post_recognize_links: int
+    self_efficacy_post_verify_legitimacy: int
+    self_efficacy_post_avoid_suspicious: int
+    self_efficacy_post_verify_trusted_source: int
+    self_efficacy_post_report_phishing: int
+    self_efficacy_post_recovery_steps: int
+
+
 class InteractionOpen(BaseModel):
     participant_id: str
     email_id: str

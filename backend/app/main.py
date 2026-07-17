@@ -100,6 +100,26 @@ def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
     return {"status": "ok"}
 
 
+@app.patch("/participants/{participant_id}/self-efficacy-post")
+def set_self_efficacy_post(
+    participant_id: str, payload: schemas.SelfEfficacyPost, db: Session = Depends(get_db)
+):
+    participant = db.get(models.Participant, participant_id)
+    if not participant:
+        raise HTTPException(status_code=404, detail="unknown participant_id")
+
+    participant.self_efficacy_post_recognize_links = payload.self_efficacy_post_recognize_links
+    participant.self_efficacy_post_verify_legitimacy = payload.self_efficacy_post_verify_legitimacy
+    participant.self_efficacy_post_avoid_suspicious = payload.self_efficacy_post_avoid_suspicious
+    participant.self_efficacy_post_verify_trusted_source = (
+        payload.self_efficacy_post_verify_trusted_source
+    )
+    participant.self_efficacy_post_report_phishing = payload.self_efficacy_post_report_phishing
+    participant.self_efficacy_post_recovery_steps = payload.self_efficacy_post_recovery_steps
+    db.commit()
+    return {"status": "ok"}
+
+
 @app.post("/interactions/open", response_model=schemas.InteractionOpenResponse)
 def open_interaction(payload: schemas.InteractionOpen, db: Session = Depends(get_db)):
     if not db.get(models.Participant, payload.participant_id):

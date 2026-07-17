@@ -15,6 +15,7 @@ import {
   getEmails,
   getTasks,
   startSession,
+  submitPostSelfEfficacy,
 } from "./api";
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
@@ -47,6 +48,7 @@ type Screen =
   | "self-efficacy"
   | "instructions"
   | "mail"
+  | "self-efficacy-post"
   | "debrief";
 
 function App() {
@@ -111,7 +113,7 @@ function App() {
               emails={emails}
               contacts={contacts}
               tasks={tasks}
-              onAllProcessed={() => setScreen("debrief")}
+              onAllProcessed={() => setScreen("self-efficacy-post")}
             />
           ) : (
             <LoginScreen
@@ -152,6 +154,17 @@ function App() {
         />
       )}
       {screen === "instructions" && <InstructionsScreen onBegin={handleBegin} />}
+      {screen === "self-efficacy-post" && (
+        <SelfEfficacyScreen
+          heading="Rate Your Confidence, Revisited"
+          description="Now that you've completed the task, rate your confidence again in your ability to complete the following cybersecurity tasks."
+          continueLabel="Finish"
+          onContinue={async (ratings) => {
+            await submitPostSelfEfficacy(participantId, ratings);
+            setScreen("debrief");
+          }}
+        />
+      )}
       {screen === "debrief" && <DebriefScreen />}
     </>
   );

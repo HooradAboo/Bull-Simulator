@@ -3,6 +3,9 @@ import type { SelfEfficacyRatings } from "../types";
 
 interface Props {
   onContinue: (ratings: SelfEfficacyRatings) => void;
+  heading?: string;
+  description?: string;
+  continueLabel?: string;
 }
 
 const STATEMENTS: { key: keyof SelfEfficacyRatings; text: string }[] = [
@@ -34,7 +37,12 @@ const STATEMENTS: { key: keyof SelfEfficacyRatings; text: string }[] = [
 
 const DEFAULT_RATING = 50;
 
-export function SelfEfficacyScreen({ onContinue }: Props) {
+export function SelfEfficacyScreen({
+  onContinue,
+  heading = "Rate Your Confidence",
+  description = "For each statement below, rate your confidence in your ability to complete the following cybersecurity tasks.",
+  continueLabel = "Continue",
+}: Props) {
   const [ratings, setRatings] = useState<Record<keyof SelfEfficacyRatings, number>>({
     recognizeLinks: DEFAULT_RATING,
     verifyLegitimacy: DEFAULT_RATING,
@@ -46,11 +54,8 @@ export function SelfEfficacyScreen({ onContinue }: Props) {
 
   return (
     <div className="screen self-efficacy-screen">
-      <h1>Rate Your Confidence</h1>
-      <p>
-        For each statement below, rate your confidence in your ability to complete the
-        following cybersecurity tasks.
-      </p>
+      <h1>{heading}</h1>
+      <p>{description}</p>
       {STATEMENTS.map((statement) => (
         <div key={statement.key} className="self-efficacy-item">
           <div className="self-efficacy-item-text">{statement.text}</div>
@@ -75,7 +80,7 @@ export function SelfEfficacyScreen({ onContinue }: Props) {
           </div>
         </div>
       ))}
-      <button onClick={() => onContinue(ratings)}>Continue</button>
+      <button onClick={() => onContinue(ratings)}>{continueLabel}</button>
     </div>
   );
 }

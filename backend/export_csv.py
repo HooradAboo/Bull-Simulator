@@ -34,6 +34,9 @@ def export_participants(db, output_dir: Path):
             p.self_efficacy_recognize_links, p.self_efficacy_verify_legitimacy,
             p.self_efficacy_avoid_suspicious, p.self_efficacy_verify_trusted_source,
             p.self_efficacy_report_phishing, p.self_efficacy_recovery_steps,
+            p.self_efficacy_post_recognize_links, p.self_efficacy_post_verify_legitimacy,
+            p.self_efficacy_post_avoid_suspicious, p.self_efficacy_post_verify_trusted_source,
+            p.self_efficacy_post_report_phishing, p.self_efficacy_post_recovery_steps,
             p.session_start_ts, p.created_at,
         ]
         for p in participants
@@ -45,6 +48,9 @@ def export_participants(db, output_dir: Path):
             "self_efficacy_recognize_links", "self_efficacy_verify_legitimacy",
             "self_efficacy_avoid_suspicious", "self_efficacy_verify_trusted_source",
             "self_efficacy_report_phishing", "self_efficacy_recovery_steps",
+            "self_efficacy_post_recognize_links", "self_efficacy_post_verify_legitimacy",
+            "self_efficacy_post_avoid_suspicious", "self_efficacy_post_verify_trusted_source",
+            "self_efficacy_post_report_phishing", "self_efficacy_post_recovery_steps",
             "session_start_ts", "created_at",
         ],
         rows,

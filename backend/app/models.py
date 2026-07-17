@@ -21,6 +21,17 @@ class Participant(Base):
     self_efficacy_verify_trusted_source: Mapped[int] = mapped_column(Integer)
     self_efficacy_report_phishing: Mapped[int] = mapped_column(Integer)
     self_efficacy_recovery_steps: Mapped[int] = mapped_column(Integer)
+    # Post-task self-efficacy ratings - same statements, filled in after the
+    # participant finishes processing every email, before the debrief screen.
+    # Nullable since a participant may not reach this point (early exit).
+    self_efficacy_post_recognize_links: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    self_efficacy_post_verify_legitimacy: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    self_efficacy_post_avoid_suspicious: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    self_efficacy_post_verify_trusted_source: Mapped[int | None] = mapped_column(
+        Integer, nullable=True
+    )
+    self_efficacy_post_report_phishing: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    self_efficacy_post_recovery_steps: Mapped[int | None] = mapped_column(Integer, nullable=True)
     session_start_ts: Mapped[int] = mapped_column(BigInteger)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
