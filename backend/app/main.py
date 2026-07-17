@@ -7,6 +7,7 @@ from app.contacts import Contact, load_contacts
 from app.database import Base, engine, get_db
 from app.departments import load_departments
 from app.emails import EmailPublic, build_template_context, load_public_emails
+from app.self_efficacy import SelfEfficacyQuestion, load_self_efficacy_questions
 from app.tasks import TaskConfig, load_tasks
 
 Base.metadata.create_all(bind=engine)
@@ -49,6 +50,14 @@ def get_emails(participant_id: str | None = None, db: Session = Depends(get_db))
 def get_departments():
     try:
         return [d.department for d in load_departments()]
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/self-efficacy-questions", response_model=list[SelfEfficacyQuestion])
+def get_self_efficacy_questions():
+    try:
+        return load_self_efficacy_questions()
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

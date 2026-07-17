@@ -31,7 +31,10 @@
       "Bash(python3 -c \"import json; json.load\\(open\\('/home/ciber/Desktop/Simulation/config/emails/phish_007_docusign_consent.json'\\)\\)\")",
       "Bash(python3 -c \"import json; json.load\\(open\\('/home/ciber/Desktop/Simulation/config/contacts.json'\\)\\)\")",
       "Bash(kill -9 3265135 3267418 3267419 3270729 3270737)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" -X PATCH http://127.0.0.1:8000/interactions/1/ratings -H \"Content-Type: application/json\" -d '{\"confidence_rating\":50,\"difficulty_rating\":50,\"cues_noticed\":[],\"cues_other_text\":null}')"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" -X PATCH http://127.0.0.1:8000/interactions/1/ratings -H \"Content-Type: application/json\" -d '{\"confidence_rating\":50,\"difficulty_rating\":50,\"cues_noticed\":[],\"cues_other_text\":null}')",
+      "Bash(python3 -c \"import json; json.load\\(open\\('/home/ciber/Desktop/Simulation/config/self_efficacy_questions.json'\\)\\)\")",
+      "Bash(kill -9 3663254 3663373 3663374 3663970 3663978)",
+      "Bash(git -C /home/ciber/Desktop/Simulation mv config/self_efficacy_questions.json config/confidence_questions.json)"
     ]
   }
 }

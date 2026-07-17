@@ -24,6 +24,15 @@ export function getDepartments(): Promise<string[]> {
   return get("/departments");
 }
 
+export interface SelfEfficacyQuestion {
+  key: string;
+  text: string;
+}
+
+export function getSelfEfficacyQuestions(): Promise<SelfEfficacyQuestion[]> {
+  return get("/self-efficacy-questions");
+}
+
 async function post(path: string, body: unknown) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",

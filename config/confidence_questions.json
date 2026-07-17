@@ -1,0 +1,26 @@
+[
+  {
+    "key": "recognizeLinks",
+    "text": "I can recognize suspicious links in emails or text messages."
+  },
+  {
+    "key": "verifyLegitimacy",
+    "text": "I can determine whether a message requesting personal information is legitimate."
+  },
+  {
+    "key": "avoidSuspicious",
+    "text": "I can avoid clicking links or opening attachments when a message seems suspicious."
+  },
+  {
+    "key": "verifyTrustedSource",
+    "text": "I can verify suspicious requests through a trusted source."
+  },
+  {
+    "key": "reportPhishing",
+    "text": "I can report a suspected phishing attempt using the appropriate process."
+  },
+  {
+    "key": "recoverySteps",
+    "text": "I know what steps to take if I accidentally click a suspicious link or enter information on a suspicious website."
+  }
+]

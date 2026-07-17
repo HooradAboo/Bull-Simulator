@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     contacts_config_path: Path = REPO_ROOT / "config" / "contacts.json"
     tasks_config_path: Path = REPO_ROOT / "config" / "tasks.json"
     departments_config_path: Path = REPO_ROOT / "config" / "departments.json"
+    self_efficacy_questions_config_path: Path = (
+        REPO_ROOT / "config" / "confidence_questions.json"
+    )
 
 
 settings = Settings()
