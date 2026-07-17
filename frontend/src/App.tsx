@@ -86,7 +86,7 @@ function App() {
     );
     const [allEmails, allContacts, allTasks, credential] = await Promise.all([
       getEmails(participantId),
-      getContacts(),
+      getContacts(participantId),
       getTasks(),
       createCredential(participantId, "USF Email (Outlook)", participantEmail, derivedPassword),
     ]);

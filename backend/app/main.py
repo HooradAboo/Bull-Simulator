@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app import models, schemas
-from app.contacts import Contact, load_contacts
+from app.contacts import Contact, load_contacts, load_contacts_for_participant
 from app.database import Base, engine, get_db
 from app.emails import EmailPublic, build_template_context, load_public_emails
 from app.participant_profile import ParticipantProfile, load_participant_profile
@@ -65,9 +65,15 @@ def get_self_efficacy_questions():
 
 
 @app.get("/contacts", response_model=list[Contact])
-def get_contacts():
+def get_contacts(participant_id: str | None = None, db: Session = Depends(get_db)):
     try:
-        return load_contacts()
+        if participant_id is None:
+            return load_contacts()
+        participant = db.get(models.Participant, participant_id)
+        if not participant:
+            raise HTTPException(status_code=404, detail="unknown participant_id")
+        profile = load_participant_profile(participant.netid)
+        return load_contacts_for_participant(profile)
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

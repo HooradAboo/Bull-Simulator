@@ -12,8 +12,8 @@ export function getEmails(participantId: string): Promise<DummyEmail[]> {
   return get(`/emails?participant_id=${encodeURIComponent(participantId)}`);
 }
 
-export function getContacts(): Promise<Contact[]> {
-  return get("/contacts");
+export function getContacts(participantId: string): Promise<Contact[]> {
+  return get(`/contacts?participant_id=${encodeURIComponent(participantId)}`);
 }
 
 export function getTasks(): Promise<TaskConfig[]> {
