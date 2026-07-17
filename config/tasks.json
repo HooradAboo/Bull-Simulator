@@ -9,8 +9,8 @@
       { "id": "use_report_phishing", "label": "\"Report\" at least one email as Phishing", "type": "action_used", "action": "report_phishing" },
       { "id": "use_delete", "label": "\"Delete\" at least one email", "type": "action_used", "action": "delete" },
       { "id": "use_ignore", "label": "\"Mark as read\" at least one email", "type": "action_used", "action": "ignore" },
-      { "id": "use_click_link", "label": "Click a link at least once", "type": "action_used", "action": "click_link" },
-      { "id": "use_open_attachment", "label": "Open an attachment at least once", "type": "attachment_opened" }
+      { "id": "use_click_link", "label": "Click at least one link", "type": "action_used", "action": "click_link" },
+      { "id": "use_open_attachment", "label": "Open at least one attachment", "type": "attachment_opened" }
     ]
   }
 ]
