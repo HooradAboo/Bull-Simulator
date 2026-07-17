@@ -114,51 +114,6 @@ export function ReadingPane({
     );
   }
 
-  if (replyMode) {
-    return (
-      <div className="mail-reading-pane">
-        <div className="reading-content">
-          <div className="compose-toolbar">
-            <button
-              className="inline-reply-send"
-              disabled={replyBody.trim().length === 0}
-              onClick={() => onReplySubmit(replyBody.trim())}
-            >
-              <Send20Regular /> Send
-            </button>
-            <button className="inline-reply-discard" onClick={onReplyDiscard}>
-              <Delete20Regular /> Discard
-            </button>
-          </div>
-
-          <div className="inline-reply-row">
-            <span className="inline-reply-label">From:</span> {participantEmail}
-          </div>
-          <div className="inline-reply-row inline-reply-to">
-            <span className="inline-reply-label">To</span>
-            <span className="reply-chip">
-              {senderName(email.sender)}
-              <span className="reply-chip-x">×</span>
-            </span>
-            <span className="inline-reply-cc">Cc  Bcc</span>
-          </div>
-          <div className="compose-subject">RE: {email.subject}</div>
-
-          <textarea
-            id="reply-body"
-            className="inline-reply-textarea"
-            value={replyBody}
-            onChange={(e) => setReplyBody(e.target.value)}
-            rows={4}
-            autoFocus
-          />
-
-          <QuotedMessage email={email} />
-        </div>
-      </div>
-    );
-  }
-
   if (forwardMode) {
     return (
       <div className="mail-reading-pane">
@@ -298,6 +253,45 @@ export function ReadingPane({
               {email.link}
             </span>
           </p>
+        )}
+
+        {replyMode && (
+          <div className="inline-reply-box">
+            <div className="inline-reply-row">
+              <span className="inline-reply-label">From:</span> {participantEmail}
+            </div>
+            <div className="inline-reply-row inline-reply-to">
+              <span className="inline-reply-label">To</span>
+              <span className="reply-chip">
+                {senderName(email.sender)}
+                <span className="reply-chip-x">×</span>
+              </span>
+              <span className="inline-reply-cc">Cc  Bcc</span>
+            </div>
+            <div className="compose-subject">RE: {email.subject}</div>
+
+            <textarea
+              id="reply-body"
+              className="inline-reply-textarea"
+              value={replyBody}
+              onChange={(e) => setReplyBody(e.target.value)}
+              rows={4}
+              autoFocus
+            />
+
+            <div className="compose-toolbar compose-toolbar-bottom">
+              <button
+                className="inline-reply-send"
+                disabled={replyBody.trim().length === 0}
+                onClick={() => onReplySubmit(replyBody.trim())}
+              >
+                <Send20Regular /> Send
+              </button>
+              <button className="inline-reply-discard" onClick={onReplyDiscard}>
+                <Delete20Regular /> Discard
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

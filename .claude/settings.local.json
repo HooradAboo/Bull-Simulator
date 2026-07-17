@@ -50,7 +50,28 @@
       "Bash(git -C /home/ciber/Desktop/Simulation status --short)",
       "Bash(curl -s http://127.0.0.1:8001/contacts)",
       "Bash(curl -s \"http://127.0.0.1:8001/contacts?participant_id=test-contacts-participant-1\")",
-      "Bash(curl -s \"http://127.0.0.1:8001/contacts?participant_id=test-contacts-participant-2\")"
+      "Bash(curl -s \"http://127.0.0.1:8001/contacts?participant_id=test-contacts-participant-2\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\([{'url':t['url'],'type':t['type']} for t in data]\\)\")",
+      "Bash(pip3 show *)",
+      "Bash(python3 -c \"import sys; print\\(sys.executable\\)\")",
+      "Bash(find / -maxdepth 4 -iname \"websockets\" -type d)",
+      "Bash(/home/ciber/Desktop/Simulation/backend/.venv/bin/python3 *)",
+      "Bash(pkill -f \"remote-debugging-port=9333\")",
+      "Bash(echo \"exit code: $?\")",
+      "Bash(DISPLAY=:1 nohup /home/ciber/Desktop/Simulation/frontend/node_modules/electron/dist/electron /home/ciber/Desktop/Simulation/frontend --user-data-dir=/tmp/claude-1001/-home-ciber-Desktop-Simulation/d728bb98-cd21-4d80-9d0e-fa49a3181c4c/scratchpad/electron-test-profile --remote-debugging-port=9333 --no-sandbox)",
+      "Bash(disown)",
+      "Bash(curl -s http://127.0.0.1:9333/json/version)",
+      "Bash(curl -s http://127.0.0.1:9333/json)",
+      "Bash(DISPLAY=:1 nohup /home/ciber/Desktop/Simulation/frontend/node_modules/electron/dist/electron /home/ciber/Desktop/Simulation/frontend --user-data-dir=/tmp/claude-1001/-home-ciber-Desktop-Simulation/d728bb98-cd21-4d80-9d0e-fa49a3181c4c/scratchpad/electron-test-profile --remote-debugging-port=9333)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8000/health)",
+      "Bash(curl -sv http://localhost:5173/)",
+      "Bash(kill 3736134 3736191 3736095 3736097 3736134)",
+      "Bash(DISPLAY=:1 NODE_ENV=development nohup /home/ciber/Desktop/Simulation/frontend/node_modules/electron/dist/electron /home/ciber/Desktop/Simulation/frontend --remote-debugging-port=9222)",
+      "Bash(curl -s http://127.0.0.1:9222/json/version)",
+      "Bash(curl -s -o /dev/null -w \"backend: %{http_code}\\\\n\" http://127.0.0.1:8000/health)",
+      "Bash(curl -s -m 3 http://127.0.0.1:9222/json/version)",
+      "Bash(echo \"curl exit: $?\")"
     ]
   }
 }

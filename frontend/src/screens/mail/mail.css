@@ -811,6 +811,14 @@
   margin-bottom: 10px;
   border-bottom: 1px solid var(--border);
 }
+.compose-toolbar-bottom {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-top: 14px;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+}
 .compose-subject {
   padding: 8px 0;
   border-bottom: 1px solid #f3f2f1;
@@ -819,6 +827,11 @@
 }
 
 .quoted-message {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.inline-reply-box {
   margin-top: 18px;
   padding-top: 14px;
   border-top: 1px solid var(--border);
