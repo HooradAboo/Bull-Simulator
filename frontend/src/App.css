@@ -115,3 +115,87 @@
   font-size: 1rem;
   opacity: 0.75;
 }
+
+.action-chart {
+  margin-top: 1.5rem;
+}
+.action-chart-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+.action-chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.action-chart-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.action-chart-swatch.legit {
+  background: #3fb950;
+}
+.action-chart-swatch.phishing {
+  background: #f85149;
+}
+.action-chart-bars-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+  height: 160px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0;
+}
+.action-chart-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  justify-content: flex-end;
+}
+.action-chart-bar-pair {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+}
+.action-chart-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: 22px;
+}
+.action-chart-bar-value {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  margin-bottom: 0.2rem;
+}
+.action-chart-bar {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+}
+.action-chart-bar.legit {
+  background: #3fb950;
+}
+.action-chart-bar.phishing {
+  background: #f85149;
+}
+.action-chart-label {
+  font-size: 0.7rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  opacity: 0.85;
+  line-height: 1.2;
+}

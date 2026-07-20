@@ -5,15 +5,84 @@ interface Props {
   participantId: string;
 }
 
-const ACTION_LABELS: Record<string, string> = {
-  mark_as_read: "marked as read",
-  reply: "replied to",
-  forward: "forwarded",
-  forward_to_it: "forwarded to IT",
-  delete: "deleted",
-  report: "reported as phishing",
-  click_link: "clicked a link in",
+const ACTION_CHART_ORDER = [
+  "mark_as_read",
+  "reply",
+  "forward",
+  "forward_to_it",
+  "delete",
+  "report",
+  "click_link",
+  "open_attachment",
+];
+
+const ACTION_CHART_LABELS: Record<string, string> = {
+  mark_as_read: "Mark as Read",
+  reply: "Reply",
+  forward: "Forward",
+  forward_to_it: "Forward to IT",
+  delete: "Delete",
+  report: "Report",
+  click_link: "Click Link",
+  open_attachment: "Open Attachment",
 };
+
+interface ActionChartRow {
+  key: string;
+  label: string;
+  legitCount: number;
+  phishingCount: number;
+}
+
+function ActionChart({ report }: { report: PerformanceReport }) {
+  const rows: ActionChartRow[] = ACTION_CHART_ORDER.map((key) => {
+    const counts =
+      key === "open_attachment"
+        ? { legitCount: report.attachments.legitOpened, phishingCount: report.attachments.phishingOpened }
+        : report.actionBreakdown[key] ?? { legitCount: 0, phishingCount: 0 };
+    return { key, label: ACTION_CHART_LABELS[key], ...counts };
+  }).filter((row) => row.legitCount + row.phishingCount > 0);
+
+  if (rows.length === 0) return null;
+
+  const max = Math.max(...rows.map((row) => Math.max(row.legitCount, row.phishingCount)), 1);
+
+  return (
+    <div className="action-chart">
+      <div className="action-chart-legend">
+        <span className="action-chart-legend-item">
+          <span className="action-chart-swatch legit" /> Legitimate emails
+        </span>
+        <span className="action-chart-legend-item">
+          <span className="action-chart-swatch phishing" /> Phishing emails
+        </span>
+      </div>
+      <div className="action-chart-bars-row">
+        {rows.map((row) => (
+          <div className="action-chart-group" key={row.key}>
+            <div className="action-chart-bar-pair">
+              <div className="action-chart-bar-wrap">
+                <span className="action-chart-bar-value">{row.legitCount}</span>
+                <div
+                  className="action-chart-bar legit"
+                  style={{ height: `${(row.legitCount / max) * 100}%` }}
+                />
+              </div>
+              <div className="action-chart-bar-wrap">
+                <span className="action-chart-bar-value">{row.phishingCount}</span>
+                <div
+                  className="action-chart-bar phishing"
+                  style={{ height: `${(row.phishingCount / max) * 100}%` }}
+                />
+              </div>
+            </div>
+            <div className="action-chart-label">{row.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function scoreLabel(totalScore: number, maxPossibleScore: number): string {
   if (maxPossibleScore <= 0) return "";
@@ -76,25 +145,7 @@ export function DebriefScreen({ participantId }: Props) {
             .
           </p>
 
-          <ul>
-            {Object.entries(report.actionBreakdown)
-              .filter(([, counts]) => counts.legitCount + counts.phishingCount > 0)
-              .map(([action, counts]) => (
-                <li key={action}>
-                  You {ACTION_LABELS[action] ?? action} {counts.legitCount} legitimate email
-                  {counts.legitCount === 1 ? "" : "s"} and {counts.phishingCount} phishing email
-                  {counts.phishingCount === 1 ? "" : "s"}.
-                </li>
-              ))}
-            {(report.attachments.legitOpened > 0 || report.attachments.phishingOpened > 0) && (
-              <li>
-                You opened attachments in {report.attachments.legitOpened} legitimate email
-                {report.attachments.legitOpened === 1 ? "" : "s"} and{" "}
-                {report.attachments.phishingOpened} phishing email
-                {report.attachments.phishingOpened === 1 ? "" : "s"}.
-              </li>
-            )}
-          </ul>
+          <ActionChart report={report} />
         </div>
       )}
 
