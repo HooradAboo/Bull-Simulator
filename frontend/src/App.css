@@ -116,6 +116,68 @@
   opacity: 0.75;
 }
 
+.confusion-matrix-wrap {
+  margin-top: 1.5rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.confusion-matrix {
+  width: 100%;
+  border-collapse: collapse;
+}
+.confusion-matrix th,
+.confusion-matrix td {
+  border: 1px solid #3a3a3a;
+}
+.confusion-matrix thead th {
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+  padding: 0.6rem 0.75rem;
+  text-align: center;
+}
+.confusion-matrix tbody th {
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.confusion-matrix thead th:first-child,
+.confusion-matrix tbody tr:first-child th {
+  border-top: none;
+}
+.confusion-cell {
+  text-align: center;
+  padding: 1rem 0.75rem;
+}
+.confusion-cell.good {
+  background: rgba(63, 185, 80, 0.12);
+}
+.confusion-cell.bad {
+  background: rgba(248, 81, 73, 0.12);
+}
+.confusion-cell-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.confusion-cell.good .confusion-cell-value {
+  color: #3fb950;
+}
+.confusion-cell.bad .confusion-cell-value {
+  color: #f85149;
+}
+.confusion-cell-label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-top: 0.2rem;
+}
+
 .action-chart {
   margin-top: 1.5rem;
 }

@@ -27,6 +27,46 @@ const ACTION_CHART_LABELS: Record<string, string> = {
   open_attachment: "Open Attachment",
 };
 
+function ConfusionMatrix({ report }: { report: PerformanceReport }) {
+  return (
+    <div className="confusion-matrix-wrap">
+      <table className="confusion-matrix">
+        <thead>
+          <tr>
+            <th />
+            <th>Flagged as suspicious</th>
+            <th>Trusted it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Actually phishing</th>
+            <td className="confusion-cell good">
+              <div className="confusion-cell-value">{report.phishing.caught}</div>
+              <div className="confusion-cell-label">Caught</div>
+            </td>
+            <td className="confusion-cell bad">
+              <div className="confusion-cell-value">{report.phishing.missed}</div>
+              <div className="confusion-cell-label">Missed</div>
+            </td>
+          </tr>
+          <tr>
+            <th>Actually legitimate</th>
+            <td className="confusion-cell bad">
+              <div className="confusion-cell-value">{report.legit.falsePositive}</div>
+              <div className="confusion-cell-label">False positive</div>
+            </td>
+            <td className="confusion-cell good">
+              <div className="confusion-cell-value">{report.legit.handledWell}</div>
+              <div className="confusion-cell-label">Trusted correctly</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 interface ActionChartRow {
   key: string;
   label: string;
@@ -126,24 +166,7 @@ export function DebriefScreen({ participantId }: Props) {
             <strong>{report.totalCount}</strong> safe decisions.
           </p>
 
-          <p>
-            Of the {report.phishing.total} phishing emails, you caught{" "}
-            <strong>{report.phishing.caught}</strong> and missed{" "}
-            <strong>{report.phishing.missed}</strong>.
-          </p>
-
-          <p>
-            Of the {report.legit.total} legitimate emails, you handled{" "}
-            <strong>{report.legit.handledWell}</strong> appropriately
-            {report.legit.falsePositive > 0 && (
-              <>
-                {" "}
-                and mistakenly flagged <strong>{report.legit.falsePositive}</strong> as
-                suspicious
-              </>
-            )}
-            .
-          </p>
+          <ConfusionMatrix report={report} />
 
           <ActionChart report={report} />
         </div>
