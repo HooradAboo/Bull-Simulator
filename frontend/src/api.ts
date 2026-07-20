@@ -164,6 +164,60 @@ export function submitInteractionRatings(interactionId: number, ratings: Interac
   });
 }
 
+export function markAttachmentOpened(interactionId: number) {
+  return patch(`/interactions/${interactionId}/attachment-opened`, {});
+}
+
+export interface PerformanceReport {
+  totalScore: number;
+  maxPossibleScore: number;
+  correctCount: number;
+  totalCount: number;
+  phishing: { total: number; caught: number; missed: number };
+  legit: { total: number; handledWell: number; falsePositive: number };
+  actionBreakdown: Record<string, { legitCount: number; phishingCount: number }>;
+  attachments: { legitOpened: number; phishingOpened: number };
+}
+
+interface PerformanceReportResponse {
+  total_score: number;
+  max_possible_score: number;
+  correct_count: number;
+  total_count: number;
+  phishing: { total: number; caught: number; missed: number };
+  legit: { total: number; handled_well: number; false_positive: number };
+  action_breakdown: Record<string, { legit_count: number; phishing_count: number }>;
+  attachments: { legit_opened: number; phishing_opened: number };
+}
+
+export async function getPerformanceReport(participantId: string): Promise<PerformanceReport> {
+  const data: PerformanceReportResponse = await get(
+    `/participants/${encodeURIComponent(participantId)}/report`
+  );
+  return {
+    totalScore: data.total_score,
+    maxPossibleScore: data.max_possible_score,
+    correctCount: data.correct_count,
+    totalCount: data.total_count,
+    phishing: data.phishing,
+    legit: {
+      total: data.legit.total,
+      handledWell: data.legit.handled_well,
+      falsePositive: data.legit.false_positive,
+    },
+    actionBreakdown: Object.fromEntries(
+      Object.entries(data.action_breakdown).map(([key, value]) => [
+        key,
+        { legitCount: value.legit_count, phishingCount: value.phishing_count },
+      ])
+    ),
+    attachments: {
+      legitOpened: data.attachments.legit_opened,
+      phishingOpened: data.attachments.phishing_opened,
+    },
+  };
+}
+
 export function logHover(
   interactionId: number,
   target: string,

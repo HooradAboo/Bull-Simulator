@@ -18,6 +18,7 @@ import { extractEmail } from "./avatar";
 import {
   confirmInteraction,
   logHover,
+  markAttachmentOpened,
   openInteraction,
   submitInteractionRatings,
   updateCredentialPassword,
@@ -423,6 +424,7 @@ export function MailClientScreen({
                 if (selectedEmail?.attachment && !processed.has(selectedEmail.id)) {
                   triggerDownload(selectedEmail.attachment);
                   setAttachmentOpened(true);
+                  if (interactionId !== null) markAttachmentOpened(interactionId);
                 }
               }}
               onReplySubmit={handleReplySubmit}

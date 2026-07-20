@@ -7,6 +7,7 @@ from app.contacts import Contact, load_contacts, load_contacts_for_participant
 from app.database import Base, engine, get_db
 from app.emails import EmailPublic, build_template_context, load_public_emails
 from app.participant_profile import ParticipantProfile, load_participant_profile
+from app.report import PerformanceReport, build_performance_report
 from app.self_efficacy import SelfEfficacyQuestion, load_self_efficacy_questions
 from app.tasks import TaskConfig, load_tasks
 
@@ -139,6 +140,13 @@ def set_self_efficacy_post(
     return {"status": "ok"}
 
 
+@app.get("/participants/{participant_id}/report", response_model=PerformanceReport)
+def get_performance_report(participant_id: str, db: Session = Depends(get_db)):
+    if not db.get(models.Participant, participant_id):
+        raise HTTPException(status_code=404, detail="unknown participant_id")
+    return build_performance_report(db, participant_id)
+
+
 @app.post("/interactions/open", response_model=schemas.InteractionOpenResponse)
 def open_interaction(payload: schemas.InteractionOpen, db: Session = Depends(get_db)):
     if not db.get(models.Participant, payload.participant_id):
@@ -184,6 +192,17 @@ def set_interaction_ratings(
     interaction.difficulty_rating = payload.difficulty_rating
     interaction.cues_noticed = payload.cues_noticed
     interaction.cues_other_text = payload.cues_other_text
+    db.commit()
+    return {"status": "ok"}
+
+
+@app.patch("/interactions/{interaction_id}/attachment-opened")
+def set_attachment_opened(interaction_id: int, db: Session = Depends(get_db)):
+    interaction = db.get(models.EmailInteraction, interaction_id)
+    if not interaction:
+        raise HTTPException(status_code=404, detail="unknown interaction_id")
+
+    interaction.attachment_opened = True
     db.commit()
     return {"status": "ok"}
 

@@ -149,7 +149,7 @@ function App() {
           }}
         />
       )}
-      {screen === "debrief" && <DebriefScreen />}
+      {screen === "debrief" && <DebriefScreen participantId={participantId} />}
     </>
   );
 }
