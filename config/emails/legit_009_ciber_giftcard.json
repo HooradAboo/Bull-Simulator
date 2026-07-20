@@ -5,5 +5,7 @@
   "body": "Hi {{participant_fname}} {{participant_lname}},\n\nThank you for participating in our research study with the CIBeR Lab. As compensation for your time, you have a $25 Amazon gift card waiting for you.\n\nClick the link below to claim your gift card:\n\nClaim Your Gift Card\n\nIf you have any questions about the study or your compensation, reach out to us directly at COENG-ciber@usf.edu.\n\nThank you again for your participation.\n\nCIBeR Lab, College of Engineering, USF",
   "link": "https://rewards.tremendous.com/claim/",
   "attachment": null,
-  "is_phishing": false
+  "is_phishing": false,
+  "days_before": 6,
+  "received_time": "20:00"
 }

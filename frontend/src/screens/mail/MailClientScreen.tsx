@@ -44,7 +44,6 @@ interface Props {
   emails: DummyEmail[];
   contacts: Contact[];
   tasks: TaskConfig[];
-  sessionStartTs: number;
   onAllProcessed: () => void;
 }
 
@@ -70,7 +69,6 @@ export function MailClientScreen({
   emails,
   contacts,
   tasks,
-  sessionStartTs,
   onAllProcessed,
 }: Props) {
   // Mounting this screen means login just succeeded, so the change-password
@@ -418,7 +416,6 @@ export function MailClientScreen({
               forwardMode={phase === "forwarding"}
               contacts={contacts}
               participantEmail={participantEmail}
-              sessionStartTs={sessionStartTs}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}

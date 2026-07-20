@@ -8,8 +8,29 @@ async function get(path: string) {
   return res.json();
 }
 
-export function getEmails(participantId: string): Promise<DummyEmail[]> {
-  return get(`/emails?participant_id=${encodeURIComponent(participantId)}`);
+interface EmailResponse {
+  id: string;
+  sender: string;
+  subject: string;
+  body: string;
+  link: string | null;
+  attachment: string | null;
+  received_at: number | null;
+}
+
+export async function getEmails(participantId: string): Promise<DummyEmail[]> {
+  const data: EmailResponse[] = await get(
+    `/emails?participant_id=${encodeURIComponent(participantId)}`
+  );
+  return data.map((e) => ({
+    id: e.id,
+    sender: e.sender,
+    subject: e.subject,
+    body: e.body,
+    link: e.link,
+    attachment: e.attachment,
+    receivedAt: e.received_at,
+  }));
 }
 
 export function getContacts(participantId: string): Promise<Contact[]> {

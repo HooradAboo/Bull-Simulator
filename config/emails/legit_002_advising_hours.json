@@ -5,5 +5,7 @@
   "body": "Dear Students,\n\nAdvising appointments for the Fall semester are now open for scheduling. Faculty advisors will hold extended hours during the first two weeks of the term to help with course selection and degree planning.\n\nTo schedule an appointment, log in to the advising portal through your MyUSF dashboard.\n\nThank you,\nDepartment Office",
   "link": "https://my.usf.edu",
   "attachment": null,
-  "is_phishing": false
+  "is_phishing": false,
+  "days_before": 4,
+  "received_time": "09:30"
 }

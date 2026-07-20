@@ -22,24 +22,8 @@ import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
 import { TaskProgressProvider } from "./taskProgress";
 import type { Contact, DummyEmail, SelfEfficacyRatings, TaskConfig } from "./types";
 
-function shuffle<T>(items: T[]): T[] {
-  const result = [...items];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
-
-// The sign-in warning always leads the inbox (a fresh login is the most
-// recent thing that happened), rather than being shuffled in with the rest.
-const PINNED_TO_TOP_EMAIL_ID = "legit_001_signin_warning";
-
-function shuffleWithPinnedTop(emails: DummyEmail[]): DummyEmail[] {
-  const pinned = emails.find((e) => e.id === PINNED_TO_TOP_EMAIL_ID);
-  const rest = emails.filter((e) => e.id !== PINNED_TO_TOP_EMAIL_ID);
-  const shuffledRest = shuffle(rest);
-  return pinned ? [pinned, ...shuffledRest] : shuffledRest;
+function sortByReceivedDesc(emails: DummyEmail[]): DummyEmail[] {
+  return [...emails].sort((a, b) => (b.receivedAt ?? 0) - (a.receivedAt ?? 0));
 }
 
 type Screen =
@@ -65,7 +49,6 @@ function App() {
   const [emails, setEmails] = useState<DummyEmail[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [tasks, setTasks] = useState<TaskConfig[]>([]);
-  const [sessionStartTs, setSessionStartTs] = useState<number | null>(null);
 
   useMouseLogger(sessionStarted ? participantId : null);
   useKeystrokeLogger(sessionStarted ? participantId : null);
@@ -91,11 +74,10 @@ function App() {
       getTasks(),
       createCredential(participantId, "USF Email (Outlook)", participantEmail, derivedPassword),
     ]);
-    setEmails(shuffleWithPinnedTop(allEmails));
+    setEmails(sortByReceivedDesc(allEmails));
     setContacts(allContacts);
     setTasks(allTasks);
     setCredentialId(credential.id);
-    setSessionStartTs(startTs);
     setSessionStarted(true);
     setScreen("mail");
   };
@@ -115,7 +97,6 @@ function App() {
               emails={emails}
               contacts={contacts}
               tasks={tasks}
-              sessionStartTs={sessionStartTs!}
               onAllProcessed={() => setScreen("self-efficacy-post")}
             />
           ) : (

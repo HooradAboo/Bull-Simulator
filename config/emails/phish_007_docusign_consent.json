@@ -5,5 +5,7 @@
   "body": "<div style='text-align:center;'><div style='height:4px;background:#006747;width:100%;margin-bottom:24px;'></div><img src='/usf-logo.png' alt='University of South Florida' style='height:48px;margin-bottom:24px;' /><div style='background:#006747;border-radius:10px;padding:32px 24px;margin-bottom:24px;'><div style='width:48px;height:48px;background:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:22px;'>&#9998;</div><div style='color:#fff;font-size:16px;font-weight:600;margin-bottom:20px;'>Hoorad Abootalebi sent you a document to review and sign.</div><a href='#' data-tracked-link style='display:inline-block;background:#cfc493;color:#1b1a19;font-weight:700;padding:12px 28px;border-radius:6px;text-decoration:none;'>Review Document</a></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:20px 24px;text-align:left;margin-bottom:16px;'><div style='font-weight:700;'>Hoorad Abootalebi</div><div style='color:#605e5c;font-size:13px;margin-bottom:14px;'>hoorad@usf.edu</div><div style='margin-bottom:10px;'>{{participant_fname}},</div><div style='margin-bottom:10px;'>Complete with Docusign: Consent - Version 1 - January 23, 2024 (Tracked Changes).pdf</div><div>Thank You,<br/>Hoorad Abootalebi</div></div><div style='color:#8a8886;font-size:12px;'>Powered by DocuSign</div></div>",
   "link": "http://docusign-notify.com/review?doc=STUDY006481",
   "attachment": null,
-  "is_phishing": true
+  "is_phishing": true,
+  "days_before": 4,
+  "received_time": "15:50"
 }

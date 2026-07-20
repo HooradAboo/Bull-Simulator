@@ -13,6 +13,7 @@ export interface DummyEmail {
   body: string;
   link: string | null;
   attachment: string | null;
+  receivedAt: number | null;
 }
 
 export interface ProcessedInfo {

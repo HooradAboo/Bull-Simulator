@@ -5,5 +5,7 @@
   "body": "Hi {{participant_fname}},\n\nI came across your profile while looking for candidates for our upcoming internship cohort and thought your coursework and experience could be a strong fit. Would you be open to a short call this week to talk through the role?\n\nBest,\nTaylor Brooks\nTalent Acquisition",
   "link": null,
   "attachment": null,
-  "is_phishing": false
+  "is_phishing": false,
+  "days_before": 3,
+  "received_time": "10:00"
 }

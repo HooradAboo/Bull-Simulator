@@ -5,5 +5,7 @@
   "body": "Dear Candidate,\n\nCongratulations, you've been selected for our Remote Research Assistant position paying $38/hr. To complete onboarding and set up your first paycheck, please verify your identity and direct deposit information using the secure link below.\n\nComplete Onboarding\n\nWe'll need this completed within 48 hours to hold your spot.\n\nRecruiting Team",
   "link": "http://nextstepcareersolutions.net/onboarding",
   "attachment": null,
-  "is_phishing": true
+  "is_phishing": true,
+  "days_before": 5,
+  "received_time": "12:05"
 }

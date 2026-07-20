@@ -5,5 +5,7 @@
   "body": "Hi {{participant_fname}},\n\nYou've unlocked an exclusive offer, just for you: 40% off your next purchase, online or in store. This isn't a sitewide deal, it's a personal thank-you for being one of our top customers.\n\nClaim My Offer\n\nOffer expires in 48 hours and is tied to your account, so don't miss it.\n\nOld Navy",
   "link": "https://oldnavy.gap.com/offers/claim",
   "attachment": null,
-  "is_phishing": false
+  "is_phishing": false,
+  "days_before": 5,
+  "received_time": "18:22"
 }

@@ -5,5 +5,7 @@
   "body": "Hi {{participant_fname}},\n\nSomething time-sensitive came up and I need to loop you in before end of day. Can you send me your phone number? I'll call you directly, it'll be faster than going back and forth over email.\n\nTalk soon,\nHoorad Abootalebi",
   "link": null,
   "attachment": null,
-  "is_phishing": true
+  "is_phishing": true,
+  "days_before": 1,
+  "received_time": "16:45"
 }

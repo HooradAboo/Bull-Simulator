@@ -5,5 +5,7 @@
   "body": "Dear Customer,\n\nWe attempted to deliver your package, but additional information is needed to complete delivery. Please confirm your shipping details within 24 hours to avoid your package being returned to sender.\n\nConfirm Shipping Information\n\nTracking Number: 9491 3838 2947 2010 8899\n\nUSPS Delivery Services",
   "link": "http://usps-shipment-alert.com/confirm",
   "attachment": null,
-  "is_phishing": true
+  "is_phishing": true,
+  "days_before": 5,
+  "received_time": "08:10"
 }
