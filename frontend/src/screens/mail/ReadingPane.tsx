@@ -20,13 +20,11 @@ function attachmentVisual(filename: string): { icon: ReactNode; color: string } 
 }
 
 function formatReceivedTime(ts: number): string {
-  return new Date(ts).toLocaleString(undefined, {
-    weekday: "short",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const d = new Date(ts);
+  const weekday = d.toLocaleDateString(undefined, { weekday: "short" });
+  const date = d.toLocaleDateString(undefined, { month: "numeric", day: "numeric", year: "numeric" });
+  const time = d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return `${weekday} ${date} ${time}`;
 }
 
 const ACTION_LABELS: Record<ActionType, string> = {

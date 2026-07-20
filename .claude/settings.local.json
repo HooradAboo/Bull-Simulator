@@ -72,7 +72,13 @@
       "Bash(curl -s -o /dev/null -w \"backend: %{http_code}\\\\n\" http://127.0.0.1:8000/health)",
       "Bash(curl -s -m 3 http://127.0.0.1:9222/json/version)",
       "Bash(echo \"curl exit: $?\")",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(curl -s -o /dev/null -w \"backend on 8000: %{http_code}\\\\n\" http://127.0.0.1:8000/health)",
+      "Bash(curl -s \"http://127.0.0.1:8000/emails\")",
+      "Bash(kill -9 3738366)",
+      "Bash(curl -s -o /dev/null -w \"port 8000 now: %{http_code}\\\\n\" http://127.0.0.1:8000/health)",
+      "Bash(awk '$2==1009240 || $2==1009239')",
+      "Bash(awk '$2==1009247')"
     ]
   }
 }
