@@ -7,8 +7,23 @@ from app import models
 from app.config import settings
 from app.contacts import load_contacts
 from app.emails import load_emails
+from app.self_efficacy import load_self_efficacy_questions
 
 IT_CONTACT_NAME = "USF IT Help Desk"
+
+# Maps each self-efficacy statement's config key to the pre/post column
+# names on Participant.
+SELF_EFFICACY_FIELD_MAP: dict[str, tuple[str, str]] = {
+    "recognizeLinks": ("self_efficacy_recognize_links", "self_efficacy_post_recognize_links"),
+    "verifyLegitimacy": ("self_efficacy_verify_legitimacy", "self_efficacy_post_verify_legitimacy"),
+    "avoidSuspicious": ("self_efficacy_avoid_suspicious", "self_efficacy_post_avoid_suspicious"),
+    "verifyTrustedSource": (
+        "self_efficacy_verify_trusted_source",
+        "self_efficacy_post_verify_trusted_source",
+    ),
+    "reportPhishing": ("self_efficacy_report_phishing", "self_efficacy_post_report_phishing"),
+    "recoverySteps": ("self_efficacy_recovery_steps", "self_efficacy_post_recovery_steps"),
+}
 
 REQUIRED_CATEGORIES = {
     "mark_as_read",
@@ -94,6 +109,58 @@ class AttachmentBreakdown(BaseModel):
     phishing_opened: int
 
 
+CALIBRATION_MIN_N = 3
+CALIBRATION_SYNC_THRESHOLD = 10
+
+
+def _calibration_state(confidence: float | None, accuracy: float | None, n: int) -> str:
+    """"in_sync" (within CALIBRATION_SYNC_THRESHOLD points), "undersold"
+    (accuracy higher than confidence - they were more often right than they
+    felt), "oversold" (confidence higher than accuracy - confidence ran
+    ahead of the outcome), or "not_enough_data" (fewer than
+    CALIBRATION_MIN_N decisions in this bucket).
+    """
+    if n < CALIBRATION_MIN_N or confidence is None or accuracy is None:
+        return "not_enough_data"
+    diff = confidence - accuracy
+    if abs(diff) <= CALIBRATION_SYNC_THRESHOLD:
+        return "in_sync"
+    return "oversold" if diff > 0 else "undersold"
+
+
+class CalibrationBucket(BaseModel):
+    confidence: float | None
+    accuracy: float | None  # % of decisions in this bucket that were correct
+    n: int
+    state: str  # "in_sync" | "undersold" | "oversold" | "not_enough_data"
+
+
+class ActionCalibrationBucket(CalibrationBucket):
+    is_protective: bool  # report/forward_to_it/delete vs. engagement actions
+
+
+class ConfidenceAverages(BaseModel):
+    overall: CalibrationBucket
+    phishing: CalibrationBucket  # confidence/accuracy on emails that were actually phishing
+    legit: CalibrationBucket  # confidence/accuracy on emails that were actually legitimate
+    claimed_phishing: CalibrationBucket  # when they treated it as a threat
+    claimed_legit: CalibrationBucket  # when they treated it as safe
+    by_action: dict[str, ActionCalibrationBucket]
+
+
+class SelfEfficacyStatement(BaseModel):
+    key: str
+    text: str
+    pre: int
+    post: int | None
+
+
+class SelfEfficacyBreakdown(BaseModel):
+    statements: list[SelfEfficacyStatement]
+    pre_average: float
+    post_average: float | None
+
+
 class PerformanceReport(BaseModel):
     total_score: int
     max_possible_score: int
@@ -103,18 +170,57 @@ class PerformanceReport(BaseModel):
     legit: LegitBreakdown
     action_breakdown: dict[str, ActionBreakdown]
     attachments: AttachmentBreakdown
+    confidence: ConfidenceAverages
+    self_efficacy: SelfEfficacyBreakdown
 
 
-def build_performance_report(db: Session, participant_id: str) -> PerformanceReport:
+class _CalibrationAccumulator:
+    def __init__(self) -> None:
+        self.n = 0
+        self.correct = 0
+        self.confidence_sum = 0.0
+        self.confidence_n = 0
+
+    def add(self, score: int, confidence: int | None) -> None:
+        self.n += 1
+        if score > 0:
+            self.correct += 1
+        if confidence is not None:
+            self.confidence_sum += confidence
+            self.confidence_n += 1
+
+    def confidence_average(self) -> float | None:
+        if self.confidence_n == 0:
+            return None
+        return round(self.confidence_sum / self.confidence_n, 1)
+
+    def accuracy(self) -> float | None:
+        if self.n == 0:
+            return None
+        return round(100 * self.correct / self.n, 1)
+
+    def to_bucket(self) -> CalibrationBucket:
+        confidence = self.confidence_average()
+        accuracy = self.accuracy()
+        return CalibrationBucket(
+            confidence=confidence,
+            accuracy=accuracy,
+            n=self.n,
+            state=_calibration_state(confidence, accuracy, self.n),
+        )
+
+
+def build_performance_report(db: Session, participant: models.Participant) -> PerformanceReport:
     emails_by_id = {e.id: e for e in load_emails()}
     it_email = _it_contact_email()
     matrix = load_safe_action_matrix()
     matrix_max = max(score for row in matrix.values() for score in row.values())
+    claimed_phishing_categories = {cat for cat, row in matrix.items() if row["phishing"] > 0}
 
     interactions = (
         db.query(models.EmailInteraction)
         .filter(
-            models.EmailInteraction.participant_id == participant_id,
+            models.EmailInteraction.participant_id == participant.id,
             models.EmailInteraction.action_taken.isnot(None),
         )
         .all()
@@ -129,6 +235,15 @@ def build_performance_report(db: Session, participant_id: str) -> PerformanceRep
         category: ActionBreakdown(legit_count=0, phishing_count=0) for category in matrix
     }
     legit_attachments_opened = phishing_attachments_opened = 0
+
+    conf_overall = _CalibrationAccumulator()
+    conf_phishing = _CalibrationAccumulator()
+    conf_legit = _CalibrationAccumulator()
+    conf_claimed_phishing = _CalibrationAccumulator()
+    conf_claimed_legit = _CalibrationAccumulator()
+    conf_by_action: dict[str, _CalibrationAccumulator] = {
+        category: _CalibrationAccumulator() for category in matrix
+    }
 
     for interaction in interactions:
         email = emails_by_id.get(interaction.email_id)
@@ -168,6 +283,31 @@ def build_performance_report(db: Session, participant_id: str) -> PerformanceRep
             else:
                 legit_attachments_opened += 1
 
+        conf_overall.add(score, interaction.confidence_rating)
+        conf_by_action[category].add(score, interaction.confidence_rating)
+        if email.is_phishing:
+            conf_phishing.add(score, interaction.confidence_rating)
+        else:
+            conf_legit.add(score, interaction.confidence_rating)
+        if category in claimed_phishing_categories:
+            conf_claimed_phishing.add(score, interaction.confidence_rating)
+        else:
+            conf_claimed_legit.add(score, interaction.confidence_rating)
+
+    statements = [
+        SelfEfficacyStatement(
+            key=question.key,
+            text=question.text,
+            pre=getattr(participant, SELF_EFFICACY_FIELD_MAP[question.key][0]),
+            post=getattr(participant, SELF_EFFICACY_FIELD_MAP[question.key][1]),
+        )
+        for question in load_self_efficacy_questions()
+        if question.key in SELF_EFFICACY_FIELD_MAP
+    ]
+    pre_average = round(sum(s.pre for s in statements) / len(statements), 1)
+    post_values = [s.post for s in statements if s.post is not None]
+    post_average = round(sum(post_values) / len(post_values), 1) if len(post_values) == len(statements) else None
+
     return PerformanceReport(
         total_score=total_score,
         max_possible_score=matrix_max * total_count,
@@ -185,5 +325,24 @@ def build_performance_report(db: Session, participant_id: str) -> PerformanceRep
         attachments=AttachmentBreakdown(
             legit_opened=legit_attachments_opened,
             phishing_opened=phishing_attachments_opened,
+        ),
+        confidence=ConfidenceAverages(
+            overall=conf_overall.to_bucket(),
+            phishing=conf_phishing.to_bucket(),
+            legit=conf_legit.to_bucket(),
+            claimed_phishing=conf_claimed_phishing.to_bucket(),
+            claimed_legit=conf_claimed_legit.to_bucket(),
+            by_action={
+                category: ActionCalibrationBucket(
+                    **acc.to_bucket().model_dump(),
+                    is_protective=category in claimed_phishing_categories,
+                )
+                for category, acc in conf_by_action.items()
+            },
+        ),
+        self_efficacy=SelfEfficacyBreakdown(
+            statements=statements,
+            pre_average=pre_average,
+            post_average=post_average,
         ),
     )

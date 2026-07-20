@@ -84,7 +84,11 @@
       "Bash(pkill -9 -f \"uvicorn app.main:app --port 8001\")",
       "Bash(curl -s -o /dev/null -w \"temp backend status after kill: %{http_code}\\\\n\" http://127.0.0.1:8001/health)",
       "Bash(curl -s http://127.0.0.1:8001/participants/report-test-participant-2/report)",
-      "Bash(kill -9 1057273)"
+      "Bash(kill -9 1057273)",
+      "Bash(curl -s -X PATCH http://127.0.0.1:8001/participants/report-test-participant-3/self-efficacy-post -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(kill -9 1082721)",
+      "Bash(kill -9 1121474)",
+      "Bash(curl -s -o /dev/null -w \"temp backend: %{http_code}\\\\n\" http://127.0.0.1:8001/health)"
     ]
   }
 }

@@ -168,6 +168,41 @@ export function markAttachmentOpened(interactionId: number) {
   return patch(`/interactions/${interactionId}/attachment-opened`, {});
 }
 
+export type CalibrationState = "in_sync" | "undersold" | "oversold" | "not_enough_data";
+
+export interface CalibrationBucket {
+  confidence: number | null;
+  accuracy: number | null;
+  n: number;
+  state: CalibrationState;
+}
+
+export interface ActionCalibrationBucket extends CalibrationBucket {
+  isProtective: boolean;
+}
+
+export interface ConfidenceAverages {
+  overall: CalibrationBucket;
+  phishing: CalibrationBucket;
+  legit: CalibrationBucket;
+  claimedPhishing: CalibrationBucket;
+  claimedLegit: CalibrationBucket;
+  byAction: Record<string, ActionCalibrationBucket>;
+}
+
+export interface SelfEfficacyStatement {
+  key: string;
+  text: string;
+  pre: number;
+  post: number | null;
+}
+
+export interface SelfEfficacyBreakdown {
+  statements: SelfEfficacyStatement[];
+  preAverage: number;
+  postAverage: number | null;
+}
+
 export interface PerformanceReport {
   totalScore: number;
   maxPossibleScore: number;
@@ -177,6 +212,8 @@ export interface PerformanceReport {
   legit: { total: number; handledWell: number; falsePositive: number };
   actionBreakdown: Record<string, { legitCount: number; phishingCount: number }>;
   attachments: { legitOpened: number; phishingOpened: number };
+  confidence: ConfidenceAverages;
+  selfEfficacy: SelfEfficacyBreakdown;
 }
 
 interface PerformanceReportResponse {
@@ -188,6 +225,19 @@ interface PerformanceReportResponse {
   legit: { total: number; handled_well: number; false_positive: number };
   action_breakdown: Record<string, { legit_count: number; phishing_count: number }>;
   attachments: { legit_opened: number; phishing_opened: number };
+  confidence: {
+    overall: CalibrationBucket;
+    phishing: CalibrationBucket;
+    legit: CalibrationBucket;
+    claimed_phishing: CalibrationBucket;
+    claimed_legit: CalibrationBucket;
+    by_action: Record<string, { confidence: number | null; accuracy: number | null; n: number; state: CalibrationState; is_protective: boolean }>;
+  };
+  self_efficacy: {
+    statements: SelfEfficacyStatement[];
+    pre_average: number;
+    post_average: number | null;
+  };
 }
 
 export async function getPerformanceReport(participantId: string): Promise<PerformanceReport> {
@@ -214,6 +264,30 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
     attachments: {
       legitOpened: data.attachments.legit_opened,
       phishingOpened: data.attachments.phishing_opened,
+    },
+    confidence: {
+      overall: data.confidence.overall,
+      phishing: data.confidence.phishing,
+      legit: data.confidence.legit,
+      claimedPhishing: data.confidence.claimed_phishing,
+      claimedLegit: data.confidence.claimed_legit,
+      byAction: Object.fromEntries(
+        Object.entries(data.confidence.by_action).map(([key, value]) => [
+          key,
+          {
+            confidence: value.confidence,
+            accuracy: value.accuracy,
+            n: value.n,
+            state: value.state,
+            isProtective: value.is_protective,
+          },
+        ])
+      ),
+    },
+    selfEfficacy: {
+      statements: data.self_efficacy.statements,
+      preAverage: data.self_efficacy.pre_average,
+      postAverage: data.self_efficacy.post_average,
     },
   };
 }

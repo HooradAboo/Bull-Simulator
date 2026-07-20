@@ -142,9 +142,10 @@ def set_self_efficacy_post(
 
 @app.get("/participants/{participant_id}/report", response_model=PerformanceReport)
 def get_performance_report(participant_id: str, db: Session = Depends(get_db)):
-    if not db.get(models.Participant, participant_id):
+    participant = db.get(models.Participant, participant_id)
+    if not participant:
         raise HTTPException(status_code=404, detail="unknown participant_id")
-    return build_performance_report(db, participant_id)
+    return build_performance_report(db, participant)
 
 
 @app.post("/interactions/open", response_model=schemas.InteractionOpenResponse)

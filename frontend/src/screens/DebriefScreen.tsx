@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { getPerformanceReport, type PerformanceReport } from "../api";
+import "./report.css";
+import {
+  getPerformanceReport,
+  type CalibrationBucket,
+  type CalibrationState,
+  type PerformanceReport,
+} from "../api";
 
 interface Props {
   participantId: string;
@@ -26,6 +32,26 @@ const ACTION_CHART_LABELS: Record<string, string> = {
   click_link: "Click Link",
   open_attachment: "Open Attachment",
 };
+
+const STATE_LABELS: Record<CalibrationState, string> = {
+  in_sync: "In sync",
+  undersold: "Undersold it",
+  oversold: "Oversold it",
+  not_enough_data: "Not enough data",
+};
+
+function StateTag({ state }: { state: CalibrationState }) {
+  return (
+    <span className={`state-tag ${state}`}>
+      <span className="state-dot" style={{ background: "currentColor" }} />
+      {STATE_LABELS[state]}
+    </span>
+  );
+}
+
+function fmtNum(value: number | null | undefined): string {
+  return value == null ? "—" : String(value);
+}
 
 function ConfusionMatrix({ report }: { report: PerformanceReport }) {
   return (
@@ -124,6 +150,205 @@ function ActionChart({ report }: { report: PerformanceReport }) {
   );
 }
 
+function OverviewCard({ label, bucket }: { label: string; bucket: CalibrationBucket }) {
+  return (
+    <div className="ov-card">
+      <div className="ov-label">{label}</div>
+      <div className="ov-value">{fmtNum(bucket.confidence)}</div>
+      <div className="ov-acc">accuracy {fmtNum(bucket.accuracy)}</div>
+      <StateTag state={bucket.state} />
+    </div>
+  );
+}
+
+function insightNarrative(claimedPhishing: CalibrationBucket, claimedLegit: CalibrationBucket): string {
+  if (claimedPhishing.confidence === null || claimedLegit.confidence === null) {
+    return "There isn't enough data yet to compare these two patterns.";
+  }
+  if (claimedPhishing.confidence === claimedLegit.confidence) {
+    return "You felt about equally sure whether you were flagging something as suspicious or trusting it. That's a good sign of even-handed judgment.";
+  }
+  const moreConfident = claimedLegit.confidence > claimedPhishing.confidence ? "trusting an email" : "flagging one as suspicious";
+  const lessConfident = claimedLegit.confidence > claimedPhishing.confidence ? "flagging one as suspicious" : "trusting an email";
+  return `You felt more sure when ${moreConfident} than when ${lessConfident}. That's a common pattern, not a personal flaw - it's part of why phishing works on almost everyone at some point.`;
+}
+
+function ConfidenceSection({ report }: { report: PerformanceReport }) {
+  const { confidence } = report;
+  const protectiveKeys = ACTION_CHART_ORDER.filter(
+    (key) => key !== "open_attachment" && confidence.byAction[key]?.isProtective
+  );
+  const engagementKeys = ACTION_CHART_ORDER.filter(
+    (key) => key !== "open_attachment" && confidence.byAction[key] && !confidence.byAction[key].isProtective
+  );
+
+  const renderActionTable = (keys: string[]) => (
+    <div className="action-table">
+      <div className="action-row header-row">
+        <div>Action</div>
+        <div>Confidence</div>
+        <div className="col-n">n</div>
+        <div>Accuracy</div>
+        <div className="col-state">Pattern</div>
+      </div>
+      {keys.map((key) => {
+        const bucket = confidence.byAction[key];
+        return (
+          <div className="action-row" key={key}>
+            <div className="action-name">{ACTION_CHART_LABELS[key]}</div>
+            <div className="action-conf">{fmtNum(bucket.confidence)}</div>
+            <div className="action-n col-n">{bucket.n}</div>
+            <div className="action-acc">{fmtNum(bucket.accuracy)}</div>
+            <div className="col-state">
+              <StateTag state={bucket.state} />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <>
+      <h2>Overview</h2>
+      <div className="overview-grid">
+        <OverviewCard label="Overall confidence" bucket={confidence.overall} />
+        <OverviewCard label="On phishing emails" bucket={confidence.phishing} />
+        <OverviewCard label="On legitimate emails" bucket={confidence.legit} />
+      </div>
+
+      <div className="insight">
+        <div className="insight-title">The gap worth noticing</div>
+        <div className="insight-compare">
+          <div className="insight-stat">
+            <div className="num-row">
+              <span className="num">{fmtNum(confidence.claimedPhishing.confidence)}</span>
+            </div>
+            <div className="acc">accuracy {fmtNum(confidence.claimedPhishing.accuracy)}</div>
+            <div className="lbl">
+              When flagging
+              <br />
+              something suspicious
+            </div>
+            <div className="state">
+              <StateTag state={confidence.claimedPhishing.state} />
+            </div>
+          </div>
+          <div className="insight-arrow">vs</div>
+          <div className="insight-stat">
+            <div className="num-row">
+              <span className="num">{fmtNum(confidence.claimedLegit.confidence)}</span>
+            </div>
+            <div className="acc">accuracy {fmtNum(confidence.claimedLegit.accuracy)}</div>
+            <div className="lbl">
+              When trusting
+              <br />
+              something
+            </div>
+            <div className="state">
+              <StateTag state={confidence.claimedLegit.state} />
+            </div>
+          </div>
+        </div>
+        <p>{insightNarrative(confidence.claimedPhishing, confidence.claimedLegit)}</p>
+      </div>
+
+      <h2>How to Read the Labels</h2>
+      <div className="legend-row">
+        <div className="legend-chip">
+          <div className="chip-title">
+            <span className="state-dot" style={{ background: "var(--sync)" }} /> In sync
+          </div>
+          <div className="chip-desc">Confidence and accuracy are close. Your gut and the outcome agreed.</div>
+        </div>
+        <div className="legend-chip">
+          <div className="chip-title">
+            <span className="state-dot" style={{ background: "var(--undersold)" }} /> Undersold it
+          </div>
+          <div className="chip-desc">You were more often right than you felt. No downside here.</div>
+        </div>
+        <div className="legend-chip">
+          <div className="chip-title">
+            <span className="state-dot" style={{ background: "var(--oversold)" }} /> Oversold it
+          </div>
+          <div className="chip-desc">Confidence ran ahead of the outcome. Worth a second look.</div>
+        </div>
+        <div className="legend-chip">
+          <div className="chip-title">
+            <span className="state-dot" style={{ background: "var(--neutral)" }} /> Not enough data
+          </div>
+          <div className="chip-desc">Too few of this action to say anything meaningful yet.</div>
+        </div>
+      </div>
+
+      <h2>By Action</h2>
+      {protectiveKeys.length > 0 && (
+        <>
+          <div className="group-label">Protective actions</div>
+          {renderActionTable(protectiveKeys)}
+        </>
+      )}
+      {engagementKeys.length > 0 && (
+        <>
+          <div className="group-label">Engagement actions</div>
+          {renderActionTable(engagementKeys)}
+        </>
+      )}
+      <p className="report-footnote">
+        Patterns are only shown once an action has been used at least 3 times - anything less
+        stays labeled "Not enough data." Within about 10 points, confidence and accuracy count
+        as "in sync"; beyond that, whichever one is higher determines "undersold" or "oversold."
+      </p>
+    </>
+  );
+}
+
+function SelfEfficacyCompare({ report }: { report: PerformanceReport }) {
+  const { selfEfficacy } = report;
+
+  const changeCell = (pre: number, post: number | null | undefined) => {
+    if (post == null) return <td className="self-efficacy-change">—</td>;
+    const diff = post - pre;
+    const sign = diff > 0 ? "+" : "";
+    const cls = diff > 0 ? "positive" : diff < 0 ? "negative" : "";
+    return (
+      <td className={`self-efficacy-change ${cls}`}>
+        {sign}
+        {diff}
+      </td>
+    );
+  };
+
+  return (
+    <table className="self-efficacy-compare">
+      <thead>
+        <tr>
+          <th>Statement</th>
+          <th>Before</th>
+          <th>After</th>
+          <th>Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        {selfEfficacy.statements.map((s) => (
+          <tr key={s.key}>
+            <td className="self-efficacy-statement">{s.text}</td>
+            <td>{s.pre}</td>
+            <td>{s.post ?? "—"}</td>
+            {changeCell(s.pre, s.post)}
+          </tr>
+        ))}
+        <tr className="self-efficacy-total-row">
+          <td className="self-efficacy-statement">Overall average</td>
+          <td>{selfEfficacy.preAverage}</td>
+          <td>{selfEfficacy.postAverage ?? "—"}</td>
+          {changeCell(selfEfficacy.preAverage, selfEfficacy.postAverage)}
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
 function scoreLabel(totalScore: number, maxPossibleScore: number): string {
   if (maxPossibleScore <= 0) return "";
   const pct = totalScore / maxPossibleScore;
@@ -149,19 +374,24 @@ export function DebriefScreen({ participantId }: Props) {
       </p>
 
       {report && (
-        <div className="performance-summary">
-          <h2>Your Performance</h2>
+        <div className="report-card">
+          <h1 className="report-title">Your Results</h1>
+          <p className="report-subtitle">
+            This isn't a score to judge yourself by. It's a look at how you handled these
+            emails and how confident you felt along the way - something to learn from, not
+            worry over.
+          </p>
 
-          <div className="score-headline">
-            <div className="score-headline-value">
+          <h2>Performance</h2>
+          <div className="report-score-headline">
+            <div className="report-score-value">
               {report.totalScore} / {report.maxPossibleScore}
             </div>
-            <div className="score-headline-tag">
+            <div className="report-score-tag">
               {scoreLabel(report.totalScore, report.maxPossibleScore)}
             </div>
           </div>
-
-          <p>
+          <p className="body">
             You made <strong>{report.correctCount}</strong> out of{" "}
             <strong>{report.totalCount}</strong> safe decisions.
           </p>
@@ -175,6 +405,15 @@ export function DebriefScreen({ participantId }: Props) {
             This shows which actions you took on legitimate emails versus phishing emails.
           </p>
           <ActionChart report={report} />
+
+          <ConfidenceSection report={report} />
+
+          <h2>Self-Efficacy: Before vs. After</h2>
+          <p className="chart-intro">
+            How your confidence in your own phishing-handling ability changed from before the
+            task to after.
+          </p>
+          <SelfEfficacyCompare report={report} />
         </div>
       )}
 
