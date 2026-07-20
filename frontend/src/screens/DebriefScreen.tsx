@@ -52,9 +52,9 @@ function ConfusionMatrix({ report }: { report: PerformanceReport }) {
           </tr>
           <tr>
             <th>Actually legitimate</th>
-            <td className="confusion-cell bad">
+            <td className="confusion-cell warn">
               <div className="confusion-cell-value">{report.legit.falsePositive}</div>
-              <div className="confusion-cell-label">False positive</div>
+              <div className="confusion-cell-label">False alarm</div>
             </td>
             <td className="confusion-cell good">
               <div className="confusion-cell-value">{report.legit.handledWell}</div>
@@ -166,8 +166,14 @@ export function DebriefScreen({ participantId }: Props) {
             <strong>{report.totalCount}</strong> safe decisions.
           </p>
 
+          <p className="chart-intro">
+            This shows how you classified each email compared to what it actually was.
+          </p>
           <ConfusionMatrix report={report} />
 
+          <p className="chart-intro">
+            This shows which actions you took on legitimate emails versus phishing emails.
+          </p>
           <ActionChart report={report} />
         </div>
       )}
