@@ -42,10 +42,19 @@ export function DebriefScreen({ participantId }: Props) {
       {report && (
         <div className="performance-summary">
           <h2>Your Performance</h2>
+
+          <div className="score-headline">
+            <div className="score-headline-value">
+              {report.totalScore} / {report.maxPossibleScore}
+            </div>
+            <div className="score-headline-tag">
+              {scoreLabel(report.totalScore, report.maxPossibleScore)}
+            </div>
+          </div>
+
           <p>
             You made <strong>{report.correctCount}</strong> out of{" "}
-            <strong>{report.totalCount}</strong> safe decisions.{" "}
-            {scoreLabel(report.totalScore, report.maxPossibleScore)}
+            <strong>{report.totalCount}</strong> safe decisions.
           </p>
 
           <p>
