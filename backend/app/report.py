@@ -1,28 +1,51 @@
+import json
+
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app import models
+from app.config import settings
 from app.contacts import load_contacts
 from app.emails import load_emails
 
 IT_CONTACT_NAME = "USF IT Help Desk"
 
-# Researcher-facing scoring rubric (never shown to participants as-is) - each
-# decision a participant can make on an email, scored separately depending on
-# whether that email was actually phishing or legitimate. Positive = safe/
-# correct, negative = a miss. "forward_to_it" is a "forward" action whose
-# recipient matches the IT Help Desk contact; any other recipient is a plain
-# "forward".
-SAFE_ACTION_MATRIX: dict[str, dict[str, int]] = {
-    "mark_as_read": {"phishing": -1, "legit": 1},
-    "reply": {"phishing": -2, "legit": 2},
-    "forward": {"phishing": -1, "legit": 2},
-    "forward_to_it": {"phishing": 1, "legit": -1},
-    "delete": {"phishing": 1, "legit": 1},
-    "report": {"phishing": 2, "legit": -2},
-    "click_link": {"phishing": -2, "legit": 2},
-    "open_attachment": {"phishing": -2, "legit": 2},
+REQUIRED_CATEGORIES = {
+    "mark_as_read",
+    "reply",
+    "forward",
+    "forward_to_it",
+    "delete",
+    "report",
+    "click_link",
+    "open_attachment",
 }
+
+
+def load_safe_action_matrix() -> dict[str, dict[str, int]]:
+    """Researcher-facing scoring rubric (never shown to participants as-is) -
+    each decision a participant can make on an email, scored separately
+    depending on whether that email was actually phishing or legitimate.
+    Positive = safe/correct, negative = a miss. "forward_to_it" is a
+    "forward" action whose recipient matches the IT Help Desk contact; any
+    other recipient is a plain "forward".
+    """
+    path = settings.safe_action_matrix_config_path
+    if not path.exists():
+        raise FileNotFoundError(f"Safe action matrix config not found: {path}")
+
+    data = json.loads(path.read_text())
+    missing = REQUIRED_CATEGORIES - data.keys()
+    if missing:
+        raise ValueError(f"Safe action matrix config is missing categories: {sorted(missing)}")
+    for category, scores in data.items():
+        if set(scores.keys()) != {"phishing", "legit"}:
+            raise ValueError(
+                f"Safe action matrix category {category!r} must have exactly "
+                f"'phishing' and 'legit' keys"
+            )
+    return data
+
 
 ACTION_TAKEN_TO_CATEGORY = {
     "ignore": "mark_as_read",
@@ -85,6 +108,8 @@ class PerformanceReport(BaseModel):
 def build_performance_report(db: Session, participant_id: str) -> PerformanceReport:
     emails_by_id = {e.id: e for e in load_emails()}
     it_email = _it_contact_email()
+    matrix = load_safe_action_matrix()
+    matrix_max = max(score for row in matrix.values() for score in row.values())
 
     interactions = (
         db.query(models.EmailInteraction)
@@ -96,13 +121,12 @@ def build_performance_report(db: Session, participant_id: str) -> PerformanceRep
     )
 
     total_score = 0
-    max_possible_score = 0
     correct_count = 0
     total_count = 0
     phishing_total = phishing_caught = phishing_missed = 0
     legit_total = legit_handled_well = legit_false_positive = 0
     action_breakdown: dict[str, ActionBreakdown] = {
-        category: ActionBreakdown(legit_count=0, phishing_count=0) for category in SAFE_ACTION_MATRIX
+        category: ActionBreakdown(legit_count=0, phishing_count=0) for category in matrix
     }
     legit_attachments_opened = phishing_attachments_opened = 0
 
@@ -114,11 +138,9 @@ def build_performance_report(db: Session, participant_id: str) -> PerformanceRep
         truth_key = "phishing" if email.is_phishing else "legit"
         category = _category_for(interaction.action_taken, interaction.recipient, it_email)
 
-        score = SAFE_ACTION_MATRIX[category][truth_key]
-        best_score = max(row[truth_key] for row in SAFE_ACTION_MATRIX.values())
+        score = matrix[category][truth_key]
 
         total_score += score
-        max_possible_score += best_score
         total_count += 1
         if score > 0:
             correct_count += 1
@@ -139,7 +161,7 @@ def build_performance_report(db: Session, participant_id: str) -> PerformanceRep
             action_breakdown[category].legit_count += 1
 
         if interaction.attachment_opened and email.attachment:
-            attachment_score = SAFE_ACTION_MATRIX["open_attachment"][truth_key]
+            attachment_score = matrix["open_attachment"][truth_key]
             total_score += attachment_score
             if email.is_phishing:
                 phishing_attachments_opened += 1
@@ -148,7 +170,7 @@ def build_performance_report(db: Session, participant_id: str) -> PerformanceRep
 
     return PerformanceReport(
         total_score=total_score,
-        max_possible_score=max_possible_score,
+        max_possible_score=matrix_max * total_count,
         correct_count=correct_count,
         total_count=total_count,
         phishing=GroundTruthBreakdown(

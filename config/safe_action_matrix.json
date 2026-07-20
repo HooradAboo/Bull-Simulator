@@ -1,0 +1,10 @@
+{
+  "mark_as_read": { "phishing": -1, "legit": 1 },
+  "reply": { "phishing": -2, "legit": 2 },
+  "forward": { "phishing": -1, "legit": 2 },
+  "forward_to_it": { "phishing": 1, "legit": -1 },
+  "delete": { "phishing": 1, "legit": 1 },
+  "report": { "phishing": 2, "legit": -2 },
+  "click_link": { "phishing": -2, "legit": 2 },
+  "open_attachment": { "phishing": -2, "legit": 2 }
+}
