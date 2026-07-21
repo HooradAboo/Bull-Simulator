@@ -105,7 +105,6 @@ class LegitBreakdown(BaseModel):
     false_positive: int  # incorrectly reported or forwarded to IT as if it were phishing
 
 
-CALIBRATION_MIN_N = 3
 CALIBRATION_SYNC_THRESHOLD = 10
 
 
@@ -113,11 +112,12 @@ def _calibration_state(confidence: float | None, accuracy: float | None, n: int)
     """"in_sync" (within CALIBRATION_SYNC_THRESHOLD points), "undersold"
     (accuracy higher than confidence - they were more often right than they
     felt), "oversold" (confidence higher than accuracy - confidence ran
-    ahead of the outcome), or "not_enough_data" (fewer than
-    CALIBRATION_MIN_N decisions in this bucket).
+    ahead of the outcome), or "no_data" (zero decisions in this bucket -
+    sample sizes here are small enough that even a single decision is
+    treated as meaningful, unlike "no data at all").
     """
-    if n < CALIBRATION_MIN_N or confidence is None or accuracy is None:
-        return "not_enough_data"
+    if n == 0 or confidence is None or accuracy is None:
+        return "no_data"
     diff = confidence - accuracy
     if abs(diff) <= CALIBRATION_SYNC_THRESHOLD:
         return "in_sync"
@@ -128,7 +128,7 @@ class CalibrationBucket(BaseModel):
     confidence: float | None
     accuracy: float | None  # % of decisions in this bucket that were correct
     n: int
-    state: str  # "in_sync" | "undersold" | "oversold" | "not_enough_data"
+    state: str  # "in_sync" | "undersold" | "oversold" | "no_data"
 
 
 class ActionCalibrationBucket(CalibrationBucket):

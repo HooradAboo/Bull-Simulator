@@ -164,7 +164,7 @@ export function submitInteractionRatings(interactionId: number, ratings: Interac
   });
 }
 
-export type CalibrationState = "in_sync" | "undersold" | "oversold" | "not_enough_data";
+export type CalibrationState = "in_sync" | "undersold" | "oversold" | "no_data";
 
 export interface CalibrationBucket {
   confidence: number | null;

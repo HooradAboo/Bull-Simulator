@@ -37,10 +37,13 @@ const STATE_LABELS: Record<CalibrationState, string> = {
   in_sync: "In sync",
   undersold: "Undersold it",
   oversold: "Oversold it",
-  not_enough_data: "Not enough data",
+  no_data: "—",
 };
 
 function StateTag({ state }: { state: CalibrationState }) {
+  if (state === "no_data") {
+    return <span className="state-tag no-data">—</span>;
+  }
   return (
     <span className={`state-tag ${state}`}>
       <span className="state-dot" style={{ background: "currentColor" }} />
@@ -268,12 +271,6 @@ function ConfidenceSection({ report }: { report: PerformanceReport }) {
           </div>
           <div className="chip-desc">Confidence ran ahead of the outcome. Worth a second look.</div>
         </div>
-        <div className="legend-chip">
-          <div className="chip-title">
-            <span className="state-dot" style={{ background: "var(--neutral)" }} /> Not enough data
-          </div>
-          <div className="chip-desc">Too few of this action to say anything meaningful yet.</div>
-        </div>
       </div>
 
       <h2>By Action</h2>
@@ -290,9 +287,8 @@ function ConfidenceSection({ report }: { report: PerformanceReport }) {
         </>
       )}
       <p className="report-footnote">
-        Patterns are only shown once an action has been used at least 3 times - anything less
-        stays labeled "Not enough data." Within about 10 points, confidence and accuracy count
-        as "in sync"; beyond that, whichever one is higher determines "undersold" or "oversold."
+        Within about 10 points, confidence and accuracy count as "in sync"; beyond that,
+        whichever one is higher determines "undersold" or "oversold."
       </p>
     </>
   );

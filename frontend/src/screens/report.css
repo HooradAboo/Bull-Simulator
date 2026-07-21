@@ -275,9 +275,10 @@
   background: rgba(194, 96, 74, 0.1);
   color: var(--oversold);
 }
-.state-tag.not_enough_data {
-  background: rgba(154, 161, 171, 0.12);
+.state-tag.no-data {
+  background: none;
   color: var(--neutral);
+  padding: 3px 4px;
 }
 
 .insight {
