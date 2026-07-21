@@ -303,49 +303,137 @@ function ConfidenceSection({ report }: { report: PerformanceReport }) {
   );
 }
 
-function SelfEfficacyCompare({ report }: { report: PerformanceReport }) {
-  const { selfEfficacy } = report;
+const SELF_EFFICACY_SHORT_LABELS: Record<string, string> = {
+  recognizeLinks: "Identifying indicators",
+  verifyLegitimacy: "Evaluating legitimacy",
+  avoidSuspicious: "Avoiding unsafe actions",
+  verifyTrustedSource: "Verifying requests",
+  reportPhishing: "Reporting attempts",
+  recoverySteps: "Recovering after exposure",
+};
 
-  const changeCell = (pre: number, post: number | null | undefined) => {
-    if (post == null) return <td className="self-efficacy-change">—</td>;
-    const diff = post - pre;
-    const sign = diff > 0 ? "+" : "";
-    const cls = diff > 0 ? "positive" : diff < 0 ? "negative" : "";
+const SHIFT_AXIS_TICKS = [0, 25, 50, 75, 100];
+
+interface ShiftRow {
+  key: string;
+  label: string;
+  pre: number;
+  post: number;
+  change: number;
+}
+
+function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
+  const { selfEfficacy } = report;
+  const allAnswered = selfEfficacy.statements.every((s) => s.post != null);
+
+  if (!allAnswered || selfEfficacy.postAverage == null) {
     return (
-      <td className={`self-efficacy-change ${cls}`}>
-        {sign}
-        {diff}
-      </td>
+      <p className="body">
+        The post-task confidence survey hasn't been completed yet, so a before/after comparison
+        isn't available.
+      </p>
     );
-  };
+  }
+
+  const rows: ShiftRow[] = selfEfficacy.statements
+    .map((s) => ({
+      key: s.key,
+      label: SELF_EFFICACY_SHORT_LABELS[s.key] ?? s.text,
+      pre: s.pre,
+      post: s.post as number,
+      change: Math.round(((s.post as number) - s.pre) * 10) / 10,
+    }))
+    .sort((a, b) => b.change - a.change);
+
+  const overallChange = Math.round((selfEfficacy.postAverage - selfEfficacy.preAverage) * 10) / 10;
+  const overallSign = Math.sign(overallChange);
+  const allSameDirection = rows.every((r) => r.change === 0 || Math.sign(r.change) === overallSign);
+
+  const moveNote = allSameDirection
+    ? overallChange > 0
+      ? "Confidence grew across every area you rated."
+      : overallChange < 0
+        ? "Confidence dropped across every area you rated."
+        : "Confidence stayed about the same across the board."
+    : "The average moved, but the items underneath it did not move together - see below.";
+
+  const minAbsChange = Math.min(...rows.map((r) => Math.abs(r.change)));
+  const barelyMoved = rows.filter((r) => Math.abs(r.change) <= Math.max(3, minAbsChange));
+  const footnote =
+    barelyMoved.length > 0 && barelyMoved.length < rows.length
+      ? `${barelyMoved.map((r) => r.label).join(" and ")} ${
+          barelyMoved.length === 1 ? "is the item" : "are the items"
+        } that barely moved. That's worth checking against whether the task actually gives
+        participants a moment to practice ${
+          barelyMoved.length === 1 ? "it" : "either one"
+        } - a competency can't shift much if nothing in the session exercises it.`
+      : "";
 
   return (
-    <table className="self-efficacy-compare">
-      <thead>
-        <tr>
-          <th>Statement</th>
-          <th>Before</th>
-          <th>After</th>
-          <th>Change</th>
-        </tr>
-      </thead>
-      <tbody>
-        {selfEfficacy.statements.map((s) => (
-          <tr key={s.key}>
-            <td className="self-efficacy-statement">{s.text}</td>
-            <td>{s.pre}</td>
-            <td>{s.post ?? "—"}</td>
-            {changeCell(s.pre, s.post)}
-          </tr>
+    <>
+      <div className="shift-overall">
+        <div className="shift-overall-label">Overall</div>
+        <div className="shift-overall-values">
+          {selfEfficacy.preAverage} <span className="shift-arrow">→</span>{" "}
+          {selfEfficacy.postAverage}
+        </div>
+        <div className="shift-overall-change">
+          {overallChange > 0 ? "+" : ""}
+          {overallChange}
+        </div>
+      </div>
+      <p className="chart-intro">{moveNote}</p>
+
+      <div className="shift-legend">
+        <span className="shift-legend-item">
+          <span className="shift-legend-dot before" /> Before
+        </span>
+        <span className="shift-legend-item">
+          <span className="shift-legend-dot after" /> After
+        </span>
+      </div>
+
+      <div className="shift-rows">
+        {rows.map((row) => (
+          <div className="shift-row" key={row.key}>
+            <div className="shift-row-label">{row.label}</div>
+            <div className="shift-row-track">
+              <div className="shift-track-line" />
+              <div
+                className="shift-connector"
+                style={{
+                  left: `${Math.min(row.pre, row.post)}%`,
+                  width: `${Math.abs(row.post - row.pre)}%`,
+                }}
+              />
+              <div className="shift-dot before" style={{ left: `${row.pre}%` }}>
+                <span className="shift-dot-value">{row.pre}</span>
+              </div>
+              <div className="shift-dot after" style={{ left: `${row.post}%` }}>
+                <span className="shift-dot-value">{row.post}</span>
+              </div>
+            </div>
+            <div className="shift-row-change">
+              {row.change > 0 ? "+" : ""}
+              {row.change}
+            </div>
+          </div>
         ))}
-        <tr className="self-efficacy-total-row">
-          <td className="self-efficacy-statement">Overall average</td>
-          <td>{selfEfficacy.preAverage}</td>
-          <td>{selfEfficacy.postAverage ?? "—"}</td>
-          {changeCell(selfEfficacy.preAverage, selfEfficacy.postAverage)}
-        </tr>
-      </tbody>
-    </table>
+        <div className="shift-axis">
+          <div className="shift-row-label" />
+          <div className="shift-row-track">
+            {SHIFT_AXIS_TICKS.map((t) => (
+              <span className="shift-axis-tick" key={t} style={{ left: `${t}%` }}>
+                {t}
+              </span>
+            ))}
+          </div>
+          <div className="shift-row-change" />
+        </div>
+      </div>
+
+      {footnote && <p className="report-footnote">{footnote}</p>}
+    </>
   );
 }
 
@@ -408,12 +496,12 @@ export function DebriefScreen({ participantId }: Props) {
 
           <ConfidenceSection report={report} />
 
-          <h2>Self-Efficacy: Before vs. After</h2>
+          <h2>How Confidence Shifted, By Competency</h2>
           <p className="chart-intro">
-            How your confidence in your own phishing-handling ability changed from before the
-            task to after.
+            Each item was asked with identical wording before the session and again after.
+            Sorted by size of change, largest first.
           </p>
-          <SelfEfficacyCompare report={report} />
+          <SelfEfficacyShift report={report} />
         </div>
       )}
 
