@@ -197,17 +197,6 @@ def set_interaction_ratings(
     return {"status": "ok"}
 
 
-@app.patch("/interactions/{interaction_id}/attachment-opened")
-def set_attachment_opened(interaction_id: int, db: Session = Depends(get_db)):
-    interaction = db.get(models.EmailInteraction, interaction_id)
-    if not interaction:
-        raise HTTPException(status_code=404, detail="unknown interaction_id")
-
-    interaction.attachment_opened = True
-    db.commit()
-    return {"status": "ok"}
-
-
 @app.post("/interactions/{interaction_id}/hover")
 def log_hover(interaction_id: int, payload: schemas.HoverEventIn, db: Session = Depends(get_db)):
     if not db.get(models.EmailInteraction, interaction_id):

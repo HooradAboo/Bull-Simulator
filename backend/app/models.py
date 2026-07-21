@@ -55,7 +55,6 @@ class EmailInteraction(Base):
     time_to_decision_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     confirmed_at: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     recipient: Mapped[str | None] = mapped_column(String, nullable=True)
-    attachment_opened: Mapped[bool] = mapped_column(Boolean, default=False)
 
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

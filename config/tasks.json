@@ -10,7 +10,7 @@
       { "id": "use_delete", "label": "\"Delete\" at least one email", "type": "action_used", "action": "delete" },
       { "id": "use_ignore", "label": "\"Mark as read\" at least one email", "type": "action_used", "action": "ignore" },
       { "id": "use_click_link", "label": "Click at least one link", "type": "action_used", "action": "click_link" },
-      { "id": "use_open_attachment", "label": "Open at least one attachment", "type": "attachment_opened" }
+      { "id": "use_open_attachment", "label": "Open at least one attachment", "type": "action_used", "action": "open_attachment" }
     ]
   }
 ]

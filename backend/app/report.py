@@ -68,6 +68,7 @@ ACTION_TAKEN_TO_CATEGORY = {
     "report_phishing": "report",
     "delete": "delete",
     "click_link": "click_link",
+    "open_attachment": "open_attachment",
     # "forward" resolves to "forward" or "forward_to_it" - handled separately.
 }
 
@@ -102,11 +103,6 @@ class LegitBreakdown(BaseModel):
     total: int
     handled_well: int  # engaged with normally, or safely ignored/deleted
     false_positive: int  # incorrectly reported or forwarded to IT as if it were phishing
-
-
-class AttachmentBreakdown(BaseModel):
-    legit_opened: int
-    phishing_opened: int
 
 
 CALIBRATION_MIN_N = 3
@@ -169,7 +165,6 @@ class PerformanceReport(BaseModel):
     phishing: GroundTruthBreakdown
     legit: LegitBreakdown
     action_breakdown: dict[str, ActionBreakdown]
-    attachments: AttachmentBreakdown
     confidence: ConfidenceAverages
     self_efficacy: SelfEfficacyBreakdown
 
@@ -234,7 +229,6 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
     action_breakdown: dict[str, ActionBreakdown] = {
         category: ActionBreakdown(legit_count=0, phishing_count=0) for category in matrix
     }
-    legit_attachments_opened = phishing_attachments_opened = 0
 
     conf_overall = _CalibrationAccumulator()
     conf_phishing = _CalibrationAccumulator()
@@ -275,14 +269,6 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
                 legit_handled_well += 1
             action_breakdown[category].legit_count += 1
 
-        if interaction.attachment_opened and email.attachment:
-            attachment_score = matrix["open_attachment"][truth_key]
-            total_score += attachment_score
-            if email.is_phishing:
-                phishing_attachments_opened += 1
-            else:
-                legit_attachments_opened += 1
-
         conf_overall.add(score, interaction.confidence_rating)
         conf_by_action[category].add(score, interaction.confidence_rating)
         if email.is_phishing:
@@ -322,10 +308,6 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
             false_positive=legit_false_positive,
         ),
         action_breakdown=action_breakdown,
-        attachments=AttachmentBreakdown(
-            legit_opened=legit_attachments_opened,
-            phishing_opened=phishing_attachments_opened,
-        ),
         confidence=ConfidenceAverages(
             overall=conf_overall.to_bucket(),
             phishing=conf_phishing.to_bucket(),

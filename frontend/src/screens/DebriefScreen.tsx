@@ -102,10 +102,7 @@ interface ActionChartRow {
 
 function ActionChart({ report }: { report: PerformanceReport }) {
   const rows: ActionChartRow[] = ACTION_CHART_ORDER.map((key) => {
-    const counts =
-      key === "open_attachment"
-        ? { legitCount: report.attachments.legitOpened, phishingCount: report.attachments.phishingOpened }
-        : report.actionBreakdown[key] ?? { legitCount: 0, phishingCount: 0 };
+    const counts = report.actionBreakdown[key] ?? { legitCount: 0, phishingCount: 0 };
     return { key, label: ACTION_CHART_LABELS[key], ...counts };
   }).filter((row) => row.legitCount + row.phishingCount > 0);
 
@@ -175,11 +172,9 @@ function insightNarrative(claimedPhishing: CalibrationBucket, claimedLegit: Cali
 
 function ConfidenceSection({ report }: { report: PerformanceReport }) {
   const { confidence } = report;
-  const protectiveKeys = ACTION_CHART_ORDER.filter(
-    (key) => key !== "open_attachment" && confidence.byAction[key]?.isProtective
-  );
+  const protectiveKeys = ACTION_CHART_ORDER.filter((key) => confidence.byAction[key]?.isProtective);
   const engagementKeys = ACTION_CHART_ORDER.filter(
-    (key) => key !== "open_attachment" && confidence.byAction[key] && !confidence.byAction[key].isProtective
+    (key) => confidence.byAction[key] && !confidence.byAction[key].isProtective
   );
 
   const renderActionTable = (keys: string[]) => (

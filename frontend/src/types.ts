@@ -1,5 +1,6 @@
 export type ActionType =
   | "click_link"
+  | "open_attachment"
   | "reply"
   | "forward"
   | "report_phishing"
@@ -45,7 +46,7 @@ export interface SentItem {
 export interface Subtask {
   id: string;
   label: string;
-  type: "process_all_emails" | "action_used" | "attachment_opened";
+  type: "process_all_emails" | "action_used";
   action?: ActionType;
 }
 

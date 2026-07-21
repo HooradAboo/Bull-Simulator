@@ -164,10 +164,6 @@ export function submitInteractionRatings(interactionId: number, ratings: Interac
   });
 }
 
-export function markAttachmentOpened(interactionId: number) {
-  return patch(`/interactions/${interactionId}/attachment-opened`, {});
-}
-
 export type CalibrationState = "in_sync" | "undersold" | "oversold" | "not_enough_data";
 
 export interface CalibrationBucket {
@@ -211,7 +207,6 @@ export interface PerformanceReport {
   phishing: { total: number; caught: number; missed: number };
   legit: { total: number; handledWell: number; falsePositive: number };
   actionBreakdown: Record<string, { legitCount: number; phishingCount: number }>;
-  attachments: { legitOpened: number; phishingOpened: number };
   confidence: ConfidenceAverages;
   selfEfficacy: SelfEfficacyBreakdown;
 }
@@ -224,7 +219,6 @@ interface PerformanceReportResponse {
   phishing: { total: number; caught: number; missed: number };
   legit: { total: number; handled_well: number; false_positive: number };
   action_breakdown: Record<string, { legit_count: number; phishing_count: number }>;
-  attachments: { legit_opened: number; phishing_opened: number };
   confidence: {
     overall: CalibrationBucket;
     phishing: CalibrationBucket;
@@ -261,10 +255,6 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
         { legitCount: value.legit_count, phishingCount: value.phishing_count },
       ])
     ),
-    attachments: {
-      legitOpened: data.attachments.legit_opened,
-      phishingOpened: data.attachments.phishing_opened,
-    },
     confidence: {
       overall: data.confidence.overall,
       phishing: data.confidence.phishing,

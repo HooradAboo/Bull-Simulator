@@ -29,6 +29,7 @@ function formatReceivedTime(ts: number): string {
 
 const ACTION_LABELS: Record<ActionType, string> = {
   click_link: "Click Link",
+  open_attachment: "Open Attachment",
   reply: "Reply",
   forward: "Forward",
   report_phishing: "Report as Phishing",
@@ -208,7 +209,7 @@ export function ReadingPane({
               className="reading-attachment"
               onClick={(e) => {
                 e.preventDefault();
-                onAttachmentClick();
+                if (!processedInfo) onAttachmentClick();
               }}
             >
               <span

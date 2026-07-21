@@ -18,7 +18,6 @@ import { extractEmail } from "./avatar";
 import {
   confirmInteraction,
   logHover,
-  markAttachmentOpened,
   openInteraction,
   submitInteractionRatings,
   updateCredentialPassword,
@@ -56,6 +55,7 @@ function folderForAction(action: ActionType | undefined): FolderName {
 
 const ACTION_LABELS: Record<ActionType, string> = {
   click_link: "Click a link",
+  open_attachment: "Open an attachment",
   reply: "Reply",
   forward: "Forward",
   report_phishing: "Report as Phishing",
@@ -92,7 +92,6 @@ export function MailClientScreen({
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
   const [requirementNotice, setRequirementNotice] = useState<string[] | null>(null);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
-  const [attachmentOpened, setAttachmentOpened] = useState(false);
 
   const hoverStart = useRef<number | null>(null);
   const { openTab, isMailTabActive, triggerDownload } = useBrowserTabs();
@@ -114,10 +113,9 @@ export function MailClientScreen({
       processedCount: processed.size,
       totalEmails: emails.length,
       usedActions: usedActionTypes,
-      attachmentOpened,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [processed, emails.length, attachmentOpened]);
+  }, [processed, emails.length]);
 
   // If choosing this action would leave more required action types unused
   // than there are remaining emails to use them on, it's about to become
@@ -210,6 +208,12 @@ export function MailClientScreen({
       if (!selectedEmail.link) return;
       openTab(selectedEmail.link);
       setPhase("link-open");
+      return;
+    }
+    if (action === "open_attachment") {
+      if (!selectedEmail.attachment) return;
+      triggerDownload(selectedEmail.attachment);
+      commitAction("open_attachment", null);
       return;
     }
     if (action === "delete" || action === "report_phishing") {
@@ -420,13 +424,7 @@ export function MailClientScreen({
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}
-              onAttachmentClick={() => {
-                if (selectedEmail?.attachment && !processed.has(selectedEmail.id)) {
-                  triggerDownload(selectedEmail.attachment);
-                  setAttachmentOpened(true);
-                  if (interactionId !== null) markAttachmentOpened(interactionId);
-                }
-              }}
+              onAttachmentClick={() => handleSelectAction("open_attachment")}
               onReplySubmit={handleReplySubmit}
               onReplyDiscard={handleReplyCancel}
               onForwardSubmit={handleForwardSubmit}
