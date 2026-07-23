@@ -36,8 +36,26 @@ export function SelfEfficacyScreen({
     onContinue(complete as unknown as SelfEfficacyRatings);
   };
 
+  // Dev convenience only (import.meta.env.DEV is false in a built/packaged
+  // app, so this never runs in a real study session): fills every slider
+  // with a random rating instead of the flat default, then continues
+  // immediately, so pre/post self-efficacy shifts have varied data to
+  // check without manually dragging every slider.
+  const handleDevRandomContinue = () => {
+    const complete: Record<string, number> = {};
+    for (const s of statements) {
+      complete[s.key] = Math.floor(Math.random() * 101);
+    }
+    onContinue(complete as unknown as SelfEfficacyRatings);
+  };
+
   return (
     <PageTemplate title={heading} subtitle={description} wide>
+      {import.meta.env.DEV && (
+        <button className="dev-skip-button" onClick={handleDevRandomContinue}>
+          DEV: Random Fill &amp; Continue
+        </button>
+      )}
       {statements.map((statement) => (
         <div key={statement.key} className="self-efficacy-item">
           <div className="self-efficacy-item-text">{statement.text}</div>

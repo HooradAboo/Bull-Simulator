@@ -30,6 +30,11 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
 
   return (
     <div className="login-page">
+      {import.meta.env.DEV && (
+        <button className="dev-skip-button" onClick={onSuccess}>
+          DEV: Skip Sign In
+        </button>
+      )}
       <div className="login-card">
         <div className="login-wordmark">
           <span className="login-wordmark-line1">UNIVERSITY OF</span>
