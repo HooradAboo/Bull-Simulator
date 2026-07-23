@@ -18,6 +18,7 @@ import { ChangePasswordForm } from "../login/ChangePasswordForm";
 import { extractEmail, senderName } from "./avatar";
 import {
   confirmInteraction,
+  logComposedEmail,
   logHover,
   openInteraction,
   submitInteractionRatings,
@@ -85,6 +86,7 @@ export function MailClientScreen({
   // Mounting this screen means login just succeeded, so the change-password
   // prompt opens on top of the inbox right away instead of on the login page.
   const [passwordStep, setPasswordStep] = useState<PasswordStep>("ask");
+  const [composeOpen, setComposeOpen] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(null);
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
@@ -180,7 +182,7 @@ export function MailClientScreen({
   };
 
   const handleSelectEmail = async (email: DummyEmail) => {
-    if (isMidFlow) return;
+    if (isMidFlow || composeOpen) return;
 
     if (processed.has(email.id)) {
       setSelectedEmail(email);
@@ -252,6 +254,14 @@ export function MailClientScreen({
 
   const handleVerifyContinue = () => {
     commitAction("verify_independently", null);
+  };
+
+  // Composing a fresh message isn't a graded action on any particular
+  // email - it's just an outlet participants can use if they want to reach
+  // out (e.g. to IT or the sender), so it's only logged, not scored.
+  const handleComposeSend = async (recipient: string, subject: string, body: string) => {
+    await logComposedEmail(participantId, recipient, subject, body, Date.now());
+    setComposeOpen(false);
   };
 
   const handleConfirmDestructiveAction = () => {
@@ -407,7 +417,13 @@ export function MailClientScreen({
     <div className="mail-shell">
       <TopBar participantEmail={participantEmail} />
       <TabBar />
-      <Ribbon pendingAction={pendingAction} disabled={ribbonDisabled} onSelectAction={handleSelectAction} />
+      <Ribbon
+        pendingAction={pendingAction}
+        disabled={ribbonDisabled}
+        composeDisabled={phase !== "idle"}
+        onSelectAction={handleSelectAction}
+        onCompose={() => setComposeOpen(true)}
+      />
       <div className="mail-body">
         <FolderSidebar
           currentFolder={currentFolder}
@@ -444,6 +460,7 @@ export function MailClientScreen({
               processedInfo={processedInfo}
               replyMode={phase === "replying"}
               forwardMode={phase === "forwarding"}
+              composeMode={composeOpen}
               contacts={contacts}
               participantEmail={participantEmail}
               onLinkClick={() => handleSelectAction("click_link")}
@@ -454,6 +471,8 @@ export function MailClientScreen({
               onReplyDiscard={handleReplyCancel}
               onForwardSubmit={handleForwardSubmit}
               onForwardDiscard={handleForwardCancel}
+              onComposeSend={handleComposeSend}
+              onComposeDiscard={() => setComposeOpen(false)}
             />
           </>
         )}

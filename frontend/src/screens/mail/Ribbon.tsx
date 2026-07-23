@@ -20,7 +20,9 @@ import type { ActionType } from "../../types";
 interface Props {
   pendingAction: ActionType | null;
   disabled: boolean;
+  composeDisabled: boolean;
   onSelectAction: (action: ActionType) => void;
+  onCompose: () => void;
 }
 
 function DecorativeButton({ icon, label }: { icon: ReactNode; label: string }) {
@@ -34,7 +36,7 @@ function DecorativeButton({ icon, label }: { icon: ReactNode; label: string }) {
   );
 }
 
-export function Ribbon({ pendingAction, disabled, onSelectAction }: Props) {
+export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectAction, onCompose }: Props) {
   const actionButton = (action: ActionType, icon: ReactNode, label: string) => (
     <button
       className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
@@ -50,7 +52,7 @@ export function Ribbon({ pendingAction, disabled, onSelectAction }: Props) {
 
   return (
     <div className="mail-ribbon">
-      <button className="ribbon-btn primary" disabled title="Not used in this study">
+      <button className="ribbon-btn primary" disabled={composeDisabled} onClick={onCompose}>
         <MailAdd20Regular /> New mail
       </button>
 

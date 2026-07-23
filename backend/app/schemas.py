@@ -51,6 +51,14 @@ class InteractionRatings(BaseModel):
     cues_other_text: str | None = None
 
 
+class ComposeEmailLog(BaseModel):
+    participant_id: str
+    recipient: str
+    subject: str
+    body: str
+    composed_at: int
+
+
 class HoverEventIn(BaseModel):
     target: str
     start_ts: int

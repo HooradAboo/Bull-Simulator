@@ -43,6 +43,7 @@ interface Props {
   processedInfo: ProcessedInfo | null;
   replyMode: boolean;
   forwardMode: boolean;
+  composeMode: boolean;
   contacts: Contact[];
   participantEmail: string;
   onLinkClick: () => void;
@@ -53,6 +54,8 @@ interface Props {
   onReplyDiscard: () => void;
   onForwardSubmit: (recipient: string, note: string) => void;
   onForwardDiscard: () => void;
+  onComposeSend: (recipient: string, subject: string, body: string) => void;
+  onComposeDiscard: () => void;
 }
 
 function QuotedMessage({ email }: { email: DummyEmail }) {
@@ -84,6 +87,7 @@ export function ReadingPane({
   processedInfo,
   replyMode,
   forwardMode,
+  composeMode,
   contacts,
   participantEmail,
   onLinkClick,
@@ -94,10 +98,15 @@ export function ReadingPane({
   onReplyDiscard,
   onForwardSubmit,
   onForwardDiscard,
+  onComposeSend,
+  onComposeDiscard,
 }: Props) {
   const [replyBody, setReplyBody] = useState("");
   const [forwardRecipient, setForwardRecipient] = useState("");
   const [forwardNote, setForwardNote] = useState("");
+  const [composeRecipient, setComposeRecipient] = useState("");
+  const [composeSubject, setComposeSubject] = useState("");
+  const [composeBody, setComposeBody] = useState("");
 
   useEffect(() => {
     if (replyMode) setReplyBody("");
@@ -109,6 +118,78 @@ export function ReadingPane({
       setForwardNote("");
     }
   }, [forwardMode]);
+
+  useEffect(() => {
+    if (composeMode) {
+      setComposeRecipient("");
+      setComposeSubject("");
+      setComposeBody("");
+    }
+  }, [composeMode]);
+
+  if (composeMode) {
+    return (
+      <div className="mail-reading-pane">
+        <div className="reading-content">
+          <div className="compose-toolbar">
+            <button
+              className="inline-reply-send"
+              disabled={composeRecipient.trim().length === 0}
+              onClick={() =>
+                onComposeSend(composeRecipient.trim(), composeSubject.trim(), composeBody.trim())
+              }
+            >
+              <Send20Regular /> Send
+            </button>
+            <button className="inline-reply-discard" onClick={onComposeDiscard}>
+              <Delete20Regular /> Discard
+            </button>
+          </div>
+
+          <div className="inline-reply-row">
+            <span className="inline-reply-label">From:</span> {participantEmail}
+          </div>
+          <div className="inline-reply-row inline-reply-to">
+            <span className="inline-reply-label">To</span>
+            <input
+              type="text"
+              id="compose-to"
+              list="compose-contacts-list"
+              className="inline-forward-to-input"
+              placeholder="Type a name/email or pick a suggestion"
+              value={composeRecipient}
+              onChange={(e) => setComposeRecipient(e.target.value)}
+              autoFocus
+            />
+            <datalist id="compose-contacts-list">
+              {contacts.map((contact) => (
+                <option key={contact.email} value={contact.email}>
+                  {contact.name}
+                </option>
+              ))}
+            </datalist>
+            <span className="inline-reply-cc">Cc  Bcc</span>
+          </div>
+          <input
+            type="text"
+            className="compose-subject-input"
+            placeholder="Subject"
+            value={composeSubject}
+            onChange={(e) => setComposeSubject(e.target.value)}
+          />
+
+          <textarea
+            id="compose-body"
+            className="inline-reply-textarea"
+            placeholder="Write your message..."
+            value={composeBody}
+            onChange={(e) => setComposeBody(e.target.value)}
+            rows={8}
+          />
+        </div>
+      </div>
+    );
+  }
 
   if (!email) {
     return (

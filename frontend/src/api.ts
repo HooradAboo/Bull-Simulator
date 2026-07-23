@@ -288,6 +288,22 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
   };
 }
 
+export function logComposedEmail(
+  participantId: string,
+  recipient: string,
+  subject: string,
+  body: string,
+  composedAt: number
+) {
+  return post("/events/compose-email", {
+    participant_id: participantId,
+    recipient,
+    subject,
+    body,
+    composed_at: composedAt,
+  });
+}
+
 export function logHover(
   interactionId: number,
   target: string,

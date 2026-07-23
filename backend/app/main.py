@@ -215,6 +215,26 @@ def log_hover(interaction_id: int, payload: schemas.HoverEventIn, db: Session = 
     return {"status": "ok"}
 
 
+@app.post("/events/compose-email")
+def log_composed_email(payload: schemas.ComposeEmailLog, db: Session = Depends(get_db)):
+    if not db.get(models.Participant, payload.participant_id):
+        raise HTTPException(status_code=404, detail="unknown participant_id")
+
+    event = models.SessionEvent(
+        participant_id=payload.participant_id,
+        event_type="compose_email",
+        timestamp_ms=payload.composed_at,
+        event_metadata={
+            "recipient": payload.recipient,
+            "subject": payload.subject,
+            "body": payload.body,
+        },
+    )
+    db.add(event)
+    db.commit()
+    return {"status": "ok"}
+
+
 @app.post("/events/keystroke")
 def log_keystrokes(payload: schemas.KeystrokeBatch, db: Session = Depends(get_db)):
     db.bulk_save_objects(

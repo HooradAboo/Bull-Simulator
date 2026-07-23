@@ -944,6 +944,18 @@
   font-size: 13.5px;
   color: var(--text-muted);
 }
+.compose-subject-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid #f3f2f1;
+  outline: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--text);
+  background: transparent;
+}
 
 .quoted-message {
   margin-top: 18px;
