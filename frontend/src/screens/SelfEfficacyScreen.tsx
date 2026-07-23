@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSelfEfficacyQuestions } from "../api";
 import type { SelfEfficacyRatings } from "../types";
+import { PageTemplate } from "./PageTemplate";
 
 interface Props {
   onContinue: (ratings: SelfEfficacyRatings) => void;
@@ -36,9 +37,7 @@ export function SelfEfficacyScreen({
   };
 
   return (
-    <div className="screen self-efficacy-screen">
-      <h1>{heading}</h1>
-      <p>{description}</p>
+    <PageTemplate title={heading} subtitle={description} wide>
       {statements.map((statement) => (
         <div key={statement.key} className="self-efficacy-item">
           <div className="self-efficacy-item-text">{statement.text}</div>
@@ -63,7 +62,11 @@ export function SelfEfficacyScreen({
           </div>
         </div>
       ))}
-      <button onClick={handleContinue}>{continueLabel}</button>
-    </div>
+      <div className="page-actions">
+        <button className="page-button" onClick={handleContinue}>
+          {continueLabel}
+        </button>
+      </div>
+    </PageTemplate>
   );
 }

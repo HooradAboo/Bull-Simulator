@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import "./report.css";
+import "./page.css";
 import {
   getPerformanceReport,
   type CalibrationBucket,
   type CalibrationState,
   type PerformanceReport,
 } from "../api";
+import { PageTemplate } from "./PageTemplate";
 
 interface Props {
   participantId: string;
@@ -445,17 +446,16 @@ export function DebriefScreen({ participantId }: Props) {
   }, [participantId]);
 
   return (
-    <div className="screen">
-      <h1>Debrief</h1>
-      <p>
-        [Placeholder debrief text.] Thank you for participating. The emails
-        you saw were part of a research study on phishing susceptibility.
-      </p>
-
+    <PageTemplate
+      title="Debrief"
+      subtitle="[Placeholder debrief text.] Thank you for participating. The emails
+        you saw were part of a research study on phishing susceptibility."
+      wide
+    >
       {report && (
-        <div className="report-card">
-          <h1 className="report-title">Your Results</h1>
-          <p className="report-subtitle">
+        <>
+          <hr className="page-divider" />
+          <p className="page-subtitle">
             This isn't a score to judge yourself by. It's a look at how you handled these
             emails and how confident you felt along the way - something to learn from, not
             worry over.
@@ -493,16 +493,22 @@ export function DebriefScreen({ participantId }: Props) {
             Sorted by size of change, largest first.
           </p>
           <SelfEfficacyShift report={report} />
-        </div>
+          <hr className="page-divider" />
+        </>
       )}
 
-      <label htmlFor="debrief-comments">Any comments? (optional)</label>
-      <textarea
-        id="debrief-comments"
-        value={comments}
-        onChange={(e) => setComments(e.target.value)}
-        rows={4}
-      />
-    </div>
+      <div className="page-field">
+        <label className="page-label" htmlFor="debrief-comments">
+          Any comments? (optional)
+        </label>
+        <textarea
+          id="debrief-comments"
+          className="page-input"
+          value={comments}
+          onChange={(e) => setComments(e.target.value)}
+          rows={4}
+        />
+      </div>
+    </PageTemplate>
   );
 }

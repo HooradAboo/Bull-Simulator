@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getParticipantProfile } from "../api";
+import { PageTemplate } from "./PageTemplate";
 
 interface Props {
   onContinue: (
@@ -38,30 +39,35 @@ export function ResearcherSetupScreen({ onContinue }: Props) {
   };
 
   return (
-    <div className="screen">
-      <h1>Researcher Setup</h1>
-      <p>
-        Enter the participant's NetID before handing over the laptop. Their
+    <PageTemplate
+      title="Researcher Setup"
+      subtitle="Enter the participant's NetID before handing over the laptop. Their
         profile (name, email, and personalization details) is loaded from a
         confidential file that never leaves this machine. None of this is
-        shown to the participant beforehand.
-      </p>
-      <label htmlFor="participant-netid">Participant's NetID</label>
-      <input
-        id="participant-netid"
-        type="text"
-        placeholder="jsmith123"
-        value={netid}
-        onChange={(e) => setNetid(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && isValid && !loading) handleSubmit();
-        }}
-        style={{ display: "block", width: "100%", margin: "0.5rem 0 1rem", padding: "0.5rem" }}
-      />
-      {error && <p style={{ color: "#b00020" }}>{error}</p>}
-      <button disabled={!isValid || loading} onClick={handleSubmit}>
-        {loading ? "Loading..." : "Continue"}
-      </button>
-    </div>
+        shown to the participant beforehand."
+    >
+      <div className="page-field">
+        <label className="page-label" htmlFor="participant-netid">
+          Participant's NetID
+        </label>
+        <input
+          id="participant-netid"
+          className="page-input"
+          type="text"
+          placeholder="jsmith123"
+          value={netid}
+          onChange={(e) => setNetid(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && isValid && !loading) handleSubmit();
+          }}
+        />
+      </div>
+      {error && <p className="page-error">{error}</p>}
+      <div className="page-actions">
+        <button className="page-button" disabled={!isValid || loading} onClick={handleSubmit}>
+          {loading ? "Loading..." : "Continue"}
+        </button>
+      </div>
+    </PageTemplate>
   );
 }

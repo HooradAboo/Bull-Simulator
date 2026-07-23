@@ -88,7 +88,9 @@
       "Bash(curl -s -X PATCH http://127.0.0.1:8001/participants/report-test-participant-3/self-efficacy-post -H 'Content-Type: application/json' -d '{ *)",
       "Bash(kill -9 1082721)",
       "Bash(kill -9 1121474)",
-      "Bash(curl -s -o /dev/null -w \"temp backend: %{http_code}\\\\n\" http://127.0.0.1:8001/health)"
+      "Bash(curl -s -o /dev/null -w \"temp backend: %{http_code}\\\\n\" http://127.0.0.1:8001/health)",
+      "Bash(grep -n \"return \\(\\\\|className={\\\\`\\\\|className=\\\\\"\" screens/DebriefScreen.tsx)",
+      "Bash(npx tsc *)"
     ]
   }
 }

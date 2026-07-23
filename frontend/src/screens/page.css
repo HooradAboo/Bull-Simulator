@@ -1,4 +1,8 @@
-.report-card {
+/* Shared shell behind every non-email screen (setup, consent,
+   instructions, self-efficacy, debrief/report) - a calm, wide, light
+   "research instrument" page, deliberately distinct from the dark app
+   chrome and the simulated OS/browser used during the mail task. */
+.page-shell {
   --card-border: #e2e5e9;
   --text-primary: #16181d;
   --text-muted: #6b7280;
@@ -8,31 +12,161 @@
   --neutral: #9aa1ab;
   --highlight-bg: #f7f5ff;
   --highlight-border: #ddd6fe;
+  --accent: #6d5ce7;
+  --accent-hover: #5c4bd6;
 
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background: #f2f2f5;
+  display: flex;
+  justify-content: center;
+  padding: 56px 24px 72px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+}
+
+.page-card {
+  width: 100%;
+  max-width: 760px;
+  height: fit-content;
   background: #ffffff;
   color: var(--text-primary);
   border: 1px solid var(--card-border);
   border-radius: 16px;
-  padding: 24px 32px 32px;
-  margin: 1.5rem 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  padding: 40px 48px 48px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04);
 }
 
-.report-title {
-  font-size: 24px;
+.page-shell-wide .page-card {
+  max-width: 980px;
+}
+
+.page-title {
+  font-size: 26px;
   font-weight: 700;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
+  color: var(--text-primary);
 }
 
-.report-subtitle {
+.page-subtitle {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.6;
-  max-width: 560px;
+  max-width: 620px;
   margin: 0 0 8px;
 }
 
-.report-card h2 {
+.page-card hr.page-divider {
+  border: none;
+  border-top: 1px solid var(--card-border);
+  margin: 28px 0;
+}
+
+.page-field {
+  margin: 20px 0 24px;
+}
+.page-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.page-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  font-size: 14.5px;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: #fff;
+}
+.page-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(109, 92, 231, 0.15);
+}
+.page-error {
+  color: #c2604a;
+  font-size: 13px;
+  margin: -12px 0 20px;
+}
+
+.page-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+.page-button {
+  appearance: none;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 22px;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  transition: background 0.15s ease;
+}
+.page-button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.page-button:disabled {
+  background: #c9c5e8;
+  cursor: not-allowed;
+}
+.page-button-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+}
+.page-button-secondary:hover:not(:disabled) {
+  background: #f5f5f7;
+}
+
+/* self-efficacy sliders */
+.self-efficacy-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+.self-efficacy-item-text {
+  flex: 0 0 300px;
+  font-size: 14.5px;
+  color: var(--text-primary);
+}
+.self-efficacy-slider-wrap {
+  flex: 1;
+  min-width: 0;
+}
+.self-efficacy-item input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.self-efficacy-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.self-efficacy-value {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+.page-card h2 {
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -59,7 +193,7 @@
   color: var(--text-muted);
 }
 
-.report-card p.body {
+.page-card p.body {
   font-size: 13.5px;
   color: var(--text-primary);
   line-height: 1.6;
@@ -562,7 +696,10 @@
 }
 
 @media (max-width: 480px) {
-  .report-card {
+  .page-shell {
+    padding: 28px 12px 40px;
+  }
+  .page-card {
     padding: 16px 18px 22px;
   }
   .action-row {
