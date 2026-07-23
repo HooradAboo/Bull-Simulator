@@ -438,7 +438,6 @@ function scoreLabel(totalScore: number, maxPossibleScore: number): string {
 }
 
 export function DebriefScreen({ participantId }: Props) {
-  const [comments, setComments] = useState("");
   const [report, setReport] = useState<PerformanceReport | null>(null);
 
   useEffect(() => {
@@ -451,64 +450,53 @@ export function DebriefScreen({ participantId }: Props) {
       subtitle="[Placeholder debrief text.] Thank you for participating. The emails
         you saw were part of a research study on phishing susceptibility."
       wide
+      flush
     >
       {report && (
         <>
           <hr className="page-divider" />
-          <p className="page-subtitle">
-            This isn't a score to judge yourself by. It's a look at how you handled these
-            emails and how confident you felt along the way - something to learn from, not
-            worry over.
-          </p>
+          <div className="report-scroll">
+            <p className="page-subtitle">
+              This isn't a score to judge yourself by. It's a look at how you handled these
+              emails and how confident you felt along the way - something to learn from, not
+              worry over.
+            </p>
 
-          <h2>Performance</h2>
-          <div className="report-score-headline">
-            <div className="report-score-value">
-              {report.totalScore} / {report.maxPossibleScore}
+            <h2>Performance</h2>
+            <div className="report-score-headline">
+              <div className="report-score-value">
+                {report.totalScore} / {report.maxPossibleScore}
+              </div>
+              <div className="report-score-tag">
+                {scoreLabel(report.totalScore, report.maxPossibleScore)}
+              </div>
             </div>
-            <div className="report-score-tag">
-              {scoreLabel(report.totalScore, report.maxPossibleScore)}
-            </div>
+            <p className="body">
+              You made <strong>{report.correctCount}</strong> out of{" "}
+              <strong>{report.totalCount}</strong> safe decisions.
+            </p>
+
+            <p className="chart-intro">
+              This shows how you classified each email compared to what it actually was.
+            </p>
+            <ConfusionMatrix report={report} />
+
+            <p className="chart-intro">
+              This shows which actions you took on legitimate emails versus phishing emails.
+            </p>
+            <ActionChart report={report} />
+
+            <ConfidenceSection report={report} />
+
+            <h2>How Confidence Shifted, By Competency</h2>
+            <p className="chart-intro">
+              Each item was asked with identical wording before the session and again after.
+              Sorted by size of change, largest first.
+            </p>
+            <SelfEfficacyShift report={report} />
           </div>
-          <p className="body">
-            You made <strong>{report.correctCount}</strong> out of{" "}
-            <strong>{report.totalCount}</strong> safe decisions.
-          </p>
-
-          <p className="chart-intro">
-            This shows how you classified each email compared to what it actually was.
-          </p>
-          <ConfusionMatrix report={report} />
-
-          <p className="chart-intro">
-            This shows which actions you took on legitimate emails versus phishing emails.
-          </p>
-          <ActionChart report={report} />
-
-          <ConfidenceSection report={report} />
-
-          <h2>How Confidence Shifted, By Competency</h2>
-          <p className="chart-intro">
-            Each item was asked with identical wording before the session and again after.
-            Sorted by size of change, largest first.
-          </p>
-          <SelfEfficacyShift report={report} />
-          <hr className="page-divider" />
         </>
       )}
-
-      <div className="page-field">
-        <label className="page-label" htmlFor="debrief-comments">
-          Any comments? (optional)
-        </label>
-        <textarea
-          id="debrief-comments"
-          className="page-input"
-          value={comments}
-          onChange={(e) => setComments(e.target.value)}
-          rows={4}
-        />
-      </div>
     </PageTemplate>
   );
 }

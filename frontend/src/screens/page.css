@@ -64,6 +64,36 @@
   margin: 28px 0;
 }
 
+.report-scroll {
+  overflow-y: auto;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: #fbfbfc;
+  padding: 20px 24px;
+  max-height: 55vh;
+}
+
+/* Debrief opts into this - the card is pinned to the viewport height so
+   only .report-scroll (not the whole page) ever scrolls. */
+.page-shell-flush {
+  overflow: hidden;
+}
+.page-shell-flush .page-card {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.page-shell-flush .page-card > *:not(.report-scroll) {
+  flex-shrink: 0;
+}
+.page-shell-flush .report-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+}
+
 .page-field {
   margin: 20px 0 24px;
 }
