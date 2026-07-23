@@ -28,6 +28,7 @@ interface Props {
   deletedCount: number;
   junkCount: number;
   sentCount: number;
+  draftsCount: number;
   participantEmail: string;
   tasks: TaskConfig[];
   onSelectFolder: (folder: FolderName) => void;
@@ -39,6 +40,7 @@ export function FolderSidebar({
   deletedCount,
   junkCount,
   sentCount,
+  draftsCount,
   participantEmail,
   tasks,
   onSelectFolder,
@@ -84,11 +86,14 @@ export function FolderSidebar({
           </span>
           Sent Items{sentCount > 0 ? ` (${sentCount})` : ""}
         </div>
-        <div className="folder-row" title="Not used in this study">
+        <div
+          className={`folder-row ${currentFolder === "drafts" ? "active" : ""}`}
+          onClick={() => onSelectFolder("drafts")}
+        >
           <span className="folder-icon" aria-hidden="true">
             <DocumentEdit20Regular />
           </span>
-          Drafts
+          Drafts{draftsCount > 0 ? ` (${draftsCount})` : ""}
         </div>
         <div
           className={`folder-row ${currentFolder === "deleted" ? "active" : ""}`}

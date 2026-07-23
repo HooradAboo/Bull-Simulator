@@ -54,7 +54,13 @@ interface Props {
   onReplyDiscard: () => void;
   onForwardSubmit: (recipient: string, note: string) => void;
   onForwardDiscard: () => void;
-  onComposeSend: (recipient: string, subject: string, body: string) => void;
+  composeRecipient: string;
+  onComposeRecipientChange: (value: string) => void;
+  composeSubject: string;
+  onComposeSubjectChange: (value: string) => void;
+  composeBody: string;
+  onComposeBodyChange: (value: string) => void;
+  onComposeSend: () => void;
   onComposeDiscard: () => void;
 }
 
@@ -98,15 +104,18 @@ export function ReadingPane({
   onReplyDiscard,
   onForwardSubmit,
   onForwardDiscard,
+  composeRecipient,
+  onComposeRecipientChange,
+  composeSubject,
+  onComposeSubjectChange,
+  composeBody,
+  onComposeBodyChange,
   onComposeSend,
   onComposeDiscard,
 }: Props) {
   const [replyBody, setReplyBody] = useState("");
   const [forwardRecipient, setForwardRecipient] = useState("");
   const [forwardNote, setForwardNote] = useState("");
-  const [composeRecipient, setComposeRecipient] = useState("");
-  const [composeSubject, setComposeSubject] = useState("");
-  const [composeBody, setComposeBody] = useState("");
 
   useEffect(() => {
     if (replyMode) setReplyBody("");
@@ -119,14 +128,6 @@ export function ReadingPane({
     }
   }, [forwardMode]);
 
-  useEffect(() => {
-    if (composeMode) {
-      setComposeRecipient("");
-      setComposeSubject("");
-      setComposeBody("");
-    }
-  }, [composeMode]);
-
   if (composeMode) {
     return (
       <div className="mail-reading-pane">
@@ -135,9 +136,7 @@ export function ReadingPane({
             <button
               className="inline-reply-send"
               disabled={composeRecipient.trim().length === 0}
-              onClick={() =>
-                onComposeSend(composeRecipient.trim(), composeSubject.trim(), composeBody.trim())
-              }
+              onClick={onComposeSend}
             >
               <Send20Regular /> Send
             </button>
@@ -158,7 +157,7 @@ export function ReadingPane({
               className="inline-forward-to-input"
               placeholder="Type a name/email or pick a suggestion"
               value={composeRecipient}
-              onChange={(e) => setComposeRecipient(e.target.value)}
+              onChange={(e) => onComposeRecipientChange(e.target.value)}
               autoFocus
             />
             <datalist id="compose-contacts-list">
@@ -175,7 +174,7 @@ export function ReadingPane({
             className="compose-subject-input"
             placeholder="Subject"
             value={composeSubject}
-            onChange={(e) => setComposeSubject(e.target.value)}
+            onChange={(e) => onComposeSubjectChange(e.target.value)}
           />
 
           <textarea
@@ -183,7 +182,7 @@ export function ReadingPane({
             className="inline-reply-textarea"
             placeholder="Write your message..."
             value={composeBody}
-            onChange={(e) => setComposeBody(e.target.value)}
+            onChange={(e) => onComposeBodyChange(e.target.value)}
             rows={8}
           />
         </div>

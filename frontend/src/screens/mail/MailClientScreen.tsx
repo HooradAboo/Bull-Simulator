@@ -13,6 +13,7 @@ import { VerifyChannelModal } from "./VerifyChannelModal";
 import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
+import { DraftsPane } from "./DraftsPane";
 import { ChangePasswordPrompt } from "../login/ChangePasswordPrompt";
 import { ChangePasswordForm } from "../login/ChangePasswordForm";
 import { extractEmail, senderName } from "./avatar";
@@ -87,6 +88,9 @@ export function MailClientScreen({
   // prompt opens on top of the inbox right away instead of on the login page.
   const [passwordStep, setPasswordStep] = useState<PasswordStep>("ask");
   const [composeOpen, setComposeOpen] = useState(false);
+  const [composeRecipient, setComposeRecipient] = useState("");
+  const [composeSubject, setComposeSubject] = useState("");
+  const [composeBody, setComposeBody] = useState("");
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(null);
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
@@ -256,11 +260,42 @@ export function MailClientScreen({
     commitAction("verify_independently", null);
   };
 
+  const handleStartCompose = () => {
+    setComposeRecipient("");
+    setComposeSubject("");
+    setComposeBody("");
+    setComposeOpen(true);
+  };
+
   // Composing a fresh message isn't a graded action on any particular
   // email - it's just an outlet participants can use if they want to reach
-  // out (e.g. to IT or the sender), so it's only logged, not scored.
-  const handleComposeSend = async (recipient: string, subject: string, body: string) => {
-    await logComposedEmail(participantId, recipient, subject, body, Date.now());
+  // out (e.g. to IT or the sender), so it's only logged, not scored. Still
+  // lands in Sent Items so the inbox stays internally consistent.
+  const handleComposeSend = async () => {
+    const recipient = composeRecipient.trim();
+    const subject = composeSubject.trim();
+    const body = composeBody.trim();
+    const sentAt = Date.now();
+    await logComposedEmail(participantId, recipient, subject, body, sentAt);
+    setSentItems((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        originalEmailId: "",
+        kind: "compose",
+        subject,
+        body,
+        originalSender: "",
+        link: null,
+        attachment: null,
+        recipient,
+        sentAt,
+      },
+    ]);
+    setComposeOpen(false);
+  };
+
+  const handleComposeDiscard = () => {
     setComposeOpen(false);
   };
 
@@ -422,7 +457,7 @@ export function MailClientScreen({
         disabled={ribbonDisabled}
         composeDisabled={phase !== "idle"}
         onSelectAction={handleSelectAction}
-        onCompose={() => setComposeOpen(true)}
+        onCompose={handleStartCompose}
       />
       <div className="mail-body">
         <FolderSidebar
@@ -431,6 +466,7 @@ export function MailClientScreen({
           deletedCount={deletedCount}
           junkCount={junkCount}
           sentCount={sentItems.length}
+          draftsCount={composeOpen ? 1 : 0}
           participantEmail={participantEmail}
           tasks={tasks}
           onSelectFolder={handleSelectFolder}
@@ -443,6 +479,40 @@ export function MailClientScreen({
               onSelect={setSelectedSentItem}
             />
             <SentItemReadingPane item={selectedSentItem} />
+          </>
+        ) : currentFolder === "drafts" ? (
+          <>
+            <DraftsPane
+              hasDraft={composeOpen}
+              recipient={composeRecipient}
+              subject={composeSubject}
+              onSelect={() => setComposeOpen(true)}
+            />
+            <ReadingPane
+              email={null}
+              processedInfo={null}
+              replyMode={false}
+              forwardMode={false}
+              composeMode={composeOpen}
+              contacts={contacts}
+              participantEmail={participantEmail}
+              onLinkClick={() => {}}
+              onLinkHoverStart={() => {}}
+              onLinkHoverEnd={() => {}}
+              onAttachmentClick={() => {}}
+              onReplySubmit={() => {}}
+              onReplyDiscard={() => {}}
+              onForwardSubmit={() => {}}
+              onForwardDiscard={() => {}}
+              composeRecipient={composeRecipient}
+              onComposeRecipientChange={setComposeRecipient}
+              composeSubject={composeSubject}
+              onComposeSubjectChange={setComposeSubject}
+              composeBody={composeBody}
+              onComposeBodyChange={setComposeBody}
+              onComposeSend={handleComposeSend}
+              onComposeDiscard={handleComposeDiscard}
+            />
           </>
         ) : (
           <>
@@ -471,8 +541,14 @@ export function MailClientScreen({
               onReplyDiscard={handleReplyCancel}
               onForwardSubmit={handleForwardSubmit}
               onForwardDiscard={handleForwardCancel}
+              composeRecipient={composeRecipient}
+              onComposeRecipientChange={setComposeRecipient}
+              composeSubject={composeSubject}
+              onComposeSubjectChange={setComposeSubject}
+              composeBody={composeBody}
+              onComposeBodyChange={setComposeBody}
               onComposeSend={handleComposeSend}
-              onComposeDiscard={() => setComposeOpen(false)}
+              onComposeDiscard={handleComposeDiscard}
             />
           </>
         )}

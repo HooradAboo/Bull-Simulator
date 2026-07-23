@@ -24,7 +24,7 @@ export interface ProcessedInfo {
   recipient?: string | null;
 }
 
-export type FolderName = "inbox" | "deleted" | "junk" | "sent";
+export type FolderName = "inbox" | "deleted" | "junk" | "sent" | "drafts";
 
 export interface Contact {
   name: string;
@@ -34,7 +34,7 @@ export interface Contact {
 export interface SentItem {
   id: string;
   originalEmailId: string;
-  kind: "forward" | "reply";
+  kind: "forward" | "reply" | "compose";
   subject: string;
   body: string;
   originalSender: string;
