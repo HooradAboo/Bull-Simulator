@@ -42,23 +42,30 @@ export function SelfEfficacyScreen({
         <div key={statement.key} className="self-efficacy-item">
           <div className="self-efficacy-item-text">{statement.text}</div>
           <div className="self-efficacy-slider-wrap">
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={ratings[statement.key] ?? DEFAULT_RATING}
-              onChange={(e) =>
-                setRatings((prev) => ({
-                  ...prev,
-                  [statement.key]: Number(e.target.value),
-                }))
-              }
-            />
+            <div className="slider-track-wrap">
+              <div
+                className="slider-value-bubble"
+                style={{ left: `${ratings[statement.key] ?? DEFAULT_RATING}%` }}
+              >
+                {ratings[statement.key] ?? DEFAULT_RATING}
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={ratings[statement.key] ?? DEFAULT_RATING}
+                onChange={(e) =>
+                  setRatings((prev) => ({
+                    ...prev,
+                    [statement.key]: Number(e.target.value),
+                  }))
+                }
+              />
+            </div>
             <div className="self-efficacy-scale-labels">
               <span>Cannot do at all</span>
               <span>Highly certain can do</span>
             </div>
-            <div className="self-efficacy-value">{ratings[statement.key] ?? DEFAULT_RATING}</div>
           </div>
         </div>
       ))}

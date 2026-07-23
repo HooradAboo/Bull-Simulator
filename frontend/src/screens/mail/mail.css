@@ -696,7 +696,22 @@
 }
 .confidence-box input[type="range"] {
   width: 100%;
+  display: block;
   accent-color: var(--usf-green);
+}
+.slider-track-wrap {
+  position: relative;
+  padding-top: 20px;
+}
+.slider-value-bubble {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--usf-green);
+  pointer-events: none;
+  white-space: nowrap;
 }
 .confidence-scale-labels {
   display: flex;
@@ -704,12 +719,6 @@
   font-size: 11.5px;
   color: var(--text-muted);
   margin-top: 4px;
-}
-.confidence-box .value {
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-muted);
-  margin: 6px 0 14px;
 }
 .confidence-box .confidence-submit {
   background: var(--usf-green);

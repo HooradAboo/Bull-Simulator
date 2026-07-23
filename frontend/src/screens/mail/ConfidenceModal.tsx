@@ -76,18 +76,22 @@ export function ConfidenceModal({
         </div>
 
         <h3>How confident are you in that decision?</h3>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={judgmentConfidenceValue}
-          onChange={(e) => onJudgmentConfidenceChange(Number(e.target.value))}
-        />
+        <div className="slider-track-wrap">
+          <div className="slider-value-bubble" style={{ left: `${judgmentConfidenceValue}%` }}>
+            {judgmentConfidenceValue}
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={judgmentConfidenceValue}
+            onChange={(e) => onJudgmentConfidenceChange(Number(e.target.value))}
+          />
+        </div>
         <div className="confidence-scale-labels">
           <span>Not at all confident</span>
           <span>Extremely confident</span>
         </div>
-        <div className="value">{judgmentConfidenceValue}</div>
 
         <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
         <div className="cue-options">
@@ -113,18 +117,22 @@ export function ConfidenceModal({
         )}
 
         <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={confidenceValue}
-          onChange={(e) => onConfidenceChange(Number(e.target.value))}
-        />
+        <div className="slider-track-wrap">
+          <div className="slider-value-bubble" style={{ left: `${confidenceValue}%` }}>
+            {confidenceValue}
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={confidenceValue}
+            onChange={(e) => onConfidenceChange(Number(e.target.value))}
+          />
+        </div>
         <div className="confidence-scale-labels">
           <span>Not at all confident</span>
           <span>Extremely confident</span>
         </div>
-        <div className="value">{confidenceValue}</div>
 
         <h3>How difficult was this decision?</h3>
         <div className="likert-options">
