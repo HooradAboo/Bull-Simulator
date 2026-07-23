@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { PerceivedLegitimacy } from "../../api";
 
 const DIFFICULTY_OPTIONS: { value: number; label: string }[] = [
@@ -20,6 +21,8 @@ const CUE_OPTIONS: { key: string; label: string }[] = [
   { key: "branding_logo", label: "Branding/logo" },
   { key: "other", label: "Something else" },
 ];
+
+const TOTAL_STEPS = 3;
 
 interface Props {
   perceivedLegitimacy: PerceivedLegitimacy | null;
@@ -54,107 +57,141 @@ export function ConfidenceModal({
   onOtherCueTextChange,
   onSubmit,
 }: Props) {
+  const [step, setStep] = useState(1);
+
   return (
     <div className="modal-backdrop">
       <div className="confidence-box">
-        <h3>Do you trust this email, or does it look suspicious?</h3>
-        <div className="judgment-buttons">
-          <button
-            type="button"
-            className={`judgment-button${perceivedLegitimacy === "trust" ? " selected" : ""}`}
-            onClick={() => onPerceivedLegitimacyChange("trust")}
-          >
-            I'd trust this email
-          </button>
-          <button
-            type="button"
-            className={`judgment-button${perceivedLegitimacy === "suspicious" ? " selected" : ""}`}
-            onClick={() => onPerceivedLegitimacyChange("suspicious")}
-          >
-            This looks suspicious
-          </button>
+        <div className="confidence-step-indicator">
+          Step {step} of {TOTAL_STEPS}
         </div>
 
-        <h3>How confident are you in that decision?</h3>
-        <div className="slider-track-wrap">
-          <div className="slider-value-bubble" style={{ left: `${judgmentConfidenceValue}%` }}>
-            {judgmentConfidenceValue}
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={judgmentConfidenceValue}
-            onChange={(e) => onJudgmentConfidenceChange(Number(e.target.value))}
-          />
-        </div>
-        <div className="confidence-scale-labels">
-          <span>Not at all confident</span>
-          <span>Extremely confident</span>
-        </div>
+        {step === 1 && (
+          <>
+            <h3>Do you trust this email, or does it look suspicious?</h3>
+            <div className="judgment-buttons">
+              <button
+                type="button"
+                className={`judgment-button${perceivedLegitimacy === "trust" ? " selected" : ""}`}
+                onClick={() => onPerceivedLegitimacyChange("trust")}
+              >
+                I'd trust this email
+              </button>
+              <button
+                type="button"
+                className={`judgment-button${perceivedLegitimacy === "suspicious" ? " selected" : ""}`}
+                onClick={() => onPerceivedLegitimacyChange("suspicious")}
+              >
+                This looks suspicious
+              </button>
+            </div>
 
-        <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
-        <div className="cue-options">
-          {CUE_OPTIONS.map((cue) => (
-            <label key={cue.key} className="cue-option">
+            <h3>How confident are you in that decision?</h3>
+            <div className="slider-track-wrap">
+              <div className="slider-value-bubble" style={{ left: `${judgmentConfidenceValue}%` }}>
+                {judgmentConfidenceValue}
+              </div>
               <input
-                type="checkbox"
-                checked={selectedCues.includes(cue.key)}
-                onChange={() => onToggleCue(cue.key)}
+                type="range"
+                min={0}
+                max={100}
+                value={judgmentConfidenceValue}
+                onChange={(e) => onJudgmentConfidenceChange(Number(e.target.value))}
               />
-              {cue.label}
-            </label>
-          ))}
-        </div>
-        {selectedCues.includes("other") && (
-          <input
-            type="text"
-            className="cue-other-input"
-            placeholder="What else influenced your decision?"
-            value={otherCueText}
-            onChange={(e) => onOtherCueTextChange(e.target.value)}
-          />
+            </div>
+            <div className="confidence-scale-labels">
+              <span>Not at all confident</span>
+              <span>Extremely confident</span>
+            </div>
+          </>
         )}
 
-        <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
-        <div className="slider-track-wrap">
-          <div className="slider-value-bubble" style={{ left: `${confidenceValue}%` }}>
-            {confidenceValue}
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={confidenceValue}
-            onChange={(e) => onConfidenceChange(Number(e.target.value))}
-          />
-        </div>
-        <div className="confidence-scale-labels">
-          <span>Not at all confident</span>
-          <span>Extremely confident</span>
-        </div>
+        {step === 2 && (
+          <>
+            <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
+            <div className="cue-options">
+              {CUE_OPTIONS.map((cue) => (
+                <label key={cue.key} className="cue-option">
+                  <input
+                    type="checkbox"
+                    checked={selectedCues.includes(cue.key)}
+                    onChange={() => onToggleCue(cue.key)}
+                  />
+                  {cue.label}
+                </label>
+              ))}
+            </div>
+            {selectedCues.includes("other") && (
+              <input
+                type="text"
+                className="cue-other-input"
+                placeholder="What else influenced your decision?"
+                value={otherCueText}
+                onChange={(e) => onOtherCueTextChange(e.target.value)}
+              />
+            )}
+          </>
+        )}
 
-        <h3>How difficult was this decision?</h3>
-        <div className="likert-options">
-          {DIFFICULTY_OPTIONS.map((option) => (
+        {step === 3 && (
+          <>
+            <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
+            <div className="slider-track-wrap">
+              <div className="slider-value-bubble" style={{ left: `${confidenceValue}%` }}>
+                {confidenceValue}
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={confidenceValue}
+                onChange={(e) => onConfidenceChange(Number(e.target.value))}
+              />
+            </div>
+            <div className="confidence-scale-labels">
+              <span>Not at all confident</span>
+              <span>Extremely confident</span>
+            </div>
+
+            <h3>How difficult was this decision?</h3>
+            <div className="likert-options">
+              {DIFFICULTY_OPTIONS.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`likert-option${difficultyValue === option.value ? " selected" : ""}`}
+                  onClick={() => onDifficultyChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className="confidence-nav">
+          {step > 1 ? (
+            <button type="button" className="confidence-back" onClick={() => setStep(step - 1)}>
+              Back
+            </button>
+          ) : (
+            <span />
+          )}
+          {step < TOTAL_STEPS ? (
             <button
               type="button"
-              key={option.value}
-              className={`likert-option${difficultyValue === option.value ? " selected" : ""}`}
-              onClick={() => onDifficultyChange(option.value)}
+              className="confidence-submit"
+              onClick={() => setStep(step + 1)}
+              disabled={step === 1 && perceivedLegitimacy === null}
             >
-              {option.label}
+              Next
             </button>
-          ))}
+          ) : (
+            <button className="confidence-submit" onClick={onSubmit}>
+              Submit
+            </button>
+          )}
         </div>
-
-        <button
-          className="confidence-submit"
-          onClick={onSubmit}
-          disabled={perceivedLegitimacy === null}
-        >
-          Submit
-        </button>
       </div>
     </div>
   );
