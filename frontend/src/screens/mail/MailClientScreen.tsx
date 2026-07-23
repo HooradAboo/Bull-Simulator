@@ -75,6 +75,72 @@ const ACTION_LABELS: Record<ActionType, string> = {
   verify_independently: "Verify Independently",
 };
 
+const ALL_ACTIONS: ActionType[] = [
+  "click_link",
+  "open_attachment",
+  "reply",
+  "forward",
+  "report_phishing",
+  "delete",
+  "ignore",
+  "verify_independently",
+];
+
+const CUE_KEYS = [
+  "sender",
+  "subject_line",
+  "links",
+  "attachments",
+  "wording_tone",
+  "urgency",
+  "personal_info_request",
+  "spelling_grammar",
+  "branding_logo",
+];
+
+function randomOf<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function actionIsValidFor(action: ActionType, email: DummyEmail): boolean {
+  if (action === "click_link") return !!email.link;
+  if (action === "open_attachment") return !!email.attachment;
+  return true;
+}
+
+function pickRandomAction(email: DummyEmail): ActionType {
+  return randomOf(ALL_ACTIONS.filter((a) => actionIsValidFor(a, email)));
+}
+
+// Guarantees every action type gets used at least once (subject to
+// per-email constraints like needing a link/attachment) rather than
+// leaving that to chance, then fills the rest of the emails randomly.
+function assignRandomActions(
+  emails: DummyEmail[],
+  alreadyUsed: Set<ActionType>
+): Map<string, ActionType> {
+  const shuffled = [...emails].sort(() => Math.random() - 0.5);
+  const assignments = new Map<string, ActionType>();
+  const claimed = new Set<string>();
+
+  for (const action of ALL_ACTIONS) {
+    if (alreadyUsed.has(action)) continue;
+    const candidate = shuffled.find((e) => !claimed.has(e.id) && actionIsValidFor(action, e));
+    if (candidate) {
+      assignments.set(candidate.id, action);
+      claimed.add(candidate.id);
+    }
+  }
+
+  for (const email of shuffled) {
+    if (!assignments.has(email.id)) {
+      assignments.set(email.id, pickRandomAction(email));
+    }
+  }
+
+  return assignments;
+}
+
 export function MailClientScreen({
   participantId,
   participantEmail,
@@ -423,6 +489,51 @@ export function MailClientScreen({
     }
   };
 
+  // Dev convenience only (import.meta.env.DEV is false in a built/packaged
+  // app, so this never runs in a real study session): auto-processes every
+  // remaining email with randomized (not just "mark as read") actions and
+  // confidence/difficulty ratings, guaranteeing every action type is used
+  // at least once, so the debrief report has varied, realistic-looking
+  // data to check without manually clicking through the whole inbox.
+  const handleDevSkipAllEmails = async () => {
+    const remaining = emails.filter((e) => !processed.has(e.id));
+    const alreadyUsed = new Set(Array.from(processed.values()).map((p) => p.action));
+    const assignments = assignRandomActions(remaining, alreadyUsed);
+
+    const updated = new Map(processed);
+    for (const email of remaining) {
+      const action = assignments.get(email.id)!;
+      const recipient =
+        action === "reply" || action === "forward"
+          ? contacts.length > 0
+            ? randomOf(contacts).email
+            : "someone@example.com"
+          : null;
+
+      const openedAt = Date.now();
+      const id = await openInteraction(participantId, email.id, openedAt);
+      const confirmedAt = Date.now();
+      await confirmInteraction(id, action, false, confirmedAt, confirmedAt - openedAt, recipient);
+
+      const numCues = Math.floor(Math.random() * 3);
+      const cuesNoticed = [...CUE_KEYS].sort(() => Math.random() - 0.5).slice(0, numCues);
+      const confidence = Math.floor(Math.random() * 101);
+
+      await submitInteractionRatings(id, {
+        perceivedLegitimacy: Math.random() < 0.5 ? "trust" : "suspicious",
+        judgmentConfidenceRating: Math.floor(Math.random() * 101),
+        confidenceRating: confidence,
+        difficultyRating: 1 + Math.floor(Math.random() * 5),
+        cuesNoticed,
+        cuesOtherText: null,
+      });
+
+      updated.set(email.id, { action, confidence, recipient });
+    }
+    setProcessed(updated);
+    onAllProcessed();
+  };
+
   const handleLinkHoverStart = () => {
     hoverStart.current = Date.now();
   };
@@ -450,6 +561,11 @@ export function MailClientScreen({
 
   return (
     <div className="mail-shell">
+      {import.meta.env.DEV && (
+        <button className="dev-skip-button" onClick={handleDevSkipAllEmails}>
+          DEV: Skip Remaining Emails (random)
+        </button>
+      )}
       <TopBar participantEmail={participantEmail} />
       <TabBar />
       <Ribbon
