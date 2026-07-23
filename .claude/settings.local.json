@@ -91,7 +91,8 @@
       "Bash(curl -s -o /dev/null -w \"temp backend: %{http_code}\\\\n\" http://127.0.0.1:8001/health)",
       "Bash(grep -n \"return \\(\\\\|className={\\\\`\\\\|className=\\\\\"\" screens/DebriefScreen.tsx)",
       "Bash(npx tsc *)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(node -e ' *)"
     ]
   }
 }

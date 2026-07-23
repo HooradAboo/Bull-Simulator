@@ -9,12 +9,13 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
+import { VerifyChannelModal } from "./VerifyChannelModal";
 import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { ChangePasswordPrompt } from "../login/ChangePasswordPrompt";
 import { ChangePasswordForm } from "../login/ChangePasswordForm";
-import { extractEmail } from "./avatar";
+import { extractEmail, senderName } from "./avatar";
 import {
   confirmInteraction,
   logHover,
@@ -34,7 +35,14 @@ import type {
   TaskConfig,
 } from "../../types";
 
-type Phase = "idle" | "confirming" | "forwarding" | "replying" | "link-open" | "confidence";
+type Phase =
+  | "idle"
+  | "confirming"
+  | "forwarding"
+  | "replying"
+  | "link-open"
+  | "verifying"
+  | "confidence";
 
 type PasswordStep = "ask" | "form" | "done";
 
@@ -62,6 +70,7 @@ const ACTION_LABELS: Record<ActionType, string> = {
   report_phishing: "Report as Phishing",
   delete: "Delete",
   ignore: "Mark as read",
+  verify_independently: "Verify Independently",
 };
 
 export function MailClientScreen({
@@ -219,6 +228,11 @@ export function MailClientScreen({
       commitAction("open_attachment", null);
       return;
     }
+    if (action === "verify_independently") {
+      setPendingAction(action);
+      setPhase("verifying");
+      return;
+    }
     if (action === "delete" || action === "report_phishing") {
       setConfirmingAction(action);
       setPhase("confirming");
@@ -234,6 +248,10 @@ export function MailClientScreen({
     }
 
     commitAction(action, null);
+  };
+
+  const handleVerifyContinue = () => {
+    commitAction("verify_independently", null);
   };
 
   const handleConfirmDestructiveAction = () => {
@@ -453,6 +471,14 @@ export function MailClientScreen({
           action={confirmingAction}
           onConfirm={handleConfirmDestructiveAction}
           onCancel={handleCancelDestructiveAction}
+        />
+      )}
+
+      {phase === "verifying" && selectedEmail && (
+        <VerifyChannelModal
+          senderName={senderName(selectedEmail.sender)}
+          onContinue={handleVerifyContinue}
+          onCancel={() => setPhase("idle")}
         />
       )}
 

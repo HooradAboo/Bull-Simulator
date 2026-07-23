@@ -6,5 +6,6 @@
   "delete": { "phishing": 1, "legit": 1 },
   "report": { "phishing": 2, "legit": -2 },
   "click_link": { "phishing": -2, "legit": 2 },
-  "open_attachment": { "phishing": -2, "legit": 2 }
+  "open_attachment": { "phishing": -2, "legit": 2 },
+  "verify_independently": { "phishing": 2, "legit": 1 }
 }

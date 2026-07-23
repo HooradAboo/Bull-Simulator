@@ -12,6 +12,7 @@ import {
   MailAdd20Regular,
   MailRead20Regular,
   PeopleTeam20Regular,
+  SearchShield20Regular,
   ShieldError20Regular,
 } from "@fluentui/react-icons";
 import type { ActionType } from "../../types";
@@ -70,6 +71,7 @@ export function Ribbon({ pendingAction, disabled, onSelectAction }: Props) {
 
       <div className="ribbon-divider" />
 
+      {actionButton("verify_independently", <SearchShield20Regular />, "Verify Independently")}
       <DecorativeButton icon={<PeopleTeam20Regular />} label="Share to Teams" />
       <DecorativeButton icon={<Flash20Regular />} label="Quick steps" />
       <DecorativeButton icon={<CheckboxChecked20Regular />} label="Mark all as read" />
