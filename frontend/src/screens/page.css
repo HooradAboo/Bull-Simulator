@@ -613,6 +613,14 @@
   font-weight: 600;
   color: var(--text-primary);
 }
+.shift-overall-change.positive {
+  background: rgba(47, 158, 110, 0.12);
+  color: var(--sync);
+}
+.shift-overall-change.negative {
+  background: rgba(194, 96, 74, 0.12);
+  color: var(--oversold);
+}
 
 .shift-legend {
   display: flex;
@@ -650,10 +658,12 @@
   border-bottom: 1px solid var(--card-border);
 }
 .shift-row-label {
-  width: 160px;
+  width: 190px;
   flex-shrink: 0;
   font-size: 13px;
   font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
 }
 .shift-row-track {
   position: relative;
@@ -706,6 +716,12 @@
   font-size: 13px;
   color: var(--text-muted);
   font-weight: 600;
+}
+.shift-row-change.positive {
+  color: var(--sync);
+}
+.shift-row-change.negative {
+  color: var(--oversold);
 }
 
 .shift-axis {

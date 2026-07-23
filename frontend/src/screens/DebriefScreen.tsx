@@ -314,6 +314,12 @@ interface ShiftRow {
   change: number;
 }
 
+function changeClass(change: number): string {
+  if (change > 0) return "positive";
+  if (change < 0) return "negative";
+  return "";
+}
+
 function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
   const { selfEfficacy } = report;
   const allAnswered = selfEfficacy.statements.every((s) => s.post != null);
@@ -327,15 +333,13 @@ function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
     );
   }
 
-  const rows: ShiftRow[] = selfEfficacy.statements
-    .map((s) => ({
-      key: s.key,
-      label: SELF_EFFICACY_SHORT_LABELS[s.key] ?? s.text,
-      pre: s.pre,
-      post: s.post as number,
-      change: Math.round(((s.post as number) - s.pre) * 10) / 10,
-    }))
-    .sort((a, b) => b.change - a.change);
+  const rows: ShiftRow[] = selfEfficacy.statements.map((s) => ({
+    key: s.key,
+    label: SELF_EFFICACY_SHORT_LABELS[s.key] ?? s.text,
+    pre: s.pre,
+    post: s.post as number,
+    change: Math.round(((s.post as number) - s.pre) * 10) / 10,
+  }));
 
   const overallChange = Math.round((selfEfficacy.postAverage - selfEfficacy.preAverage) * 10) / 10;
   const overallSign = Math.sign(overallChange);
@@ -369,7 +373,7 @@ function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
           {selfEfficacy.preAverage} <span className="shift-arrow">→</span>{" "}
           {selfEfficacy.postAverage}
         </div>
-        <div className="shift-overall-change">
+        <div className={`shift-overall-change ${changeClass(overallChange)}`}>
           {overallChange > 0 ? "+" : ""}
           {overallChange}
         </div>
@@ -405,7 +409,7 @@ function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
                 <span className="shift-dot-value">{row.post}</span>
               </div>
             </div>
-            <div className="shift-row-change">
+            <div className={`shift-row-change ${changeClass(row.change)}`}>
               {row.change > 0 ? "+" : ""}
               {row.change}
             </div>
@@ -490,8 +494,8 @@ export function DebriefScreen({ participantId }: Props) {
 
             <h2>How Confidence Shifted, By Competency</h2>
             <p className="chart-intro">
-              Each item was asked with identical wording before the session and again after.
-              Sorted by size of change, largest first.
+              Each item was asked with identical wording before the session and again after,
+              in the same order as the questionnaire.
             </p>
             <SelfEfficacyShift report={report} />
           </div>
