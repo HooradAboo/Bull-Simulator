@@ -12,8 +12,8 @@
   --neutral: #9aa1ab;
   --highlight-bg: #f7f5ff;
   --highlight-border: #ddd6fe;
-  --accent: #6d5ce7;
-  --accent-hover: #5c4bd6;
+  --accent: #006484;
+  --accent-hover: #00506a;
 
   flex: 1 1 auto;
   min-height: 0;
@@ -119,7 +119,7 @@
 .page-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(109, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 100, 132, 0.15);
 }
 .page-error {
   color: #c2604a;
@@ -149,7 +149,7 @@
   background: var(--accent-hover);
 }
 .page-button:disabled {
-  background: #c9c5e8;
+  background: #a9c3cc;
   cursor: not-allowed;
 }
 .page-button-secondary {
