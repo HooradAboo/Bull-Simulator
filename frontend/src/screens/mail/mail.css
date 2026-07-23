@@ -695,6 +695,7 @@
 }
 .confidence-box input[type="range"] {
   width: 100%;
+  accent-color: #1a73e8;
 }
 .confidence-scale-labels {
   display: flex;
@@ -719,6 +720,57 @@
   cursor: pointer;
   margin-top: 18px;
 }
+.judgment-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.confidence-box .judgment-button {
+  flex: 1;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0;
+}
+.confidence-box .judgment-button.selected {
+  background: var(--usf-green);
+  color: #fff;
+  border-color: var(--usf-green);
+}
+.confidence-box button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.likert-options {
+  display: flex;
+  gap: 6px;
+}
+.confidence-box .likert-option {
+  flex: 1;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 0;
+}
+.confidence-box .likert-option.selected {
+  background: #1a73e8;
+  color: #fff;
+  border-color: #1a73e8;
+}
+
 .cue-options {
   display: grid;
   grid-template-columns: 1fr 1fr;

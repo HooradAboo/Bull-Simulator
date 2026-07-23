@@ -210,7 +210,7 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
     it_email = _it_contact_email()
     matrix = load_safe_action_matrix()
     matrix_max = max(score for row in matrix.values() for score in row.values())
-    claimed_phishing_categories = {cat for cat, row in matrix.items() if row["phishing"] > 0}
+    protective_categories = {cat for cat, row in matrix.items() if row["phishing"] > 0}
 
     interactions = (
         db.query(models.EmailInteraction)
@@ -275,10 +275,17 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
             conf_phishing.add(score, interaction.confidence_rating)
         else:
             conf_legit.add(score, interaction.confidence_rating)
-        if category in claimed_phishing_categories:
-            conf_claimed_phishing.add(score, interaction.confidence_rating)
-        else:
-            conf_claimed_legit.add(score, interaction.confidence_rating)
+
+        # Claimed phishing/legit is keyed off the participant's explicit
+        # trust/suspicious call, not the action they ended up taking - a
+        # participant can flag an email as suspicious and still reply to it,
+        # and that inconsistency is exactly what this bucket should surface.
+        if interaction.perceived_legitimacy == "suspicious":
+            judgment_score = 1 if email.is_phishing else -1
+            conf_claimed_phishing.add(judgment_score, interaction.judgment_confidence_rating)
+        elif interaction.perceived_legitimacy == "trust":
+            judgment_score = -1 if email.is_phishing else 1
+            conf_claimed_legit.add(judgment_score, interaction.judgment_confidence_rating)
 
     statements = [
         SelfEfficacyStatement(
@@ -317,7 +324,7 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
             by_action={
                 category: ActionCalibrationBucket(
                     **acc.to_bucket().model_dump(),
-                    is_protective=category in claimed_phishing_categories,
+                    is_protective=category in protective_categories,
                 )
                 for category, acc in conf_by_action.items()
             },

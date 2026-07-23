@@ -21,6 +21,7 @@ import {
   openInteraction,
   submitInteractionRatings,
   updateCredentialPassword,
+  type PerceivedLegitimacy,
 } from "../../api";
 import { useTaskProgress } from "../../taskProgress";
 import type {
@@ -82,8 +83,10 @@ export function MailClientScreen({
   const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
+  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState(50);
   const [confidenceValue, setConfidenceValueState] = useState(50);
-  const [difficultyValue, setDifficultyValue] = useState(50);
+  const [difficultyValue, setDifficultyValue] = useState(3);
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
@@ -256,8 +259,10 @@ export function MailClientScreen({
     setPendingAction(action);
     setPendingRecipient(recipient);
     setPhase("confidence");
+    setPerceivedLegitimacy(null);
+    setJudgmentConfidenceValue(50);
     setConfidenceValueState(50);
-    setDifficultyValue(50);
+    setDifficultyValue(3);
     setSelectedCues([]);
     setOtherCueText("");
 
@@ -325,8 +330,10 @@ export function MailClientScreen({
   };
 
   const handleSubmitConfidence = async () => {
-    if (!selectedEmail || !pendingAction || interactionId === null) return;
+    if (!selectedEmail || !pendingAction || interactionId === null || !perceivedLegitimacy) return;
     await submitInteractionRatings(interactionId, {
+      perceivedLegitimacy,
+      judgmentConfidenceRating: judgmentConfidenceValue,
       confidenceRating: confidenceValue,
       difficultyRating: difficultyValue,
       cuesNoticed: selectedCues,
@@ -451,6 +458,11 @@ export function MailClientScreen({
 
       {phase === "confidence" && (
         <ConfidenceModal
+          perceivedLegitimacy={perceivedLegitimacy}
+          onPerceivedLegitimacyChange={setPerceivedLegitimacy}
+          judgmentConfidenceValue={judgmentConfidenceValue}
+          onJudgmentConfidenceChange={setJudgmentConfidenceValue}
+          actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
           difficultyValue={difficultyValue}

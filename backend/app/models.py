@@ -48,6 +48,10 @@ class EmailInteraction(Base):
     opened_at: Mapped[int] = mapped_column(BigInteger)
     action_taken: Mapped[str | None] = mapped_column(String, nullable=True)
     answer_changed: Mapped[bool] = mapped_column(Boolean, default=False)
+    # The participant's explicit read on the email itself, independent of
+    # whatever action they end up taking on it.
+    perceived_legitimacy: Mapped[str | None] = mapped_column(String, nullable=True)
+    judgment_confidence_rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
     confidence_rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
     difficulty_rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
     cues_noticed: Mapped[list | None] = mapped_column(JSON, nullable=True)

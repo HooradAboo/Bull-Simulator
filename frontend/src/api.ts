@@ -148,7 +148,11 @@ export function confirmInteraction(
   });
 }
 
+export type PerceivedLegitimacy = "trust" | "suspicious";
+
 export interface InteractionRatings {
+  perceivedLegitimacy: PerceivedLegitimacy;
+  judgmentConfidenceRating: number;
   confidenceRating: number;
   difficultyRating: number;
   cuesNoticed: string[];
@@ -157,6 +161,8 @@ export interface InteractionRatings {
 
 export function submitInteractionRatings(interactionId: number, ratings: InteractionRatings) {
   return patch(`/interactions/${interactionId}/ratings`, {
+    perceived_legitimacy: ratings.perceivedLegitimacy,
+    judgment_confidence_rating: ratings.judgmentConfidenceRating,
     confidence_rating: ratings.confidenceRating,
     difficulty_rating: ratings.difficultyRating,
     cues_noticed: ratings.cuesNoticed,

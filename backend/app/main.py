@@ -189,6 +189,8 @@ def set_interaction_ratings(
     if not interaction:
         raise HTTPException(status_code=404, detail="unknown interaction_id")
 
+    interaction.perceived_legitimacy = payload.perceived_legitimacy
+    interaction.judgment_confidence_rating = payload.judgment_confidence_rating
     interaction.confidence_rating = payload.confidence_rating
     interaction.difficulty_rating = payload.difficulty_rating
     interaction.cues_noticed = payload.cues_noticed

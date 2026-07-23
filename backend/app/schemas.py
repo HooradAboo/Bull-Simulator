@@ -43,6 +43,8 @@ class InteractionConfirm(BaseModel):
 
 
 class InteractionRatings(BaseModel):
+    perceived_legitimacy: str
+    judgment_confidence_rating: int
     confidence_rating: int
     difficulty_rating: int
     cues_noticed: list[str]
