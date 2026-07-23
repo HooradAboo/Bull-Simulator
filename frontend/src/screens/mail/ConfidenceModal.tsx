@@ -140,7 +140,11 @@ export function ConfidenceModal({
           ))}
         </div>
 
-        <button onClick={onSubmit} disabled={perceivedLegitimacy === null}>
+        <button
+          className="confidence-submit"
+          onClick={onSubmit}
+          disabled={perceivedLegitimacy === null}
+        >
           Submit
         </button>
       </div>

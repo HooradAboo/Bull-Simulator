@@ -1,5 +1,6 @@
 :root {
   --usf-green: #006747;
+  --usf-green-hover: #005d40;
   --usf-green-dark: #00432e;
   --usf-gold: #cfc493;
   --border: #e1dfdd;
@@ -695,7 +696,7 @@
 }
 .confidence-box input[type="range"] {
   width: 100%;
-  accent-color: #1a73e8;
+  accent-color: var(--usf-green);
 }
 .confidence-scale-labels {
   display: flex;
@@ -710,7 +711,7 @@
   color: var(--text-muted);
   margin: 6px 0 14px;
 }
-.confidence-box button {
+.confidence-box .confidence-submit {
   background: var(--usf-green);
   color: #fff;
   border: none;
@@ -719,6 +720,13 @@
   font-size: 13px;
   cursor: pointer;
   margin-top: 18px;
+}
+.confidence-box .confidence-submit:hover:not(:disabled) {
+  background: var(--usf-green-hover);
+}
+.confidence-box .confidence-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .judgment-buttons {
   display: flex;
@@ -737,14 +745,18 @@
   cursor: pointer;
   margin-top: 0;
 }
+.confidence-box .judgment-button:hover:not(.selected) {
+  background: var(--hover);
+  border-color: var(--usf-green);
+}
 .confidence-box .judgment-button.selected {
   background: var(--usf-green);
   color: #fff;
   border-color: var(--usf-green);
 }
-.confidence-box button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.confidence-box .judgment-button.selected:hover {
+  background: var(--usf-green-hover);
+  border-color: var(--usf-green-hover);
 }
 
 .likert-options {
@@ -765,10 +777,18 @@
   cursor: pointer;
   margin-top: 0;
 }
+.confidence-box .likert-option:hover:not(.selected) {
+  background: var(--hover);
+  border-color: var(--usf-green);
+}
 .confidence-box .likert-option.selected {
-  background: #1a73e8;
+  background: var(--usf-green);
   color: #fff;
-  border-color: #1a73e8;
+  border-color: var(--usf-green);
+}
+.confidence-box .likert-option.selected:hover {
+  background: var(--usf-green-hover);
+  border-color: var(--usf-green-hover);
 }
 
 .cue-options {
@@ -783,6 +803,9 @@
   font-size: 13px;
   color: var(--text);
   cursor: pointer;
+}
+.cue-option input[type="checkbox"] {
+  accent-color: var(--usf-green);
 }
 .cue-other-input {
   width: 100%;
