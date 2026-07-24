@@ -1,5 +1,17 @@
+import type { ReactNode } from "react";
 import { useState } from "react";
-import { Dismiss20Regular, QuestionCircle24Filled } from "@fluentui/react-icons";
+import {
+  ArrowForward20Regular,
+  ArrowReply20Regular,
+  Attach20Regular,
+  Delete20Regular,
+  Dismiss20Regular,
+  Link20Regular,
+  MailRead20Regular,
+  QuestionCircle24Filled,
+  SearchShield20Regular,
+  ShieldError20Regular,
+} from "@fluentui/react-icons";
 
 const TOPICS = [
   { key: "tasks", label: "Task Definitions" },
@@ -8,19 +20,33 @@ const TOPICS = [
 
 type TopicKey = (typeof TOPICS)[number]["key"];
 
-const ACTION_DEFINITIONS: { term: string; definition: string }[] = [
-  { term: "Reply", definition: "Send a response back to the sender." },
-  { term: "Forward", definition: "Send the email on to someone else, such as IT." },
+const ACTION_DEFINITIONS: { term: string; icon: ReactNode; definition: string }[] = [
+  { term: "Reply", icon: <ArrowReply20Regular />, definition: "Send a response back to the sender." },
+  {
+    term: "Forward",
+    icon: <ArrowForward20Regular />,
+    definition: "Send the email on to someone else, such as IT.",
+  },
   {
     term: "Report as Phishing",
+    icon: <ShieldError20Regular />,
     definition: "Flag the email as a phishing attempt. It moves to Junk Email.",
   },
-  { term: "Delete", definition: "Remove the email from your inbox." },
-  { term: "Mark as read", definition: "Leave the email as-is without taking any other action." },
-  { term: "Click a link", definition: "Open a link included in the email." },
-  { term: "Open an attachment", definition: "Download or open a file attached to the email." },
+  { term: "Delete", icon: <Delete20Regular />, definition: "Remove the email from your inbox." },
+  {
+    term: "Mark as read",
+    icon: <MailRead20Regular />,
+    definition: "Leave the email as-is without taking any other action.",
+  },
+  { term: "Click a link", icon: <Link20Regular />, definition: "Open a link included in the email." },
+  {
+    term: "Open an attachment",
+    icon: <Attach20Regular />,
+    definition: "Download or open a file attached to the email.",
+  },
   {
     term: "Verify Independently",
+    icon: <SearchShield20Regular />,
     definition:
       "Check the sender or company through a separate channel (their website, a phone number, someone you know) instead of relying on the email itself.",
   },
@@ -59,7 +85,12 @@ export function HelpButton() {
               <dl className="help-definitions">
                 {ACTION_DEFINITIONS.map((item) => (
                   <div key={item.term} className="help-definition-row">
-                    <dt>{item.term}</dt>
+                    <dt>
+                      <span className="help-definition-icon" aria-hidden="true">
+                        {item.icon}
+                      </span>
+                      {item.term}
+                    </dt>
                     <dd>{item.definition}</dd>
                   </div>
                 ))}

@@ -1123,23 +1123,26 @@
 
 .help-popup {
   position: fixed;
-  bottom: 78px;
-  right: 20px;
+  bottom: 70px;
+  right: 70px;
   z-index: 1000;
+  box-sizing: border-box;
   width: 340px;
   max-width: calc(100vw - 40px);
-  max-height: 60vh;
-  overflow-y: auto;
+  height: 400px;
+  max-height: 70vh;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 .help-popup-tabs {
   display: flex;
+  flex-shrink: 0;
   border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
   background: #fff;
 }
 .help-tab {
@@ -1161,6 +1164,9 @@
   border-bottom-color: var(--usf-green);
 }
 .help-popup-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 14px 16px;
   font-size: 12.5px;
   color: var(--text);
@@ -1175,9 +1181,19 @@
   margin-bottom: 0;
 }
 .help-definition-row dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 2px;
+}
+.help-definition-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--usf-green);
+  flex-shrink: 0;
 }
 .help-definition-row dd {
   margin: 0;

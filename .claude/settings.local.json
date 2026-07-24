@@ -92,7 +92,8 @@
       "Bash(grep -n \"return \\(\\\\|className={\\\\`\\\\|className=\\\\\"\" screens/DebriefScreen.tsx)",
       "Bash(npx tsc *)",
       "Bash(curl *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(node *)"
     ]
   }
 }
