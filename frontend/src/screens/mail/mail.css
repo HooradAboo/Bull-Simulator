@@ -1083,7 +1083,7 @@
 .dev-skip-button {
   position: fixed;
   bottom: 6px;
-  right: 12px;
+  right: 80px;
   z-index: 1000;
   background: #b91c1c;
   color: #fff;
@@ -1097,4 +1097,101 @@
 }
 .dev-skip-button:hover {
   opacity: 1;
+}
+
+/* Help button + popup, bottom-right of the mail screen. */
+.help-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1001;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--usf-green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+.help-fab:hover {
+  background: var(--usf-green-hover);
+}
+
+.help-popup {
+  position: fixed;
+  bottom: 78px;
+  right: 20px;
+  z-index: 1000;
+  width: 340px;
+  max-width: calc(100vw - 40px);
+  max-height: 60vh;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+.help-popup-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: #fff;
+}
+.help-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.help-tab:hover {
+  background: var(--hover);
+}
+.help-tab.active {
+  color: var(--usf-green);
+  border-bottom-color: var(--usf-green);
+}
+.help-popup-body {
+  padding: 14px 16px;
+  font-size: 12.5px;
+  color: var(--text);
+}
+.help-definitions {
+  margin: 0;
+}
+.help-definition-row {
+  margin-bottom: 12px;
+}
+.help-definition-row:last-child {
+  margin-bottom: 0;
+}
+.help-definition-row dt {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.help-definition-row dd {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+.help-steps {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.6;
+}
+.help-steps li {
+  margin-bottom: 10px;
+}
+.help-steps li:last-child {
+  margin-bottom: 0;
 }

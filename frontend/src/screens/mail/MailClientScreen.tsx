@@ -14,6 +14,7 @@ import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
+import { HelpButton } from "./HelpButton";
 import { ChangePasswordPrompt } from "../login/ChangePasswordPrompt";
 import { ChangePasswordForm } from "../login/ChangePasswordForm";
 import { extractEmail, senderName } from "./avatar";
@@ -566,6 +567,7 @@ export function MailClientScreen({
           DEV: Skip Remaining Emails (random)
         </button>
       )}
+      <HelpButton />
       <TopBar participantEmail={participantEmail} />
       <TabBar />
       <Ribbon
