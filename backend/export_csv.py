@@ -8,6 +8,7 @@ If no output_dir is given, writes to exports/<timestamp>/.
 """
 
 import csv
+import json
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -68,7 +69,9 @@ def export_email_interactions(db, output_dir: Path):
         is_phishing = email_config.is_phishing if email_config else ""
         rows.append([
             i.id, i.participant_id, i.email_id, is_phishing,
-            i.opened_at, i.action_taken, i.answer_changed, i.confidence_rating,
+            i.opened_at, i.action_taken, i.answer_changed,
+            i.perceived_legitimacy, i.judgment_confidence_rating,
+            i.confidence_rating,
             i.difficulty_rating,
             ",".join(i.cues_noticed) if i.cues_noticed else "",
             i.cues_other_text,
@@ -78,7 +81,9 @@ def export_email_interactions(db, output_dir: Path):
         db, output_dir, "email_interactions.csv",
         [
             "interaction_id", "participant_id", "email_id", "is_phishing",
-            "opened_at", "action_taken", "answer_changed", "confidence_rating",
+            "opened_at", "action_taken", "answer_changed",
+            "perceived_legitimacy", "judgment_confidence_rating",
+            "confidence_rating",
             "difficulty_rating", "cues_noticed", "cues_other_text",
             "time_to_decision_ms", "confirmed_at", "recipient", "created_at",
         ],
@@ -138,12 +143,43 @@ def export_credentials(db, output_dir: Path):
 def export_session_events(db, output_dir: Path):
     events = db.query(models.SessionEvent).order_by(models.SessionEvent.id).all()
     rows = [
-        [e.id, e.participant_id, e.event_type, e.timestamp_ms, e.event_metadata]
+        [
+            e.id, e.participant_id, e.event_type, e.timestamp_ms,
+            json.dumps(e.event_metadata) if e.event_metadata is not None else "",
+        ]
         for e in events
     ]
     export_table(
         db, output_dir, "session_events.csv",
         ["id", "participant_id", "event_type", "timestamp_ms", "event_metadata"],
+        rows,
+    )
+
+
+def export_composed_emails(db, output_dir: Path):
+    """Messages sent through the standalone "New mail" compose flow - not a
+    graded action, so it lives in session_events (event_type=compose_email)
+    rather than email_interactions. Pulled out into its own file since the
+    recipient/subject/body are the interesting part, not the raw event log.
+    """
+    events = (
+        db.query(models.SessionEvent)
+        .filter(models.SessionEvent.event_type == "compose_email")
+        .order_by(models.SessionEvent.id)
+        .all()
+    )
+    rows = []
+    for e in events:
+        metadata = e.event_metadata or {}
+        rows.append([
+            e.id, e.participant_id, e.timestamp_ms,
+            metadata.get("recipient", ""),
+            metadata.get("subject", ""),
+            metadata.get("body", ""),
+        ])
+    export_table(
+        db, output_dir, "composed_emails.csv",
+        ["id", "participant_id", "composed_at", "recipient", "subject", "body"],
         rows,
     )
 
@@ -166,6 +202,7 @@ def main():
         export_keystroke_events(db, output_dir)
         export_mouse_events(db, output_dir)
         export_session_events(db, output_dir)
+        export_composed_emails(db, output_dir)
         export_credentials(db, output_dir)
     finally:
         db.close()
