@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { ArrowLeft20Regular, Key20Regular } from "@fluentui/react-icons";
 import "./login.css";
 import { ResetPasswordScreen } from "./ResetPasswordScreen";
 import { updateCredentialPassword } from "../../api";
+import usfLogoGreen from "../../assets/usf-logo-green.png";
+import bullBackground from "../../assets/bull-background.jpeg";
 
 interface Props {
   expectedEmail: string;
@@ -11,6 +14,7 @@ interface Props {
 }
 
 export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onSuccess }: Props) {
+  const [step, setStep] = useState<"email" | "password">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +32,15 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
     );
   }
 
+  const handleNext = () => {
+    if (email.trim().length === 0) {
+      setError("Enter your NetID email address.");
+      return;
+    }
+    setError(null);
+    setStep("password");
+  };
+
   const handleSubmit = () => {
     const emailMatches = email.trim().toLowerCase() === expectedEmail.trim().toLowerCase();
     const passwordMatches = password === expectedPassword;
@@ -41,66 +54,123 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
   };
 
   return (
-    <div className="login-page">
+    <div
+      className="usflogin-page"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${bullBackground})`,
+      }}
+    >
       {import.meta.env.DEV && (
         <button className="dev-skip-button" onClick={onSuccess}>
           DEV: Skip Sign In
         </button>
       )}
-      <div className="login-card">
-        <div className="login-wordmark">
-          <span className="login-wordmark-line1">UNIVERSITY OF</span>
-          <span className="login-wordmark-line2">SOUTH FLORIDA</span>
+      <div className="usflogin-container">
+        <div className="usflogin-block">
+          <div className="usflogin-card">
+            <img src={usfLogoGreen} alt="University of South Florida" className="usflogin-logo" />
+
+            {step === "email" ? (
+              <>
+                <h1 className="usflogin-heading">Sign in</h1>
+                <input
+                  id="login-email"
+                  type="text"
+                  className="usflogin-input"
+                  placeholder="Sign-in with your NetID@usf.edu (not U#)"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleNext();
+                  }}
+                  autoFocus
+                />
+                {error && <div className="usflogin-error">{error}</div>}
+                <a
+                  className="usflogin-link"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowReset(true);
+                  }}
+                >
+                  Can't access your account?
+                </a>
+                <div className="usflogin-actions">
+                  <button className="usflogin-btn" onClick={handleNext}>
+                    Next
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  className="usflogin-back-row"
+                  onClick={() => {
+                    setError(null);
+                    setStep("email");
+                  }}
+                >
+                  <ArrowLeft20Regular />
+                  <span>{email}</span>
+                </div>
+                <h1 className="usflogin-heading">Enter password</h1>
+                <input
+                  id="login-password"
+                  type="password"
+                  className="usflogin-input"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSubmit();
+                  }}
+                  autoFocus
+                />
+                {error && <div className="usflogin-error">{error}</div>}
+                <a
+                  className="usflogin-link"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowReset(true);
+                  }}
+                >
+                  Forgot my password
+                </a>
+                <div className="usflogin-actions">
+                  <button className="usflogin-btn" onClick={handleSubmit}>
+                    Sign in
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="usflogin-policy">
+            By logging in you agree to follow the USF's{" "}
+            <a href="#" onClick={(e) => e.preventDefault()}>
+              Acceptable Use Policy
+            </a>
+            .
+          </div>
         </div>
 
-        <h1 className="login-heading">Sign in</h1>
-
-        <input
-          id="login-email"
-          type="text"
-          className="login-input"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          id="login-password"
-          type="password"
-          className="login-input"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSubmit();
-          }}
-        />
-
-        {error && <div className="login-error">{error}</div>}
-
-        <a
-          className="login-help-link"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setShowReset(true);
-          }}
-        >
-          Forgot my password
-        </a>
-
-        <div className="login-submit-row">
-          <button className="login-submit" onClick={handleSubmit}>
-            Sign in
-          </button>
-        </div>
+        {step === "email" && (
+          <div className="usflogin-signin-options">
+            <Key20Regular />
+            <span>Sign-in options</span>
+          </div>
+        )}
       </div>
 
-      <div className="login-footer">
-        By logging in you agree to follow the USF's{" "}
+      <div className="usflogin-footer">
         <a href="#" onClick={(e) => e.preventDefault()}>
-          Acceptable Use Policy
+          Terms of use
         </a>
-        .
+        <a href="#" onClick={(e) => e.preventDefault()}>
+          Privacy &amp; cookies
+        </a>
+        <span>&bull;&bull;&bull;</span>
       </div>
     </div>
   );
