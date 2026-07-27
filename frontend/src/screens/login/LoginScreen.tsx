@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./login.css";
-import { ResetPasswordModal } from "./ResetPasswordModal";
+import { ResetPasswordScreen } from "./ResetPasswordScreen";
 import { updateCredentialPassword } from "../../api";
 
 interface Props {
@@ -15,6 +15,18 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showReset, setShowReset] = useState(false);
+
+  if (showReset) {
+    return (
+      <ResetPasswordScreen
+        expectedEmail={expectedEmail}
+        onReset={async (netId) => {
+          await updateCredentialPassword(credentialId, netId);
+        }}
+        onBack={() => setShowReset(false)}
+      />
+    );
+  }
 
   const handleSubmit = () => {
     const emailMatches = email.trim().toLowerCase() === expectedEmail.trim().toLowerCase();
@@ -73,7 +85,7 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
             setShowReset(true);
           }}
         >
-          Reset password
+          Forgot my password
         </a>
 
         <div className="login-submit-row">
@@ -90,16 +102,6 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
         </a>
         .
       </div>
-
-      {showReset && (
-        <ResetPasswordModal
-          expectedEmail={expectedEmail}
-          onReset={async (netId) => {
-            await updateCredentialPassword(credentialId, netId);
-          }}
-          onClose={() => setShowReset(false)}
-        />
-      )}
     </div>
   );
 }
