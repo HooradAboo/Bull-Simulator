@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft20Regular, Key20Regular } from "@fluentui/react-icons";
+import { ArrowLeft20Regular } from "@fluentui/react-icons";
 import "./login.css";
 import { ResetPasswordScreen } from "./ResetPasswordScreen";
 import { updateCredentialPassword } from "../../api";
@@ -67,11 +67,15 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
       )}
       <div className="usflogin-container">
         <div className="usflogin-block">
-          <div className="usflogin-card">
+          <div className={`usflogin-card${error ? " usflogin-card-error" : ""}`}>
             <img src={usfLogoGreen} alt="University of South Florida" className="usflogin-logo" />
 
             {step === "email" ? (
               <>
+                <div className="usflogin-back-row" style={{ visibility: "hidden" }} aria-hidden="true">
+                  <ArrowLeft20Regular />
+                  <span>placeholder</span>
+                </div>
                 <h1 className="usflogin-heading">Sign in</h1>
                 <input
                   id="login-email"
@@ -154,13 +158,6 @@ export function LoginScreen({ expectedEmail, expectedPassword, credentialId, onS
             .
           </div>
         </div>
-
-        {step === "email" && (
-          <div className="usflogin-signin-options">
-            <Key20Regular />
-            <span>Sign-in options</span>
-          </div>
-        )}
       </div>
 
       <div className="usflogin-footer">
