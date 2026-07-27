@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowClockwise20Regular, Speaker220Regular } from "@fluentui/react-icons";
-import usfIcon from "../../assets/usf-icon.png";
+import usfLogoGreen from "../../assets/usf-logo-green.png";
 
 interface Props {
   expectedEmail: string;
@@ -73,11 +73,7 @@ export function ResetPasswordScreen({ expectedEmail, onReset, onBack }: Props) {
   return (
     <div className="reset-page">
       <div className="reset-logo-row">
-        <img src={usfIcon} alt="" className="reset-logo-icon" />
-        <div className="reset-logo-text">
-          <div className="reset-logo-line1">UNIVERSITY of</div>
-          <div className="reset-logo-line2">SOUTH FLORIDA</div>
-        </div>
+        <img src={usfLogoGreen} alt="University of South Florida" className="reset-logo-img" />
       </div>
 
       {netId === null ? (
