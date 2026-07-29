@@ -255,13 +255,18 @@
 .search-wordmark {
   display: flex;
   font-size: 64px;
-  font-weight: 500;
+  font-weight: 700;
   font-family: arial, sans-serif;
   letter-spacing: -2px;
 }
 .search-wordmark-compact {
   font-size: 26px;
   letter-spacing: -1px;
+}
+.search-page-home .search-wordmark {
+  /* Nudges just the logo up without shifting the search box/button below it
+     (a margin change here would also pull those siblings up). */
+  transform: translateY(-20px);
 }
 
 .search-page-home {
