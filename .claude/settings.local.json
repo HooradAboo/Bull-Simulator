@@ -93,7 +93,8 @@
       "Bash(npx tsc *)",
       "Bash(curl *)",
       "Bash(node -e ' *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(awk '{print $1}')"
     ]
   }
 }

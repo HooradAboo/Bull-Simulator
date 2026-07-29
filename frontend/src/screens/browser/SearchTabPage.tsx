@@ -44,7 +44,6 @@ function ContextBanner({ target }: { target: IndependentSearchTarget | null }) {
 export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
-  const [wasRecorded, setWasRecorded] = useState(false);
   const [showRecordedPopup, setShowRecordedPopup] = useState(false);
 
   // A new email being verified (or no email at all) means any previous
@@ -53,19 +52,19 @@ export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
   useEffect(() => {
     setQuery("");
     setSubmittedQuery(null);
-    setWasRecorded(false);
     setShowRecordedPopup(false);
   }, [target?.id]);
 
+  // Searching is only possible with an unprocessed email open in Mail to
+  // attribute it to - the inputs below are disabled otherwise, but this
+  // guards direct calls too (e.g. Enter on a disabled field).
   const handleSearch = () => {
+    if (!target) return;
     const trimmed = query.trim();
     if (trimmed.length === 0) return;
     setSubmittedQuery(trimmed);
-    if (target) {
-      onSearch(trimmed);
-      setWasRecorded(true);
-      setShowRecordedPopup(true);
-    }
+    onSearch(trimmed);
+    setShowRecordedPopup(true);
   };
 
   const handleReturnToMail = () => {
@@ -78,11 +77,12 @@ export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
       <div className="search-page-results">
         <div className="search-results-header">
           <GoogleWordmark compact />
-          <div className="search-results-box">
+          <div className={`search-results-box ${!target ? "disabled" : ""}`}>
             <Search20Regular />
             <input
               className="search-results-input"
               value={query}
+              disabled={!target}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSearch();
@@ -92,12 +92,6 @@ export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
         </div>
 
         <ContextBanner target={target} />
-
-        {!wasRecorded && (
-          <div className="search-not-recorded-banner">
-            This search wasn't linked to an email, so it wasn't recorded as an action.
-          </div>
-        )}
 
         <div className="search-fake-results">
           <div className="search-fake-result">
@@ -137,12 +131,13 @@ export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
     <div className="search-page-home">
       <ContextBanner target={target} />
       <GoogleWordmark />
-      <div className="search-home-box">
+      <div className={`search-home-box ${!target ? "disabled" : ""}`}>
         <Search20Regular />
         <input
           className="search-home-input"
-          placeholder="Search Google or type a URL"
+          placeholder={target ? "Search Google or type a URL" : "Open an email in Mail to search"}
           value={query}
+          disabled={!target}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSearch();
@@ -150,7 +145,7 @@ export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
           autoFocus
         />
       </div>
-      <button className="search-home-button" onClick={handleSearch}>
+      <button className="search-home-button" disabled={!target} onClick={handleSearch}>
         Google Search
       </button>
     </div>
