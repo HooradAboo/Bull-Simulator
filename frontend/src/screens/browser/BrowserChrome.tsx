@@ -33,11 +33,18 @@ interface BrowserTab {
   kind: "mail" | "blank" | "search";
 }
 
+export interface IndependentSearchTarget {
+  id: string;
+  label: string;
+}
+
 interface BrowserTabsApi {
   openTab: (url: string) => void;
   isMailTabActive: boolean;
   triggerDownload: (filename: string) => void;
   registerIndependentSearchHandler: (handler: ((query: string) => void) | null) => void;
+  independentSearchTarget: IndependentSearchTarget | null;
+  setIndependentSearchTarget: (target: IndependentSearchTarget | null) => void;
 }
 
 const BrowserTabsContext = createContext<BrowserTabsApi | null>(null);
@@ -78,6 +85,8 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSe
   const [activeTabId, setActiveTabId] = useState(MAIL_TAB_ID);
   const [downloadFile, setDownloadFile] = useState<string | null>(null);
   const independentSearchHandler = useRef<((query: string) => void) | null>(null);
+  const [independentSearchTarget, setIndependentSearchTarget] =
+    useState<IndependentSearchTarget | null>(null);
 
   const registerIndependentSearchHandler = (handler: ((query: string) => void) | null) => {
     independentSearchHandler.current = handler;
@@ -150,6 +159,8 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSe
         isMailTabActive: activeTabId === MAIL_TAB_ID,
         triggerDownload,
         registerIndependentSearchHandler,
+        independentSearchTarget,
+        setIndependentSearchTarget,
       }}
     >
       <div className="browser-shell">
@@ -237,7 +248,10 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSe
               className="browser-tab-panel search-page"
               style={{ display: activeTabId === SEARCH_TAB_ID ? "flex" : "none" }}
             >
-              <SearchTabPage onSearch={(query) => independentSearchHandler.current?.(query)} />
+              <SearchTabPage
+                target={independentSearchTarget}
+                onSearch={(query) => independentSearchHandler.current?.(query)}
+              />
             </div>
           )}
           {tabs

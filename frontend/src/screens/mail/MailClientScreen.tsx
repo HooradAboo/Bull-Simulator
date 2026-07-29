@@ -14,7 +14,7 @@ import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
-import { extractEmail } from "./avatar";
+import { extractEmail, senderName } from "./avatar";
 import {
   confirmInteraction,
   logComposedEmail,
@@ -168,8 +168,13 @@ export function MailClientScreen({
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
   const hoverStart = useRef<number | null>(null);
-  const { openTab, isMailTabActive, triggerDownload, registerIndependentSearchHandler } =
-    useBrowserTabs();
+  const {
+    openTab,
+    isMailTabActive,
+    triggerDownload,
+    registerIndependentSearchHandler,
+    setIndependentSearchTarget,
+  } = useBrowserTabs();
   const { reportProgress } = useTaskProgress();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
@@ -222,18 +227,30 @@ export function MailClientScreen({
   }, [isMailTabActive, phase]);
 
   // Registers the handler the Google tab calls once the participant submits
-  // a search there. Only counts as "verifying independently" if there's a
-  // specific unprocessed email currently open to attribute it to.
+  // a search there, and keeps the Google tab's "verifying: <email>" banner in
+  // sync - both gated on the same condition, so the tab only ever claims to
+  // record a search when there's a specific unprocessed email open to
+  // attribute it to.
+  const canVerifyIndependently =
+    !!selectedEmail && !processed.has(selectedEmail.id) && phase === "idle" && interactionId !== null;
+
   useEffect(() => {
     registerIndependentSearchHandler(() => {
-      if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle" || interactionId === null) {
-        return;
-      }
+      if (!canVerifyIndependently) return;
       setPhase("verifying");
     });
     return () => registerIndependentSearchHandler(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedEmail, processed, phase, interactionId]);
+  }, [canVerifyIndependently]);
+
+  useEffect(() => {
+    setIndependentSearchTarget(
+      canVerifyIndependently && selectedEmail
+        ? { id: selectedEmail.id, label: `"${selectedEmail.subject}" from ${senderName(selectedEmail.sender)}` }
+        : null
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canVerifyIndependently, selectedEmail]);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
 
