@@ -48,7 +48,7 @@ const ACTION_DEFINITIONS: { term: string; icon: ReactNode; definition: string }[
     term: "Verify Independently",
     icon: <SearchShield20Regular />,
     definition:
-      "Check the sender or company through a separate channel (their website, a phone number, someone you know) instead of relying on the email itself.",
+      "Switch to the Google tab and search for the sender or company yourself, instead of relying on anything in the email.",
   },
 ];
 

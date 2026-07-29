@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -19,21 +20,24 @@ import {
   MoreHorizontal20Regular,
 } from "@fluentui/react-icons";
 import { WindowControls } from "./WindowControls";
+import { SearchTabPage } from "./SearchTabPage";
 import "./browser.css";
 
 const MAIL_TAB_ID = "mail";
+const SEARCH_TAB_ID = "search";
 
 interface BrowserTab {
   id: string;
   title: string;
   url: string;
-  kind: "mail" | "blank";
+  kind: "mail" | "blank" | "search";
 }
 
 interface BrowserTabsApi {
   openTab: (url: string) => void;
   isMailTabActive: boolean;
   triggerDownload: (filename: string) => void;
+  registerIndependentSearchHandler: (handler: ((query: string) => void) | null) => void;
 }
 
 const BrowserTabsContext = createContext<BrowserTabsApi | null>(null);
@@ -59,9 +63,10 @@ interface Props {
   children: ReactNode;
   primaryTabTitle?: string;
   primaryTabUrl?: string;
+  showSearchTab?: boolean;
 }
 
-export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Props) {
+export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSearchTab }: Props) {
   const [tabs, setTabs] = useState<BrowserTab[]>([
     {
       id: MAIL_TAB_ID,
@@ -72,6 +77,36 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
   ]);
   const [activeTabId, setActiveTabId] = useState(MAIL_TAB_ID);
   const [downloadFile, setDownloadFile] = useState<string | null>(null);
+  const independentSearchHandler = useRef<((query: string) => void) | null>(null);
+
+  const registerIndependentSearchHandler = (handler: ((query: string) => void) | null) => {
+    independentSearchHandler.current = handler;
+  };
+
+  // The Google tab only exists once the participant is signed in and in the
+  // inbox (not on the login page) - added/removed here rather than always
+  // present, since showSearchTab flips on the same long-lived BrowserChrome
+  // instance as loggedIn changes.
+  useEffect(() => {
+    setTabs((prev) => {
+      const hasSearchTab = prev.some((t) => t.id === SEARCH_TAB_ID);
+      if (showSearchTab && !hasSearchTab) {
+        const mailIndex = prev.findIndex((t) => t.id === MAIL_TAB_ID);
+        const next = [...prev];
+        next.splice(mailIndex + 1, 0, {
+          id: SEARCH_TAB_ID,
+          title: "Google",
+          url: "https://www.google.com",
+          kind: "search",
+        });
+        return next;
+      }
+      if (!showSearchTab && hasSearchTab) {
+        return prev.filter((t) => t.id !== SEARCH_TAB_ID);
+      }
+      return prev;
+    });
+  }, [showSearchTab]);
 
   useEffect(() => {
     if (!downloadFile) return;
@@ -110,7 +145,12 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
 
   return (
     <BrowserTabsContext.Provider
-      value={{ openTab, isMailTabActive: activeTabId === MAIL_TAB_ID, triggerDownload }}
+      value={{
+        openTab,
+        isMailTabActive: activeTabId === MAIL_TAB_ID,
+        triggerDownload,
+        registerIndependentSearchHandler,
+      }}
     >
       <div className="browser-shell">
         <div className="browser-titlebar">
@@ -125,7 +165,7 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
                   {tab.kind === "mail" ? <Mail16Filled /> : <Globe16Regular />}
                 </span>
                 <span className="browser-tab-title">{tab.title}</span>
-                {tab.kind !== "mail" && (
+                {tab.kind === "blank" && (
                   <span
                     className="browser-tab-close"
                     onClick={(e) => {
@@ -192,6 +232,14 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Prop
           >
             {children}
           </div>
+          {tabs.some((t) => t.id === SEARCH_TAB_ID) && (
+            <div
+              className="browser-tab-panel search-page"
+              style={{ display: activeTabId === SEARCH_TAB_ID ? "flex" : "none" }}
+            >
+              <SearchTabPage onSearch={(query) => independentSearchHandler.current?.(query)} />
+            </div>
+          )}
           {tabs
             .filter((t) => t.kind === "blank")
             .map((tab) => (

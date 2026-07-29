@@ -88,6 +88,7 @@ function App() {
         <BrowserChrome
           primaryTabTitle={loggedIn ? undefined : "Sign in"}
           primaryTabUrl={loggedIn ? undefined : "login.microsoftonline.com"}
+          showSearchTab={loggedIn}
         >
           {loggedIn ? (
             <MailClientScreen

@@ -9,13 +9,12 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
-import { VerifyChannelModal } from "./VerifyChannelModal";
 import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
-import { extractEmail, senderName } from "./avatar";
+import { extractEmail } from "./avatar";
 import {
   confirmInteraction,
   logComposedEmail,
@@ -169,7 +168,8 @@ export function MailClientScreen({
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
   const hoverStart = useRef<number | null>(null);
-  const { openTab, isMailTabActive, triggerDownload } = useBrowserTabs();
+  const { openTab, isMailTabActive, triggerDownload, registerIndependentSearchHandler } =
+    useBrowserTabs();
   const { reportProgress } = useTaskProgress();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
@@ -209,16 +209,31 @@ export function MailClientScreen({
     return null;
   };
 
-  // Clicking a link opens a new browser tab instead of committing
-  // immediately; the click_link action only commits once the
-  // participant comes back (switches to or closes back into the mail
-  // tab), so time_to_decision includes however long they spent there.
+  // Clicking a link (or switching to the Google tab to verify
+  // independently) opens/switches to another browser tab instead of
+  // committing immediately; the action only commits once the participant
+  // comes back to the mail tab, so time_to_decision includes however long
+  // they spent there.
   useEffect(() => {
-    if (phase === "link-open" && isMailTabActive) {
-      commitAction("click_link", null);
+    if (isMailTabActive && (phase === "link-open" || phase === "verifying")) {
+      commitAction(phase === "link-open" ? "click_link" : "verify_independently", null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMailTabActive, phase]);
+
+  // Registers the handler the Google tab calls once the participant submits
+  // a search there. Only counts as "verifying independently" if there's a
+  // specific unprocessed email currently open to attribute it to.
+  useEffect(() => {
+    registerIndependentSearchHandler(() => {
+      if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle" || interactionId === null) {
+        return;
+      }
+      setPhase("verifying");
+    });
+    return () => registerIndependentSearchHandler(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedEmail, processed, phase, interactionId]);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
 
@@ -291,11 +306,6 @@ export function MailClientScreen({
       commitAction("open_attachment", null);
       return;
     }
-    if (action === "verify_independently") {
-      setPendingAction(action);
-      setPhase("verifying");
-      return;
-    }
     if (action === "delete" || action === "report_phishing") {
       setConfirmingAction(action);
       setPhase("confirming");
@@ -311,10 +321,6 @@ export function MailClientScreen({
     }
 
     commitAction(action, null);
-  };
-
-  const handleVerifyContinue = () => {
-    commitAction("verify_independently", null);
   };
 
   const handleStartCompose = () => {
@@ -674,14 +680,6 @@ export function MailClientScreen({
           action={confirmingAction}
           onConfirm={handleConfirmDestructiveAction}
           onCancel={handleCancelDestructiveAction}
-        />
-      )}
-
-      {phase === "verifying" && selectedEmail && (
-        <VerifyChannelModal
-          senderName={senderName(selectedEmail.sender)}
-          onContinue={handleVerifyContinue}
-          onCancel={() => setPhase("idle")}
         />
       )}
 
