@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
-import { CheckmarkCircle20Filled, Info20Regular, Search20Regular } from "@fluentui/react-icons";
+import {
+  CheckmarkCircle48Regular,
+  Dismiss12Regular,
+  Info20Regular,
+  Search20Regular,
+} from "@fluentui/react-icons";
 import type { IndependentSearchTarget } from "./BrowserChrome";
 
 interface Props {
   target: IndependentSearchTarget | null;
   onSearch: (query: string) => void;
+  onReturnToMail: () => void;
 }
 
 function GoogleWordmark({ compact }: { compact?: boolean }) {
@@ -35,18 +41,20 @@ function ContextBanner({ target }: { target: IndependentSearchTarget | null }) {
   );
 }
 
-export function SearchTabPage({ target, onSearch }: Props) {
+export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
   const [wasRecorded, setWasRecorded] = useState(false);
+  const [showRecordedPopup, setShowRecordedPopup] = useState(false);
 
   // A new email being verified (or no email at all) means any previous
-  // search's "recorded" banner no longer applies - start the tab fresh
+  // search's "recorded" state no longer applies - start the tab fresh
   // instead of leaving a stale confirmation from a different email on screen.
   useEffect(() => {
     setQuery("");
     setSubmittedQuery(null);
     setWasRecorded(false);
+    setShowRecordedPopup(false);
   }, [target?.id]);
 
   const handleSearch = () => {
@@ -56,7 +64,13 @@ export function SearchTabPage({ target, onSearch }: Props) {
     if (target) {
       onSearch(trimmed);
       setWasRecorded(true);
+      setShowRecordedPopup(true);
     }
+  };
+
+  const handleReturnToMail = () => {
+    setShowRecordedPopup(false);
+    onReturnToMail();
   };
 
   if (submittedQuery) {
@@ -79,17 +93,7 @@ export function SearchTabPage({ target, onSearch }: Props) {
 
         <ContextBanner target={target} />
 
-        {wasRecorded ? (
-          <div className="search-captured-banner">
-            <CheckmarkCircle20Filled className="search-captured-icon" />
-            <div>
-              <div className="search-captured-title">This action has been recorded</div>
-              <div className="search-captured-subtitle">
-                You can ignore these results and return to the Mail tab.
-              </div>
-            </div>
-          </div>
-        ) : (
+        {!wasRecorded && (
           <div className="search-not-recorded-banner">
             This search wasn't linked to an email, so it wasn't recorded as an action.
           </div>
@@ -104,6 +108,27 @@ export function SearchTabPage({ target, onSearch }: Props) {
             </div>
           </div>
         </div>
+
+        {showRecordedPopup && (
+          <div className="search-recorded-modal-backdrop">
+            <div className="search-recorded-modal">
+              <span
+                className="search-recorded-modal-close"
+                onClick={() => setShowRecordedPopup(false)}
+              >
+                <Dismiss12Regular />
+              </span>
+              <CheckmarkCircle48Regular className="search-recorded-modal-icon" />
+              <div className="search-recorded-modal-title">This action has been recorded</div>
+              <div className="search-recorded-modal-subtitle">
+                Head back to the Mail tab to continue with your tasks.
+              </div>
+              <button className="search-recorded-modal-button" onClick={handleReturnToMail}>
+                Return to Mail
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

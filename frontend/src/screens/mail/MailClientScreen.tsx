@@ -227,30 +227,38 @@ export function MailClientScreen({
   }, [isMailTabActive, phase]);
 
   // Registers the handler the Google tab calls once the participant submits
-  // a search there, and keeps the Google tab's "verifying: <email>" banner in
-  // sync - both gated on the same condition, so the tab only ever claims to
-  // record a search when there's a specific unprocessed email open to
-  // attribute it to.
-  const canVerifyIndependently =
+  // a search there. Only actually starts the action if nothing else is
+  // already in flight for this email (phase idle) - but note this is
+  // narrower than the "which email is this" label below: phase moves to
+  // "verifying" the instant this fires, so gating the *label* on phase idle
+  // too would null it out right as the search succeeds, wiping the Google
+  // tab's own "recorded" confirmation before the participant ever sees it.
+  const canStartVerifying =
     !!selectedEmail && !processed.has(selectedEmail.id) && phase === "idle" && interactionId !== null;
 
   useEffect(() => {
     registerIndependentSearchHandler(() => {
-      if (!canVerifyIndependently) return;
+      if (!canStartVerifying) return;
       setPhase("verifying");
     });
     return () => registerIndependentSearchHandler(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canVerifyIndependently]);
+  }, [canStartVerifying]);
 
+  // The Google tab's displayed target: any selected, not-yet-processed email
+  // counts, all the way through its verifying/confidence sub-phases - it only
+  // clears once that email is actually processed (or a different one opens).
   useEffect(() => {
     setIndependentSearchTarget(
-      canVerifyIndependently && selectedEmail
-        ? { id: selectedEmail.id, label: `"${selectedEmail.subject}" from ${senderName(selectedEmail.sender)}` }
+      selectedEmail && !processed.has(selectedEmail.id)
+        ? {
+            id: selectedEmail.id,
+            label: `"${selectedEmail.subject}" from ${senderName(selectedEmail.sender)}`,
+          }
         : null
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canVerifyIndependently, selectedEmail]);
+  }, [selectedEmail, processed]);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
 

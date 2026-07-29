@@ -251,6 +251,7 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSe
               <SearchTabPage
                 target={independentSearchTarget}
                 onSearch={(query) => independentSearchHandler.current?.(query)}
+                onReturnToMail={() => setActiveTabId(MAIL_TAB_ID)}
               />
             </div>
           )}
