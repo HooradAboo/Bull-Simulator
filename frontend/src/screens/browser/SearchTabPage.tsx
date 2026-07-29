@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  CheckmarkCircle48Regular,
-  Dismiss12Regular,
-  Info20Regular,
-  Search20Regular,
-} from "@fluentui/react-icons";
+import { CheckmarkCircle48Regular, Dismiss12Regular, Search20Regular } from "@fluentui/react-icons";
 import type { IndependentSearchTarget } from "./BrowserChrome";
 
 interface Props {
@@ -22,21 +17,6 @@ function GoogleWordmark({ compact }: { compact?: boolean }) {
       <span style={{ color: "#4285F4" }}>g</span>
       <span style={{ color: "#34A853" }}>l</span>
       <span style={{ color: "#EA4335" }}>e</span>
-    </div>
-  );
-}
-
-function ContextBanner({ target }: { target: IndependentSearchTarget | null }) {
-  return (
-    <div className={`search-context-banner ${target ? "linked" : "unlinked"}`}>
-      <Info20Regular className="search-context-icon" />
-      {target ? (
-        <span>
-          Verifying: <strong>{target.label}</strong>
-        </span>
-      ) : (
-        <span>Open an unprocessed email in the Mail tab, then come back here to verify it.</span>
-      )}
     </div>
   );
 }
@@ -91,8 +71,6 @@ export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
           </div>
         </div>
 
-        <ContextBanner target={target} />
-
         <div className="search-fake-results">
           <div className="search-fake-result">
             <div className="search-fake-result-url">www.example.com</div>
@@ -129,7 +107,6 @@ export function SearchTabPage({ target, onSearch, onReturnToMail }: Props) {
 
   return (
     <div className="search-page-home">
-      <ContextBanner target={target} />
       <GoogleWordmark />
       <div className={`search-home-box ${!target ? "disabled" : ""}`}>
         <Search20Regular />
