@@ -15,8 +15,6 @@ import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
-import { ChangePasswordPrompt } from "../login/ChangePasswordPrompt";
-import { ChangePasswordForm } from "../login/ChangePasswordForm";
 import { extractEmail, senderName } from "./avatar";
 import {
   confirmInteraction,
@@ -24,7 +22,6 @@ import {
   logHover,
   openInteraction,
   submitInteractionRatings,
-  updateCredentialPassword,
   type PerceivedLegitimacy,
 } from "../../api";
 import { useTaskProgress } from "../../taskProgress";
@@ -47,12 +44,9 @@ type Phase =
   | "verifying"
   | "confidence";
 
-type PasswordStep = "ask" | "form" | "done";
-
 interface Props {
   participantId: string;
   participantEmail: string;
-  credentialId: number;
   emails: DummyEmail[];
   contacts: Contact[];
   tasks: TaskConfig[];
@@ -145,15 +139,11 @@ function assignRandomActions(
 export function MailClientScreen({
   participantId,
   participantEmail,
-  credentialId,
   emails,
   contacts,
   tasks,
   onAllProcessed,
 }: Props) {
-  // Mounting this screen means login just succeeded, so the change-password
-  // prompt opens on top of the inbox right away instead of on the login page.
-  const [passwordStep, setPasswordStep] = useState<PasswordStep>("ask");
   const [composeOpen, setComposeOpen] = useState(false);
   const [composeRecipient, setComposeRecipient] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
@@ -711,23 +701,6 @@ export function MailClientScreen({
           otherCueText={otherCueText}
           onOtherCueTextChange={setOtherCueText}
           onSubmit={handleSubmitConfidence}
-        />
-      )}
-
-      {passwordStep === "ask" && (
-        <ChangePasswordPrompt
-          onYes={() => setPasswordStep("form")}
-          onNo={() => setPasswordStep("done")}
-        />
-      )}
-
-      {passwordStep === "form" && (
-        <ChangePasswordForm
-          onCancel={() => setPasswordStep("done")}
-          onSubmit={async (newPassword) => {
-            await updateCredentialPassword(credentialId, newPassword);
-            setPasswordStep("done");
-          }}
         />
       )}
     </div>

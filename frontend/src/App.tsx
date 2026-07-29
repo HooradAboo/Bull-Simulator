@@ -93,7 +93,6 @@ function App() {
             <MailClientScreen
               participantId={participantId}
               participantEmail={participantEmail}
-              credentialId={credentialId!}
               emails={emails}
               contacts={contacts}
               tasks={tasks}
