@@ -9,6 +9,7 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
+import { ActionRecordedModal } from "./ActionRecordedModal";
 import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
@@ -39,7 +40,7 @@ type Phase =
   | "confirming"
   | "forwarding"
   | "replying"
-  | "link-open"
+  | "action-recorded"
   | "verifying"
   | "confidence";
 
@@ -168,13 +169,8 @@ export function MailClientScreen({
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
   const hoverStart = useRef<number | null>(null);
-  const {
-    openTab,
-    isMailTabActive,
-    triggerDownload,
-    registerIndependentSearchHandler,
-    setIndependentSearchTarget,
-  } = useBrowserTabs();
+  const { isMailTabActive, registerIndependentSearchHandler, setIndependentSearchTarget } =
+    useBrowserTabs();
   const { reportProgress } = useTaskProgress();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
@@ -214,14 +210,12 @@ export function MailClientScreen({
     return null;
   };
 
-  // Clicking a link (or switching to the Google tab to verify
-  // independently) opens/switches to another browser tab instead of
-  // committing immediately; the action only commits once the participant
-  // comes back to the mail tab, so time_to_decision includes however long
-  // they spent there.
+  // Switching to the Google tab to verify independently doesn't commit
+  // immediately - it only commits once the participant comes back to the
+  // mail tab, so time_to_decision includes however long they spent there.
   useEffect(() => {
-    if (isMailTabActive && (phase === "link-open" || phase === "verifying")) {
-      commitAction(phase === "link-open" ? "click_link" : "verify_independently", null);
+    if (isMailTabActive && phase === "verifying") {
+      commitAction("verify_independently", null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMailTabActive, phase]);
@@ -308,8 +302,10 @@ export function MailClientScreen({
   // Delete/Report ask for a yes/no confirmation first since they're
   // destructive (move the email out of Inbox). Forward and Reply need
   // more input first (a recipient, or a composed reply), so they open
-  // a modal and only commit once that's submitted. Click Link opens a
-  // new browser tab and defers committing until the participant returns.
+  // a modal and only commit once that's submitted. Click Link and Open
+  // Attachment show a "this action has been recorded" popup first
+  // (rather than actually opening a tab or download) and commit once the
+  // participant dismisses it.
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
 
@@ -321,14 +317,14 @@ export function MailClientScreen({
 
     if (action === "click_link") {
       if (!selectedEmail.link) return;
-      openTab(selectedEmail.link);
-      setPhase("link-open");
+      setPendingAction(action);
+      setPhase("action-recorded");
       return;
     }
     if (action === "open_attachment") {
       if (!selectedEmail.attachment) return;
-      triggerDownload(selectedEmail.attachment);
-      commitAction("open_attachment", null);
+      setPendingAction(action);
+      setPhase("action-recorded");
       return;
     }
     if (action === "delete" || action === "report_phishing") {
@@ -706,6 +702,10 @@ export function MailClientScreen({
           onConfirm={handleConfirmDestructiveAction}
           onCancel={handleCancelDestructiveAction}
         />
+      )}
+
+      {phase === "action-recorded" && pendingAction && (
+        <ActionRecordedModal onContinue={() => commitAction(pendingAction, null)} />
       )}
 
       {phase === "confidence" && (
