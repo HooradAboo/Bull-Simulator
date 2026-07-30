@@ -243,7 +243,7 @@
 
 /* ---- Folder sidebar ---- */
 .mail-folder-sidebar {
-  width: 320px;
+  width: 200px;
   flex-shrink: 0;
   border-right: 1px solid var(--border);
   overflow-y: auto;
