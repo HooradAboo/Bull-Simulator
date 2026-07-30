@@ -45,6 +45,7 @@ def get_emails(participant_id: str | None = None, db: Session = Depends(get_db))
                 participant.session_start_ts,
                 contacts=profile.contacts if profile else None,
                 variables=profile.variables if profile else None,
+                email=profile.email if profile else None,
             )
         return load_public_emails(context, session_start_ts)
     except (FileNotFoundError, ValueError) as e:

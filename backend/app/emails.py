@@ -99,12 +99,15 @@ def build_template_context(
     session_start_ts: int,
     contacts: dict[str, ContactProfile] | None = None,
     variables: dict[str, str] | None = None,
+    email: str | None = None,
 ) -> dict[str, str]:
     context = {
         "participant_fname": first_name,
         "participant_lname": last_name,
         "login_time": format_login_time(session_start_ts),
     }
+    if email:
+        context["email_address"] = email
 
     for role, contact in (contacts or {}).items():
         full_name = f"{contact.firstName} {contact.lastName}"

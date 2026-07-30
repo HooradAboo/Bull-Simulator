@@ -1,8 +1,8 @@
 {
   "id": "phish_004_supervisor_payment_request",
-  "sender": "{{faculty}} <officebox346@gmail.com>",
+  "sender": "{{supervisor_name}} <officebox346@gmail.com>",
   "subject": "Quick ask",
-  "body": "<div><div style='margin-bottom:10px;'>Hi {{participant_fname}},</div><div style='margin-bottom:10px;'>I'm in back-to-back meetings all day and need a favor. I'm trying to lock in conference registration before the early-bird rate closes within the hour, but my card keeps getting declined through the university portal. Could you put the $150 fee on your card and I'll reimburse you right away? Just need the card number, expiration date, and the security code on the back, I'll handle the rest from there.</div><div style='margin-bottom:10px;'>If you're not able to help with this, could you forward this to someone else on the team who might be able to?</div><div>Thanks so much,<br/>{{faculty}}</div></div>",
+  "body": "<div><div style='margin-bottom:10px;'>Hi {{participant_fname}},</div><div style='margin-bottom:10px;'>I'm in back-to-back meetings all day and need a favor. I'm trying to lock in conference registration before the early-bird rate closes within the hour, but my card keeps getting declined through the university portal. Could you put the $150 fee on your card and I'll reimburse you right away? Just need the card number, expiration date, and the security code on the back, I'll handle the rest from there.</div><div style='margin-bottom:10px;'>If you're not able to help with this, could you forward this to someone else on the team who might be able to?</div><div>Thanks so much,<br/>{{supervisor_name}}</div></div>",
   "link": null,
   "attachment": null,
   "is_phishing": true,
