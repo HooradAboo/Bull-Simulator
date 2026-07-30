@@ -10,7 +10,6 @@ import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
-import { RequirementNoticeModal } from "./RequirementNoticeModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
@@ -165,7 +164,6 @@ export function MailClientScreen({
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
-  const [requirementNotice, setRequirementNotice] = useState<string[] | null>(null);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
   const hoverStart = useRef<number | null>(null);
@@ -176,14 +174,6 @@ export function MailClientScreen({
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
   const usedActionTypes = new Set(Array.from(processed.values()).map((p) => p.action));
 
-  // Required action types come from the tasks config (any "action_used"
-  // subtask, across all tasks) rather than being hardcoded, so editing
-  // config/tasks.json changes what's enforced without a code change.
-  const requiredActions = tasks
-    .flatMap((t) => t.subtasks)
-    .filter((s) => s.type === "action_used" && s.action)
-    .map((s) => s.action as ActionType);
-
   useEffect(() => {
     reportProgress({
       processedCount: processed.size,
@@ -192,23 +182,6 @@ export function MailClientScreen({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [processed, emails.length]);
-
-  // If choosing this action would leave more required action types unused
-  // than there are remaining emails to use them on, it's about to become
-  // impossible to finish the task list - reject it instead of committing.
-  const computeBlockedNotice = (action: ActionType): string[] | null => {
-    if (!selectedEmail) return null;
-    const remainingOtherEmails = emails.filter(
-      (e) => e.id !== selectedEmail.id && !processed.has(e.id)
-    ).length;
-    const usedAfter = new Set(usedActionTypes);
-    usedAfter.add(action);
-    const stillNeeded = requiredActions.filter((a) => !usedAfter.has(a));
-    if (stillNeeded.length > remainingOtherEmails) {
-      return stillNeeded.map((a) => ACTION_LABELS[a]);
-    }
-    return null;
-  };
 
   // Switching to the Google tab to verify independently doesn't commit
   // immediately - it only commits once the participant comes back to the
@@ -308,12 +281,6 @@ export function MailClientScreen({
   // participant dismisses it.
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
-
-    const blocked = computeBlockedNotice(action);
-    if (blocked) {
-      setRequirementNotice(blocked);
-      return;
-    }
 
     if (action === "click_link") {
       if (!selectedEmail.link) return;
@@ -688,13 +655,6 @@ export function MailClientScreen({
           </>
         )}
       </div>
-
-      {requirementNotice && (
-        <RequirementNoticeModal
-          neededLabels={requirementNotice}
-          onDismiss={() => setRequirementNotice(null)}
-        />
-      )}
 
       {phase === "confirming" && confirmingAction && (
         <ConfirmActionModal
