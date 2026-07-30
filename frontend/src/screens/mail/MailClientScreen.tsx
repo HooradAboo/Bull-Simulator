@@ -151,8 +151,8 @@ export function MailClientScreen({
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
-  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState(50);
-  const [confidenceValue, setConfidenceValueState] = useState(50);
+  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState(3);
+  const [confidenceValue, setConfidenceValueState] = useState(3);
   const [difficultyValue, setDifficultyValue] = useState(3);
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
@@ -359,8 +359,8 @@ export function MailClientScreen({
     setPendingRecipient(recipient);
     setPhase("confidence");
     setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(50);
-    setConfidenceValueState(50);
+    setJudgmentConfidenceValue(3);
+    setConfidenceValueState(3);
     setDifficultyValue(3);
     setSelectedCues([]);
     setOtherCueText("");

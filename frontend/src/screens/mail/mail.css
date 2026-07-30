@@ -694,32 +694,6 @@
   font-size: 14.5px;
   margin: 14px 0 10px;
 }
-.confidence-box input[type="range"] {
-  width: 100%;
-  display: block;
-  accent-color: var(--usf-green);
-}
-.slider-track-wrap {
-  position: relative;
-  padding-top: 20px;
-}
-.slider-value-bubble {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--usf-green);
-  pointer-events: none;
-  white-space: nowrap;
-}
-.confidence-scale-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11.5px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
 .confidence-nav {
   display: flex;
   align-items: center;
@@ -764,7 +738,7 @@
 .judgment-buttons {
   display: flex;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 32px;
 }
 .confidence-scale-labels-step1 {
   margin-bottom: 16px;
@@ -796,7 +770,7 @@
 }
 
 .confidence-box h3.confidence-second-h3 {
-  margin-top: 8px;
+  margin-top: 24px;
 }
 .likert-options {
   display: flex;

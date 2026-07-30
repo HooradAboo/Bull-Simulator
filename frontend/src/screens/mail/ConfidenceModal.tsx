@@ -1,6 +1,14 @@
 import { useState } from "react";
 import type { PerceivedLegitimacy } from "../../api";
 
+const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
+  { value: 1, label: "Not at all confident" },
+  { value: 2, label: "Slightly confident" },
+  { value: 3, label: "Somewhat confident" },
+  { value: 4, label: "Confident" },
+  { value: 5, label: "Extremely confident" },
+];
+
 const DIFFICULTY_OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: "Very easy" },
   { value: 2, label: "Somewhat easy" },
@@ -88,21 +96,17 @@ export function ConfidenceModal({
             </div>
 
             <h3>How confident are you in that decision?</h3>
-            <div className="slider-track-wrap">
-              <div className="slider-value-bubble" style={{ left: `${judgmentConfidenceValue}%` }}>
-                {judgmentConfidenceValue}
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={judgmentConfidenceValue}
-                onChange={(e) => onJudgmentConfidenceChange(Number(e.target.value))}
-              />
-            </div>
-            <div className="confidence-scale-labels confidence-scale-labels-step1">
-              <span>Not at all confident</span>
-              <span>Extremely confident</span>
+            <div className="likert-options confidence-scale-labels-step1">
+              {CONFIDENCE_OPTIONS.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`likert-option${judgmentConfidenceValue === option.value ? " selected" : ""}`}
+                  onClick={() => onJudgmentConfidenceChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
           </>
         )}
@@ -148,21 +152,17 @@ export function ConfidenceModal({
         {step === 3 && (
           <>
             <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
-            <div className="slider-track-wrap">
-              <div className="slider-value-bubble" style={{ left: `${confidenceValue}%` }}>
-                {confidenceValue}
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={confidenceValue}
-                onChange={(e) => onConfidenceChange(Number(e.target.value))}
-              />
-            </div>
-            <div className="confidence-scale-labels">
-              <span>Not at all confident</span>
-              <span>Extremely confident</span>
+            <div className="likert-options">
+              {CONFIDENCE_OPTIONS.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`likert-option${confidenceValue === option.value ? " selected" : ""}`}
+                  onClick={() => onConfidenceChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
 
             <h3 className="confidence-second-h3">How difficult was this decision?</h3>
