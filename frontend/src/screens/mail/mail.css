@@ -881,14 +881,21 @@
 .cue-option input[type="checkbox"] {
   accent-color: var(--usf-green);
 }
-.cue-other-input {
-  width: 100%;
+.cue-other-inline-input {
+  flex: 1;
+  min-width: 0;
   box-sizing: border-box;
-  margin-top: 10px;
-  padding: 6px 10px;
+  padding: 2px 4px;
   font-size: 13px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  font-family: inherit;
+  color: var(--text);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  outline: none;
+  cursor: text;
+}
+.cue-other-inline-input:focus {
+  border-bottom-color: var(--usf-green);
 }
 
 .forward-box {

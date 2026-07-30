@@ -58,6 +58,7 @@ export function ConfidenceModal({
   onSubmit,
 }: Props) {
   const [step, setStep] = useState(1);
+  const isOtherSelected = selectedCues.includes("other");
 
   return (
     <div className="modal-backdrop">
@@ -110,7 +111,7 @@ export function ConfidenceModal({
           <>
             <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
             <div className="cue-options">
-              {CUE_OPTIONS.map((cue) => (
+              {CUE_OPTIONS.filter((cue) => cue.key !== "other").map((cue) => (
                 <label key={cue.key} className="cue-option">
                   <input
                     type="checkbox"
@@ -120,16 +121,27 @@ export function ConfidenceModal({
                   {cue.label}
                 </label>
               ))}
+              <label className="cue-option cue-option-other">
+                <input
+                  type="checkbox"
+                  checked={isOtherSelected}
+                  onChange={() => onToggleCue("other")}
+                />
+                {isOtherSelected ? (
+                  <input
+                    type="text"
+                    className="cue-other-inline-input"
+                    placeholder="Something else..."
+                    value={otherCueText}
+                    onChange={(e) => onOtherCueTextChange(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    autoFocus
+                  />
+                ) : (
+                  "Something else"
+                )}
+              </label>
             </div>
-            {selectedCues.includes("other") && (
-              <input
-                type="text"
-                className="cue-other-input"
-                placeholder="What else influenced your decision?"
-                value={otherCueText}
-                onChange={(e) => onOtherCueTextChange(e.target.value)}
-              />
-            )}
           </>
         )}
 

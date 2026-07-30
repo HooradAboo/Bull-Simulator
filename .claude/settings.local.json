@@ -94,7 +94,8 @@
       "Bash(curl *)",
       "Bash(node -e ' *)",
       "Bash(node *)",
-      "Bash(awk '{print $1}')"
+      "Bash(awk '{print $1}')",
+      "Bash(kill -9 3780981 3781075 3781317)"
     ]
   }
 }

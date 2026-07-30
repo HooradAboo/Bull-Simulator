@@ -5,7 +5,6 @@ import {
   ArrowReply20Regular,
   ArrowReplyAll20Regular,
   Broom20Regular,
-  CheckboxChecked20Regular,
   Delete20Regular,
   Flash20Regular,
   Folder20Regular,
@@ -62,7 +61,6 @@ export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectActio
       {actionButton("report_phishing", <ShieldError20Regular />, "Report")}
       <DecorativeButton icon={<Broom20Regular />} label="Sweep" />
       <DecorativeButton icon={<Folder20Regular />} label="Move to" />
-      {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
 
       <div className="ribbon-divider" />
 
@@ -73,8 +71,11 @@ export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectActio
       <div className="ribbon-divider" />
 
       <DecorativeButton icon={<PeopleTeam20Regular />} label="Share to Teams" />
+
+      <div className="ribbon-divider" />
+
       <DecorativeButton icon={<Flash20Regular />} label="Quick steps" />
-      <DecorativeButton icon={<CheckboxChecked20Regular />} label="Mark all as read" />
+      {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
     </div>
   );
 }
