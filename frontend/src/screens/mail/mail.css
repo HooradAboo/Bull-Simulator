@@ -725,10 +725,12 @@
   padding: 22px;
   width: 480px;
   max-width: 90vw;
-  height: 322px;
+  height: 328px;
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
 }
 .confidence-step-indicator {
   font-size: 11px;
@@ -771,7 +773,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 14px;
+  /* Pins the nav row to the exact bottom of the fixed-height box regardless
+     of how much content precedes it, so Back/Next/Submit never shift
+     between steps - absorbs all remaining flex space above it. */
+  margin-top: auto;
+  padding-top: 14px;
+  flex-shrink: 0;
 }
 .confidence-box .confidence-submit {
   background: var(--usf-green);
@@ -806,7 +813,10 @@
 .judgment-buttons {
   display: flex;
   gap: 10px;
-  margin-bottom: 4px;
+  margin-bottom: 16px;
+}
+.confidence-scale-labels-step1 {
+  margin-bottom: 16px;
 }
 .confidence-box .judgment-button {
   flex: 1;
@@ -834,9 +844,13 @@
   border-color: var(--usf-green-hover);
 }
 
+.confidence-box h3.confidence-second-h3 {
+  margin-top: 8px;
+}
 .likert-options {
   display: flex;
   gap: 6px;
+  margin-bottom: 16px;
 }
 .confidence-box .likert-option {
   flex: 1;

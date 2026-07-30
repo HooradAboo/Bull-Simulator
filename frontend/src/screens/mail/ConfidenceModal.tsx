@@ -100,7 +100,7 @@ export function ConfidenceModal({
                 onChange={(e) => onJudgmentConfidenceChange(Number(e.target.value))}
               />
             </div>
-            <div className="confidence-scale-labels">
+            <div className="confidence-scale-labels confidence-scale-labels-step1">
               <span>Not at all confident</span>
               <span>Extremely confident</span>
             </div>
@@ -165,7 +165,7 @@ export function ConfidenceModal({
               <span>Extremely confident</span>
             </div>
 
-            <h3>How difficult was this decision?</h3>
+            <h3 className="confidence-second-h3">How difficult was this decision?</h3>
             <div className="likert-options">
               {DIFFICULTY_OPTIONS.map((option) => (
                 <button
@@ -187,7 +187,9 @@ export function ConfidenceModal({
               Back
             </button>
           ) : (
-            <span />
+            <button type="button" className="confidence-back" style={{ visibility: "hidden" }}>
+              Back
+            </button>
           )}
           {step < TOTAL_STEPS ? (
             <button
