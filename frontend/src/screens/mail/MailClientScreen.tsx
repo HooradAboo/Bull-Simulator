@@ -23,7 +23,6 @@ import {
   submitInteractionRatings,
   type PerceivedLegitimacy,
 } from "../../api";
-import { useTaskProgress } from "../../taskProgress";
 import type {
   ActionType,
   Contact,
@@ -31,7 +30,6 @@ import type {
   FolderName,
   ProcessedInfo,
   SentItem,
-  TaskConfig,
 } from "../../types";
 
 type Phase =
@@ -48,7 +46,6 @@ interface Props {
   participantEmail: string;
   emails: DummyEmail[];
   contacts: Contact[];
-  tasks: TaskConfig[];
   onAllProcessed: () => void;
 }
 
@@ -140,7 +137,6 @@ export function MailClientScreen({
   participantEmail,
   emails,
   contacts,
-  tasks,
   onAllProcessed,
 }: Props) {
   const [composeOpen, setComposeOpen] = useState(false);
@@ -169,19 +165,8 @@ export function MailClientScreen({
   const hoverStart = useRef<number | null>(null);
   const { isMailTabActive, registerIndependentSearchHandler, setIndependentSearchTarget } =
     useBrowserTabs();
-  const { reportProgress } = useTaskProgress();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
-  const usedActionTypes = new Set(Array.from(processed.values()).map((p) => p.action));
-
-  useEffect(() => {
-    reportProgress({
-      processedCount: processed.size,
-      totalEmails: emails.length,
-      usedActions: usedActionTypes,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [processed, emails.length]);
 
   // Switching to the Google tab to verify independently doesn't commit
   // immediately - it only commits once the participant comes back to the
@@ -570,7 +555,6 @@ export function MailClientScreen({
           sentCount={sentItems.length}
           draftsCount={composeOpen ? 1 : 0}
           participantEmail={participantEmail}
-          tasks={tasks}
           onSelectFolder={handleSelectFolder}
         />
         {currentFolder === "sent" ? (

@@ -1,4 +1,4 @@
-import type { Contact, Credential, DummyEmail, SelfEfficacyRatings, TaskConfig } from "./types";
+import type { Contact, Credential, DummyEmail, SelfEfficacyRatings } from "./types";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -35,10 +35,6 @@ export async function getEmails(participantId: string): Promise<DummyEmail[]> {
 
 export function getContacts(participantId: string): Promise<Contact[]> {
   return get(`/contacts?participant_id=${encodeURIComponent(participantId)}`);
-}
-
-export function getTasks(): Promise<TaskConfig[]> {
-  return get("/tasks");
 }
 
 export interface ParticipantProfile {

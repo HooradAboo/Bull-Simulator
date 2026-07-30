@@ -9,7 +9,6 @@ from app.emails import EmailPublic, build_template_context, load_public_emails
 from app.participant_profile import ParticipantProfile, load_participant_profile
 from app.report import PerformanceReport, build_performance_report
 from app.self_efficacy import SelfEfficacyQuestion, load_self_efficacy_questions
-from app.tasks import TaskConfig, load_tasks
 
 Base.metadata.create_all(bind=engine)
 
@@ -78,14 +77,6 @@ def get_contacts(participant_id: str | None = None, db: Session = Depends(get_db
             raise HTTPException(status_code=404, detail="unknown participant_id")
         profile = load_participant_profile(participant.netid)
         return load_contacts_for_participant(profile)
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/tasks", response_model=list[TaskConfig])
-def get_tasks():
-    try:
-        return load_tasks()
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

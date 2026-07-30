@@ -13,14 +13,12 @@ import {
   createCredential,
   getContacts,
   getEmails,
-  getTasks,
   startSession,
   submitPostSelfEfficacy,
 } from "./api";
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
-import { TaskProgressProvider } from "./taskProgress";
-import type { Contact, DummyEmail, SelfEfficacyRatings, TaskConfig } from "./types";
+import type { Contact, DummyEmail, SelfEfficacyRatings } from "./types";
 
 function sortByReceivedDesc(emails: DummyEmail[]): DummyEmail[] {
   return [...emails].sort((a, b) => (b.receivedAt ?? 0) - (a.receivedAt ?? 0));
@@ -48,7 +46,6 @@ function App() {
   const [credentialId, setCredentialId] = useState<number | null>(null);
   const [emails, setEmails] = useState<DummyEmail[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [tasks, setTasks] = useState<TaskConfig[]>([]);
 
   useMouseLogger(sessionStarted ? participantId : null);
   useKeystrokeLogger(sessionStarted ? participantId : null);
@@ -68,15 +65,13 @@ function App() {
       selfEfficacy!,
       startTs
     );
-    const [allEmails, allContacts, allTasks, credential] = await Promise.all([
+    const [allEmails, allContacts, credential] = await Promise.all([
       getEmails(participantId),
       getContacts(participantId),
-      getTasks(),
       createCredential(participantId, "USF Email (Outlook)", participantEmail, derivedPassword),
     ]);
     setEmails(sortByReceivedDesc(allEmails));
     setContacts(allContacts);
-    setTasks(allTasks);
     setCredentialId(credential.id);
     setSessionStarted(true);
     setScreen("mail");
@@ -84,31 +79,28 @@ function App() {
 
   if (screen === "mail") {
     return (
-      <TaskProgressProvider>
-        <BrowserChrome
-          primaryTabTitle={loggedIn ? undefined : "Sign in"}
-          primaryTabUrl={loggedIn ? undefined : "login.microsoftonline.com"}
-          showSearchTab={loggedIn}
-        >
-          {loggedIn ? (
-            <MailClientScreen
-              participantId={participantId}
-              participantEmail={participantEmail}
-              emails={emails}
-              contacts={contacts}
-              tasks={tasks}
-              onAllProcessed={() => setScreen("self-efficacy-post")}
-            />
-          ) : (
-            <LoginScreen
-              expectedEmail={participantEmail}
-              expectedPassword={derivedPassword}
-              credentialId={credentialId!}
-              onSuccess={() => setLoggedIn(true)}
-            />
-          )}
-        </BrowserChrome>
-      </TaskProgressProvider>
+      <BrowserChrome
+        primaryTabTitle={loggedIn ? undefined : "Sign in"}
+        primaryTabUrl={loggedIn ? undefined : "login.microsoftonline.com"}
+        showSearchTab={loggedIn}
+      >
+        {loggedIn ? (
+          <MailClientScreen
+            participantId={participantId}
+            participantEmail={participantEmail}
+            emails={emails}
+            contacts={contacts}
+            onAllProcessed={() => setScreen("self-efficacy-post")}
+          />
+        ) : (
+          <LoginScreen
+            expectedEmail={participantEmail}
+            expectedPassword={derivedPassword}
+            credentialId={credentialId!}
+            onSuccess={() => setLoggedIn(true)}
+          />
+        )}
+      </BrowserChrome>
     );
   }
 

@@ -44,19 +44,6 @@ export interface SentItem {
   sentAt: number;
 }
 
-export interface Subtask {
-  id: string;
-  label: string;
-  type: "process_all_emails" | "action_used";
-  action?: ActionType;
-}
-
-export interface TaskConfig {
-  id: string;
-  title: string;
-  subtasks: Subtask[];
-}
-
 export interface Credential {
   id: number;
   website: string;

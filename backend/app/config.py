@@ -14,7 +14,6 @@ class Settings(BaseSettings):
     port: int = 8000
     emails_config_dir: Path = REPO_ROOT / "config" / "emails"
     contacts_config_path: Path = REPO_ROOT / "config" / "contacts.json"
-    tasks_config_path: Path = REPO_ROOT / "config" / "tasks.json"
     confidential_participants_dir: Path = REPO_ROOT / "confidential" / "participants"
     self_efficacy_questions_config_path: Path = (
         REPO_ROOT / "config" / "confidence_questions.json"

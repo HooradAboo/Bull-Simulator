@@ -11,8 +11,7 @@ import {
   Send20Regular,
   TaskListSquareLtr20Regular,
 } from "@fluentui/react-icons";
-import type { FolderName, TaskConfig } from "../../types";
-import { TaskList } from "./TaskList";
+import type { FolderName } from "../../types";
 
 const RAIL_ICONS = [
   { icon: <Mail20Filled />, active: true },
@@ -30,7 +29,6 @@ interface Props {
   sentCount: number;
   draftsCount: number;
   participantEmail: string;
-  tasks: TaskConfig[];
   onSelectFolder: (folder: FolderName) => void;
 }
 
@@ -42,7 +40,6 @@ export function FolderSidebar({
   sentCount,
   draftsCount,
   participantEmail,
-  tasks,
   onSelectFolder,
 }: Props) {
   return (
@@ -106,8 +103,6 @@ export function FolderSidebar({
         </div>
 
         <div className="account-row">{participantEmail}</div>
-
-        <TaskList tasks={tasks} />
       </div>
     </>
   );
