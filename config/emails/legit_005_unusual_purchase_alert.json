@@ -1,0 +1,11 @@
+{
+  "id": "legit_005_unusual_purchase_alert",
+  "sender": "{{bank}} Fraud Alerts <alerts@{{bank_domain}}>",
+  "subject": "Unusual Purchase Activity on Your Card",
+  "body": "<div style='text-align:center;'><div style='height:4px;background:#13294b;width:100%;margin-bottom:24px;'></div><div style='font-size:18px;font-weight:700;color:#13294b;margin-bottom:24px;'>{{bank}}</div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;'><div style='margin-bottom:10px;'>Hi {{participant_fname}} {{participant_lname}},</div><div style='margin-bottom:14px;'>We noticed a purchase on your {{bank}} card that's outside your typical spending pattern:</div><table style='width:100%;font-size:14px;margin-bottom:16px;'><tr><td style='color:#605e5c;padding:4px 0;width:90px;'>Merchant:</td><td>{{retailer}}</td></tr><tr><td style='color:#605e5c;padding:4px 0;'>Location:</td><td>Denver, CO</td></tr><tr><td style='color:#605e5c;padding:4px 0;'>Time:</td><td>2:14 AM EST</td></tr><tr><td style='color:#605e5c;padding:4px 0;'>Amount:</td><td>$342.17</td></tr></table><div style='margin-bottom:12px;'>Was this you?</div><div style='margin-bottom:14px;'><a href='https://{{bank_domain}}/fraud-alerts/confirm?ref=8842910' data-tracked-link style='display:inline-block;background:#13294b;color:#fff;font-weight:700;padding:10px 20px;border-radius:6px;text-decoration:none;margin-right:10px;'>Yes, this was me</a><a href='#' style='display:inline-block;background:#fff;color:#13294b;font-weight:700;padding:10px 20px;border-radius:6px;text-decoration:none;border:1px solid #13294b;'>No, this wasn't me</a></div><div>If you don't recognize this charge, you can also call the number on the back of your card.</div><div style='margin-top:10px;'>{{bank}} Fraud Prevention</div></div></div>",
+  "link": "https://{{bank_domain}}/fraud-alerts/confirm?ref=8842910",
+  "attachment": null,
+  "is_phishing": false,
+  "days_before": 0,
+  "received_time": "02:36"
+}

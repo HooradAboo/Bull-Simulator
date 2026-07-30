@@ -1,0 +1,11 @@
+{
+  "id": "phish_001_urgent_meeting_request",
+  "sender": "depthead@post.com <jm.davis8842@gmail.com>",
+  "subject": "Need to talk today, urgent",
+  "body": "<div><div style='margin-bottom:10px;'>Hi {{participant_fname}},</div><div style='margin-bottom:10px;'>Something time-sensitive came up and I need to loop you in before end of day. Can you send me your phone number? I'll call you directly, it'll be faster than going back and forth over email.</div><div>Talk soon,<br/>Hoorad Abootalebi</div></div>",
+  "link": null,
+  "attachment": null,
+  "is_phishing": true,
+  "days_before": 0,
+  "received_time": "20:50"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "phish_005_suspicious_attachment",
+  "sender": "USF IT Security Compliance <compliance@usf-itsecurity-check.com>",
+  "subject": "Required: Install Security Update by Friday",
+  "body": "<div style='text-align:center;'><div style='height:4px;background:#006747;width:100%;margin-bottom:24px;'></div><img src='/usf-logo.png' alt='University of South Florida' style='height:48px;margin-bottom:24px;' /><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;'><div style='margin-bottom:10px;'>Dear Student,</div><div style='margin-bottom:14px;'>As part of a university-wide security compliance initiative, all students are required to install the attached security client on any device used to access USF systems. Failure to install by Friday may result in restricted access to Canvas and email.</div><div style='display:flex;align-items:center;border:1px solid #e1dfdd;border-radius:6px;padding:10px 14px;margin-bottom:14px;'><div style='width:32px;height:32px;background:#606060;border-radius:4px;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;'>ZIP</div><div style='font-size:13px;'>SecureUSF_Client_Install.zip</div></div><div>USF IT Security Compliance</div></div></div>",
+  "link": null,
+  "attachment": "SecureUSF_Client_Install.zip",
+  "is_phishing": true,
+  "days_before": 2,
+  "received_time": "07:29"
+}

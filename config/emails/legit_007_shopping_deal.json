@@ -1,0 +1,11 @@
+{
+  "id": "legit_007_shopping_deal",
+  "sender": "{{retailer}} <offers@{{retailer}}.com>",
+  "subject": "{{participant_fname}}, This One's Just for You",
+  "body": "<div style='text-align:center;'><div style='height:4px;background:#b23b3b;width:100%;margin-bottom:24px;'></div><div style='font-size:18px;font-weight:700;color:#b23b3b;margin-bottom:24px;'>{{retailer}}</div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;'><div style='margin-bottom:10px;'>Hi {{participant_fname}},</div><div style='margin-bottom:14px;'>You've unlocked an exclusive offer, just for you: 40% off your next purchase, online or in store. This isn't a sitewide deal, it's a personal thank-you for being one of our top customers.</div><div style='text-align:center;margin-bottom:14px;'><a href='https://{{retailer}}.com/rewards/claim?code=VIP40OFF' data-tracked-link style='display:inline-block;background:#b23b3b;color:#fff;font-weight:700;padding:12px 28px;border-radius:6px;text-decoration:none;'>Claim My Offer</a></div><div style='color:#605e5c;font-size:13px;'>Offer expires in 48 hours and is tied to your account, so don't miss it.</div></div></div>",
+  "link": "https://{{retailer}}.com/rewards/claim?code=VIP40OFF",
+  "attachment": null,
+  "is_phishing": false,
+  "days_before": 1,
+  "received_time": "11:20"
+}

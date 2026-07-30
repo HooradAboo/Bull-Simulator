@@ -1,0 +1,11 @@
+{
+  "id": "legit_002_department_announcement",
+  "sender": "USF {{department}} Advising Office <{{department}}-advising@usf.edu>",
+  "subject": "Fall Semester Advising Hours Now Available for {{department}} Students",
+  "body": "<div style='text-align:center;'><div style='height:4px;background:#006747;width:100%;margin-bottom:24px;'></div><div style='font-size:18px;font-weight:700;color:#006747;margin-bottom:24px;'>USF {{department}} Advising Office</div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;'><div style='margin-bottom:10px;'>Dear Students,</div><div style='margin-bottom:10px;'>Advising appointments for the Fall semester are now open for scheduling. Faculty advisors in {{department}} will hold extended hours during the first two weeks of the term to help with course selection and degree planning.</div><div style='margin-bottom:14px;'>To schedule an appointment, use the link below to book a time that works for you:</div><a href='https://outlook.office.com/bookwithme/user/e8f4a9c2b3d64e1f9a8c7b2d3e4f5a6b@usf.edu/meetingtype/3a7b9c1d-4e2f-4a8b-9c3d-7e1f2a4b6c8d?anonymous&ep=mlink' data-tracked-link style='display:inline-block;background:#006747;color:#fff;font-weight:700;padding:10px 24px;border-radius:6px;text-decoration:none;margin-bottom:14px;'>Schedule via Outlook Bookings</a><div>Thank you,<br/>{{department}} Office</div></div></div>",
+  "link": "https://outlook.office.com/bookwithme/user/e8f4a9c2b3d64e1f9a8c7b2d3e4f5a6b@usf.edu/meetingtype/3a7b9c1d-4e2f-4a8b-9c3d-7e1f2a4b6c8d?anonymous&ep=mlink",
+  "attachment": null,
+  "is_phishing": false,
+  "days_before": 3,
+  "received_time": "09:15"
+}

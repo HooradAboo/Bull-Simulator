@@ -1,0 +1,11 @@
+{
+  "id": "phish_007_social_engineering",
+  "sender": "marcus.reyes82@yahoo.com",
+  "subject": "{{contact}} mentioned you",
+  "body": "<div><div style='margin-bottom:10px;'>Hi {{participant_fname}},</div><div style='margin-bottom:10px;'>Hope this reaches you okay. {{contact}} and I were talking recently and your name came up, they mentioned you might be a good person to connect with. I'd love to chat for a few minutes if you're open to it, whenever works for you this week.</div><div style='margin-bottom:10px;'>Let me know.</div><div>Marcus</div></div>",
+  "link": null,
+  "attachment": null,
+  "is_phishing": true,
+  "days_before": 1,
+  "received_time": "14:50"
+}

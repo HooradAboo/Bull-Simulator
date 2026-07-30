@@ -1,0 +1,11 @@
+{
+  "id": "phish_003_usps_shipping_notification",
+  "sender": "USPS Delivery Services <delivery@usps-shipment-alert.com>",
+  "subject": "Unsuccessful Delivery Attempt",
+  "body": "<div style='text-align:center;'><div style='height:4px;background:#333366;width:100%;margin-bottom:24px;'></div><div style='font-size:18px;font-weight:700;color:#333366;margin-bottom:24px;'>USPS<span style='color:#da291c;'>.</span></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;'><div style='margin-bottom:10px;'>Dear Customer,</div><div style='margin-bottom:14px;'>We attempted to deliver your package today, but the delivery attempt was unsuccessful. Your package is currently being held at our local facility.</div><div style='margin-bottom:14px;'>Please click the link below to reschedule your delivery.</div><div style='text-align:center;margin-bottom:14px;'><a href='http://usps-shipment-alert.com/reschedule' data-tracked-link style='display:inline-block;background:#333366;color:#fff;font-weight:700;padding:12px 28px;border-radius:4px;text-decoration:none;'>Confirm Shipping Information</a></div><div style='margin-bottom:10px;'>Tracking Number: 9491 3838 2947 2010 8899</div><div>USPS Delivery Services</div></div></div>",
+  "link": "http://usps-shipment-alert.com/reschedule",
+  "attachment": null,
+  "is_phishing": true,
+  "days_before": 0,
+  "received_time": "10:15"
+}

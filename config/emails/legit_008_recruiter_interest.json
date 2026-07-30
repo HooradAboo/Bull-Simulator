@@ -1,11 +1,11 @@
 {
   "id": "legit_008_recruiter_interest",
-  "sender": "Taylor Brooks, Talent Acquisition <t.brooks@technovarecruiting.com>",
+  "sender": "Taylor Brooks <t.brooks@promazo.com>",
   "subject": "Part-Time Technical Lead Role (up to $50/hr, 12-month contract)",
-  "body": "Hi {{participant_fname}},\n\nI came across your profile while looking for candidates for our upcoming internship cohort and thought your coursework and experience could be a strong fit. Would you be open to a short call this week to talk through the role?\n\nBest,\nTaylor Brooks\nTalent Acquisition",
+  "body": "<div><div style='margin-bottom:10px;'>Hi {{participant_fname}},</div><div style='margin-bottom:10px;'>I came across your profile while looking for candidates for our upcoming internship cohort and thought your coursework and experience could be a strong fit. Would you be open to a short call this week to talk through the role?</div><div>Best,<br/>Taylor Brooks</div></div>",
   "link": null,
   "attachment": null,
   "is_phishing": false,
-  "days_before": 3,
-  "received_time": "10:00"
+  "days_before": 4,
+  "received_time": "11:00"
 }

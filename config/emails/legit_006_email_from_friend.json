@@ -1,0 +1,11 @@
+{
+  "id": "legit_006_email_from_friend",
+  "sender": "{{peer}} <{{peer_usf_email}}>",
+  "subject": "notes from today?",
+  "body": "<div><div style='margin-bottom:10px;'>hey,</div><div style='margin-bottom:10px;'>i had to leave early today, missed the last 20 minutes. did you catch what she said about the project, is it due monday or wednesday? also, want to meet up before the deadline to discuss the plan?</div><div style='margin-bottom:10px;'>let me know when you get a sec.</div><div style='color:#605e5c;font-size:12px;'>Sent from my iPhone</div></div>",
+  "link": null,
+  "attachment": null,
+  "is_phishing": false,
+  "days_before": 1,
+  "received_time": "19:10"
+}

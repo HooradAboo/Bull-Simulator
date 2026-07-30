@@ -1,0 +1,11 @@
+{
+  "id": "phish_009_ransom_extortion",
+  "sender": "system.audit774@protonmail.com",
+  "subject": "I've been watching you",
+  "body": "<div><div style='margin-bottom:10px;'>Hi there,</div><div style='margin-bottom:10px;'>Funny thing, you don't know me, but I know you really well by now.</div><div style='margin-bottom:10px;'>Months back I slipped a little RAT onto your machine off a site you visited. full control since then. Cam, mic, everything you've typed, everywhere you've clicked. You never had a clue.</div><div style='margin-bottom:10px;'>I've just been sitting back enjoying the show. And there's some stuff on here you REALLY don't want anyone else seeing. Zipped it all up for you, figured you'd want a look before you decide I'm bluffing. Open it if you don't believe me.</div><div style='margin-bottom:10px;'>Here's how this goes. $1,200 in bitcoin to the wallet below, 48 hours, or everything goes out. Footage, files, your home address, all of it, straight to everyone you know and half the internet besides.</div><div style='margin-bottom:10px;font-family:monospace;'>Wallet: 1KX7QzM4pLr9WgT2Yn8VsD5cJf3EbHq6Rt</div><div style='display:flex;align-items:center;border:1px solid #e1dfdd;border-radius:6px;padding:10px 14px;margin-bottom:14px;'><div style='width:32px;height:32px;background:#606060;border-radius:4px;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;'>ZIP</div><div style='font-size:13px;'>proof_package.zip</div></div><div>Don't email me back. Don't bother with the cops either, they can't do anything about this. I'm still in there and I'll know everything.</div></div>",
+  "link": null,
+  "attachment": "proof_package.zip",
+  "is_phishing": true,
+  "days_before": 6,
+  "received_time": "02:38"
+}

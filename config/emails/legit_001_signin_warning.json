@@ -1,9 +1,9 @@
 {
   "id": "legit_001_signin_warning",
-  "sender": "USF Office of Technology Services <notify@usf.edu>",
+  "sender": "USF Office of Technology Services <help@usf.edu>",
   "subject": "New Sign-in to Your USF Account",
-  "body": "Hello {{participant_fname}},\n\nWe noticed a new sign-in to your USF NetID account.\n\nDevice: Windows PC\nLocation: Tampa, FL\nTime: {{login_time}}\n\nIf this was you, no action is needed. If you don't recognize this activity, change your password through the official USF Account Management portal (netid.usf.edu) or contact the OTS Help Desk.\n\nUSF Office of Technology Services",
-  "link": "https://netid.usf.edu",
+  "body": "<div style='text-align:center;'><div style='height:4px;background:#006747;width:100%;margin-bottom:24px;'></div><img src='/usf-logo.png' alt='University of South Florida' style='height:48px;margin-bottom:24px;' /><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;'><div style='margin-bottom:10px;'>Hello {{participant_fname}},</div><div style='margin-bottom:10px;'>We noticed a new sign-in to your USF NetID account.</div><div style='margin-bottom:14px;'>Account: {{email_address}}<br/>Device: Windows PC<br/>Location: Tampa, FL<br/>Time: {{login_time}}</div><div style='margin-bottom:10px;'>If this was you, no action is needed. If you don't recognize this activity, change your password through the official USF Account Management portal or contact the IT Help Desk.</div><div>USF Office of Technology Services</div></div></div>",
+  "link": null,
   "attachment": null,
   "is_phishing": false,
   "days_before": 0,

@@ -1,0 +1,11 @@
+{
+  "id": "legit_004_meeting_invitation",
+  "sender": "{{supervisor/advisor}} <{{supervisor_usf_email}}>",
+  "subject": "Meeting Invitation: Advising Check-in",
+  "body": "<div><div style='margin-bottom:10px;'>Hi {{participant_fname}},</div><div style='margin-bottom:10px;'>Let's meet to go over your progress this semester. Use the link below to add a time slot that works for you:</div><div style='margin-bottom:10px;'><a href='https://www.when2meet.com/?23847651-KpQr9' data-tracked-link>https://www.when2meet.com/?23847651-KpQr9</a></div><div style='margin-bottom:10px;'>Once you've added your availability, could you forward this email to {{peer}} as well so they can add theirs?</div><div>{{supervisor}}</div></div>",
+  "link": "https://www.when2meet.com/?23847651-KpQr9",
+  "attachment": null,
+  "is_phishing": false,
+  "days_before": 2,
+  "received_time": "13:45"
+}
