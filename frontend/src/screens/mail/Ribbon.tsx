@@ -11,6 +11,7 @@ import {
   MailAdd20Regular,
   MailRead20Regular,
   PeopleTeam20Regular,
+  ShieldCheckmark20Regular,
   ShieldError20Regular,
 } from "@fluentui/react-icons";
 import type { ActionType } from "../../types";
@@ -76,6 +77,10 @@ export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectActio
 
       <DecorativeButton icon={<Flash20Regular />} label="Quick steps" />
       {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
+
+      <div className="ribbon-divider" />
+
+      {actionButton("verify_independently", <ShieldCheckmark20Regular />, "Verify")}
     </div>
   );
 }
