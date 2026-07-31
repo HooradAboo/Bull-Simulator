@@ -453,7 +453,7 @@
 .reading-scroll-area {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: scroll;
   padding: 20px;
   box-sizing: border-box;
 }
