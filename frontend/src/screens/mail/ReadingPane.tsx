@@ -275,16 +275,6 @@ export function ReadingPane({
 
   return (
     <div className="mail-reading-pane">
-      <JudgmentPanel
-        step={judgmentStep}
-        perceivedLegitimacy={perceivedLegitimacy}
-        judgmentConfidenceValue={judgmentConfidenceValue}
-        processedInfo={processedInfo}
-        actionLabel={processedInfo ? ACTION_LABELS[processedInfo.action] : null}
-        onSelectLegitimacy={onSelectLegitimacy}
-        onSelectConfidence={onSelectJudgmentConfidence}
-      />
-
       <div className="reading-content">
         <div className="reading-subject">{email.subject}</div>
         <div className="reading-sender-row">
@@ -401,6 +391,16 @@ export function ReadingPane({
           </div>
         )}
       </div>
+
+      <JudgmentPanel
+        step={judgmentStep}
+        perceivedLegitimacy={perceivedLegitimacy}
+        judgmentConfidenceValue={judgmentConfidenceValue}
+        processedInfo={processedInfo}
+        actionLabel={processedInfo ? ACTION_LABELS[processedInfo.action] : null}
+        onSelectLegitimacy={onSelectLegitimacy}
+        onSelectConfidence={onSelectJudgmentConfidence}
+      />
     </div>
   );
 }

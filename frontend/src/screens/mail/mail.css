@@ -815,7 +815,7 @@
   border: 1px solid var(--usf-green);
   border-radius: 6px;
   padding: 14px 16px;
-  margin: 4px 0 16px;
+  margin: 16px 0 4px;
   box-sizing: border-box;
   min-height: 106px;
   display: flex;
