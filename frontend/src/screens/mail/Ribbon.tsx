@@ -58,7 +58,7 @@ export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectActio
       <div className="ribbon-divider" />
 
       {actionButton("delete", <Delete20Regular />, "Delete")}
-      <DecorativeButton icon={<Archive20Regular />} label="Archive" />
+      {actionButton("archive", <Archive20Regular />, "Archive")}
       {actionButton("report_phishing", <ShieldError20Regular />, "Report")}
       <DecorativeButton icon={<Broom20Regular />} label="Sweep" />
       <DecorativeButton icon={<Folder20Regular />} label="Move to" />

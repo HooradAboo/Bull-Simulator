@@ -1,4 +1,5 @@
 import {
+  Archive20Regular,
   Calendar20Regular,
   ChevronDown12Regular,
   Cloud20Regular,
@@ -28,6 +29,7 @@ interface Props {
   junkCount: number;
   sentCount: number;
   draftsCount: number;
+  archiveCount: number;
   participantEmail: string;
   onSelectFolder: (folder: FolderName) => void;
 }
@@ -39,6 +41,7 @@ export function FolderSidebar({
   junkCount,
   sentCount,
   draftsCount,
+  archiveCount,
   participantEmail,
   onSelectFolder,
 }: Props) {
@@ -91,6 +94,15 @@ export function FolderSidebar({
             <DocumentEdit20Regular />
           </span>
           Drafts{draftsCount > 0 ? ` (${draftsCount})` : ""}
+        </div>
+        <div
+          className={`folder-row ${currentFolder === "archive" ? "active" : ""}`}
+          onClick={() => onSelectFolder("archive")}
+        >
+          <span className="folder-icon" aria-hidden="true">
+            <Archive20Regular />
+          </span>
+          Archive{archiveCount > 0 ? ` (${archiveCount})` : ""}
         </div>
         <div
           className={`folder-row ${currentFolder === "deleted" ? "active" : ""}`}

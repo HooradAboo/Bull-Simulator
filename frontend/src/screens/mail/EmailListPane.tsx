@@ -17,6 +17,8 @@ const FOLDER_TITLES: Record<FolderName, string> = {
   deleted: "Deleted Items",
   junk: "Junk Email",
   sent: "Sent Items",
+  drafts: "Drafts",
+  archive: "Archive",
 };
 
 function decodeHtmlEntities(text: string): string {

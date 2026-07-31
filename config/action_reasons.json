@@ -1,4 +1,11 @@
 {
+  "archive": [
+    { "key": "out_of_inbox_not_delete", "label": "I wanted it out of my inbox but didn't want to delete it" },
+    { "key": "legit_no_action_now", "label": "It seemed legitimate but I didn't need to act on it now" },
+    { "key": "might_need_later", "label": "I might need to reference it later" },
+    { "key": "not_urgent", "label": "It didn't seem urgent" },
+    { "key": "other", "label": "Something else" }
+  ],
   "delete": [
     { "key": "unfamiliar_sender", "label": "The sender looked unfamiliar or suspicious" },
     { "key": "seemed_spam", "label": "It seemed like spam or irrelevant" },
