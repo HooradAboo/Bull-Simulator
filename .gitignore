@@ -30,3 +30,5 @@ exports/
 
 # Confidential participant profiles (real names/emails/contacts - never commit)
 confidential/participants/*.json
+__pycache__/
+*.pyc
