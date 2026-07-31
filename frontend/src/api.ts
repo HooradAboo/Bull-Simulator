@@ -46,6 +46,15 @@ export function getActionReasons(): Promise<Record<string, ActionReasonOption[]>
   return get("/action-reasons");
 }
 
+export interface CueOption {
+  key: string;
+  label: string;
+}
+
+export function getCueOptions(): Promise<CueOption[]> {
+  return get("/cue-options");
+}
+
 export interface ParticipantProfile {
   netid: string;
   firstName: string;

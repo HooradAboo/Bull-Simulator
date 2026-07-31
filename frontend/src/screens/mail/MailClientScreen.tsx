@@ -19,11 +19,13 @@ import { extractEmail, senderName } from "./avatar";
 import {
   confirmInteraction,
   getActionReasons,
+  getCueOptions,
   logComposedEmail,
   logHover,
   openInteraction,
   submitInteractionRatings,
   type ActionReasonOption,
+  type CueOption,
   type PerceivedLegitimacy,
 } from "../../api";
 import type {
@@ -78,18 +80,6 @@ const ALL_ACTIONS: ActionType[] = [
   "delete",
   "ignore",
   "verify_independently",
-];
-
-const CUE_KEYS = [
-  "sender",
-  "subject_line",
-  "links",
-  "attachments",
-  "wording_tone",
-  "urgency",
-  "personal_info_request",
-  "spelling_grammar",
-  "branding_logo",
 ];
 
 function randomOf<T>(arr: T[]): T {
@@ -165,6 +155,7 @@ export function MailClientScreen({
   const [actionReasonOptions, setActionReasonOptions] = useState<
     Record<string, ActionReasonOption[]>
   >({});
+  const [cueOptions, setCueOptions] = useState<CueOption[]>([]);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -179,6 +170,7 @@ export function MailClientScreen({
 
   useEffect(() => {
     getActionReasons().then(setActionReasonOptions);
+    getCueOptions().then(setCueOptions);
   }, []);
 
   // Switching to the Google tab to verify independently doesn't commit
@@ -532,8 +524,9 @@ export function MailClientScreen({
       const confirmedAt = Date.now();
       await confirmInteraction(id, action, false, confirmedAt, confirmedAt - openedAt, recipient);
 
+      const cueKeys = cueOptions.map((option) => option.key).filter((key) => key !== "other");
       const numCues = Math.floor(Math.random() * 3);
-      const cuesNoticed = [...CUE_KEYS].sort(() => Math.random() - 0.5).slice(0, numCues);
+      const cuesNoticed = [...cueKeys].sort(() => Math.random() - 0.5).slice(0, numCues);
       const confidence = Math.floor(Math.random() * 101);
       const reasonPool = (actionReasonOptions[action] ?? [])
         .map((option) => option.key)
@@ -722,6 +715,7 @@ export function MailClientScreen({
       {phase === "confidence" && (
         <ConfidenceModal
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
+          cueOptions={cueOptions}
           reasonOptions={pendingAction ? actionReasonOptions[pendingAction] ?? [] : []}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}

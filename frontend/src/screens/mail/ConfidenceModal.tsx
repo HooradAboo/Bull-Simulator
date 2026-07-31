@@ -16,23 +16,11 @@ const DIFFICULTY_OPTIONS: { value: number; label: string }[] = [
   { value: 5, label: "Very difficult" },
 ];
 
-const CUE_OPTIONS: { key: string; label: string }[] = [
-  { key: "sender", label: "Sender" },
-  { key: "subject_line", label: "Subject line" },
-  { key: "links", label: "Links" },
-  { key: "attachments", label: "Attachments" },
-  { key: "wording_tone", label: "Wording/tone" },
-  { key: "urgency", label: "Urgency" },
-  { key: "personal_info_request", label: "Request for personal information" },
-  { key: "spelling_grammar", label: "Spelling/grammar" },
-  { key: "branding_logo", label: "Branding/logo" },
-  { key: "other", label: "Something else" },
-];
-
 const TOTAL_STEPS = 3;
 
 interface Props {
   actionLabel: string;
+  cueOptions: { key: string; label: string }[];
   reasonOptions: { key: string; label: string }[];
   confidenceValue: number;
   onConfidenceChange: (value: number) => void;
@@ -51,6 +39,7 @@ interface Props {
 
 export function ConfidenceModal({
   actionLabel,
+  cueOptions,
   reasonOptions,
   confidenceValue,
   onConfidenceChange,
@@ -113,7 +102,7 @@ export function ConfidenceModal({
           <>
             <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
             <div className="cue-options">
-              {CUE_OPTIONS.filter((cue) => cue.key !== "other").map((cue) => (
+              {cueOptions.filter((cue) => cue.key !== "other").map((cue) => (
                 <label key={cue.key} className="cue-option">
                   <input
                     type="checkbox"

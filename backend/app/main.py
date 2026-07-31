@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from app.action_reasons import ActionReasonOption, load_action_reasons
 from app.contacts import Contact, load_contacts, load_contacts_for_participant
+from app.cue_options import CueOption, load_cue_options
 from app.database import Base, engine, get_db
 from app.emails import EmailPublic, build_template_context, load_public_emails
 from app.participant_profile import ParticipantProfile, load_participant_profile
@@ -72,6 +73,14 @@ def get_self_efficacy_questions():
 def get_action_reasons():
     try:
         return load_action_reasons()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/cue-options", response_model=list[CueOption])
+def get_cue_options():
+    try:
+        return load_cue_options()
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

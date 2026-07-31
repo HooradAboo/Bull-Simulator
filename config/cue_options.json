@@ -1,0 +1,12 @@
+[
+  { "key": "sender", "label": "Sender" },
+  { "key": "subject_line", "label": "Subject line" },
+  { "key": "links", "label": "Links" },
+  { "key": "attachments", "label": "Attachments" },
+  { "key": "wording_tone", "label": "Wording/tone" },
+  { "key": "urgency", "label": "Urgency" },
+  { "key": "personal_info_request", "label": "Request for personal information" },
+  { "key": "spelling_grammar", "label": "Spelling/grammar" },
+  { "key": "branding_logo", "label": "Branding/logo" },
+  { "key": "other", "label": "Something else" }
+]

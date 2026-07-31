@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     )
     safe_action_matrix_config_path: Path = REPO_ROOT / "config" / "safe_action_matrix.json"
     action_reasons_config_path: Path = REPO_ROOT / "config" / "action_reasons.json"
+    cue_options_config_path: Path = REPO_ROOT / "config" / "cue_options.json"
 
 
 settings = Settings()
