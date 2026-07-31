@@ -1,3 +1,4 @@
+import { CheckmarkCircle20Filled } from "@fluentui/react-icons";
 import type { PerceivedLegitimacy } from "../../api";
 
 const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
@@ -8,16 +9,41 @@ const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
   { value: 5, label: "Extremely confident" },
 ];
 
+const LEGITIMACY_LABELS: Record<PerceivedLegitimacy, string> = {
+  trust: "I'd trust this email",
+  suspicious: "This looks suspicious",
+};
+
 export type JudgmentStep = "trust" | "confidence" | "done";
 
 interface Props {
   step: JudgmentStep;
+  perceivedLegitimacy: PerceivedLegitimacy | null;
+  judgmentConfidenceValue: number;
   onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
   onSelectConfidence: (value: number) => void;
 }
 
-export function JudgmentPanel({ step, onSelectLegitimacy, onSelectConfidence }: Props) {
-  if (step === "done") return null;
+export function JudgmentPanel({
+  step,
+  perceivedLegitimacy,
+  judgmentConfidenceValue,
+  onSelectLegitimacy,
+  onSelectConfidence,
+}: Props) {
+  if (step === "done") {
+    if (!perceivedLegitimacy) return null;
+    const confidenceLabel = CONFIDENCE_OPTIONS.find(
+      (option) => option.value === judgmentConfidenceValue
+    )?.label;
+    return (
+      <div className="judgment-panel judgment-panel-done">
+        <CheckmarkCircle20Filled />
+        You said: <strong>{LEGITIMACY_LABELS[perceivedLegitimacy]}</strong>
+        {confidenceLabel ? <> ({confidenceLabel})</> : null}
+      </div>
+    );
+  }
 
   return (
     <div className="judgment-panel">

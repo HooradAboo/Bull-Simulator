@@ -828,6 +828,14 @@
   color: var(--text);
   margin-bottom: 10px;
 }
+.judgment-panel-done {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  color: var(--usf-green-dark);
+  font-size: 13px;
+}
 .judgment-panel .judgment-buttons,
 .judgment-panel .likert-options {
   margin-bottom: 0;

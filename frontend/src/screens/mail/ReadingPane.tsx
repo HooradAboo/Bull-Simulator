@@ -49,6 +49,8 @@ interface Props {
   contacts: Contact[];
   participantEmail: string;
   judgmentStep: JudgmentStep;
+  perceivedLegitimacy: PerceivedLegitimacy | null;
+  judgmentConfidenceValue: number;
   onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
   onSelectJudgmentConfidence: (value: number) => void;
   onLinkClick: () => void;
@@ -102,6 +104,8 @@ export function ReadingPane({
   contacts,
   participantEmail,
   judgmentStep,
+  perceivedLegitimacy,
+  judgmentConfidenceValue,
   onSelectLegitimacy,
   onSelectJudgmentConfidence,
   onLinkClick,
@@ -274,6 +278,8 @@ export function ReadingPane({
     <div className="mail-reading-pane">
       <JudgmentPanel
         step={judgmentStep}
+        perceivedLegitimacy={perceivedLegitimacy}
+        judgmentConfidenceValue={judgmentConfidenceValue}
         onSelectLegitimacy={onSelectLegitimacy}
         onSelectConfidence={onSelectJudgmentConfidence}
       />

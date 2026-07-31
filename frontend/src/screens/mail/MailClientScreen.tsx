@@ -251,6 +251,7 @@ export function MailClientScreen({
       setPendingAction(null);
       setPhase("idle");
       setJudgmentStep("done");
+      setPerceivedLegitimacy(null);
       return;
     }
 
@@ -611,6 +612,8 @@ export function MailClientScreen({
               contacts={contacts}
               participantEmail={participantEmail}
               judgmentStep="done"
+              perceivedLegitimacy={null}
+              judgmentConfidenceValue={3}
               onSelectLegitimacy={() => {}}
               onSelectJudgmentConfidence={() => {}}
               onLinkClick={() => {}}
@@ -651,6 +654,8 @@ export function MailClientScreen({
               contacts={contacts}
               participantEmail={participantEmail}
               judgmentStep={judgmentStep}
+              perceivedLegitimacy={perceivedLegitimacy}
+              judgmentConfidenceValue={judgmentConfidenceValue}
               onSelectLegitimacy={handleSelectLegitimacy}
               onSelectJudgmentConfidence={handleSelectJudgmentConfidence}
               onLinkClick={() => handleSelectAction("click_link")}
