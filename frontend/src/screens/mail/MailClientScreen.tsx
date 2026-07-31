@@ -18,10 +18,12 @@ import { HelpButton } from "./HelpButton";
 import { extractEmail, senderName } from "./avatar";
 import {
   confirmInteraction,
+  getActionReasons,
   logComposedEmail,
   logHover,
   openInteraction,
   submitInteractionRatings,
+  type ActionReasonOption,
   type PerceivedLegitimacy,
 } from "../../api";
 import type {
@@ -89,20 +91,6 @@ const CUE_KEYS = [
   "spelling_grammar",
   "branding_logo",
 ];
-
-// Mirrors ConfidenceModal's per-action reason groups, kept as a flat lookup
-// here since the DEV skip-all path fills ratings directly via the API
-// without ever rendering the modal itself.
-const ACTION_REASON_KEYS: Record<ActionType, string[]> = {
-  delete: ["unfamiliar_sender", "asked_for_info", "urgent_pressure", "wording_off", "distrust_link_attachment"],
-  report_phishing: ["unfamiliar_sender", "asked_for_info", "urgent_pressure", "wording_off", "distrust_link_attachment"],
-  reply: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
-  forward: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
-  click_link: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
-  open_attachment: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
-  ignore: ["unsure", "not_urgent", "deal_later", "legit_no_response"],
-  verify_independently: ["not_sure_legit", "confirm_first", "somewhat_suspicious", "habit_check"],
-};
 
 function randomOf<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -174,6 +162,9 @@ export function MailClientScreen({
   const [otherCueText, setOtherCueText] = useState("");
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [otherReasonText, setOtherReasonText] = useState("");
+  const [actionReasonOptions, setActionReasonOptions] = useState<
+    Record<string, ActionReasonOption[]>
+  >({});
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -185,6 +176,10 @@ export function MailClientScreen({
     useBrowserTabs();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
+
+  useEffect(() => {
+    getActionReasons().then(setActionReasonOptions);
+  }, []);
 
   // Switching to the Google tab to verify independently doesn't commit
   // immediately - it only commits once the participant comes back to the
@@ -540,7 +535,9 @@ export function MailClientScreen({
       const numCues = Math.floor(Math.random() * 3);
       const cuesNoticed = [...CUE_KEYS].sort(() => Math.random() - 0.5).slice(0, numCues);
       const confidence = Math.floor(Math.random() * 101);
-      const reasonPool = ACTION_REASON_KEYS[action];
+      const reasonPool = (actionReasonOptions[action] ?? [])
+        .map((option) => option.key)
+        .filter((key) => key !== "other");
       const numReasons = 1 + Math.floor(Math.random() * 2);
       const actionReasons = [...reasonPool].sort(() => Math.random() - 0.5).slice(0, numReasons);
 
@@ -724,8 +721,8 @@ export function MailClientScreen({
 
       {phase === "confidence" && (
         <ConfidenceModal
-          action={pendingAction}
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
+          reasonOptions={pendingAction ? actionReasonOptions[pendingAction] ?? [] : []}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
           difficultyValue={difficultyValue}

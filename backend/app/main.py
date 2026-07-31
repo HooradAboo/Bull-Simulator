@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app import models, schemas
+from app.action_reasons import ActionReasonOption, load_action_reasons
 from app.contacts import Contact, load_contacts, load_contacts_for_participant
 from app.database import Base, engine, get_db
 from app.emails import EmailPublic, build_template_context, load_public_emails
@@ -63,6 +64,14 @@ def get_participant_profile(netid: str):
 def get_self_efficacy_questions():
     try:
         return load_self_efficacy_questions()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/action-reasons", response_model=dict[str, list[ActionReasonOption]])
+def get_action_reasons():
+    try:
+        return load_action_reasons()
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

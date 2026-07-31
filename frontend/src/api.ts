@@ -37,6 +37,15 @@ export function getContacts(participantId: string): Promise<Contact[]> {
   return get(`/contacts?participant_id=${encodeURIComponent(participantId)}`);
 }
 
+export interface ActionReasonOption {
+  key: string;
+  label: string;
+}
+
+export function getActionReasons(): Promise<Record<string, ActionReasonOption[]>> {
+  return get("/action-reasons");
+}
+
 export interface ParticipantProfile {
   netid: string;
   firstName: string;

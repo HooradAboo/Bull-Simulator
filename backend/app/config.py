@@ -19,6 +19,7 @@ class Settings(BaseSettings):
         REPO_ROOT / "config" / "confidence_questions.json"
     )
     safe_action_matrix_config_path: Path = REPO_ROOT / "config" / "safe_action_matrix.json"
+    action_reasons_config_path: Path = REPO_ROOT / "config" / "action_reasons.json"
 
 
 settings = Settings()
