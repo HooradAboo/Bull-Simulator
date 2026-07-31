@@ -9,8 +9,10 @@ import {
   MailInbox48Regular,
   Send20Regular,
 } from "@fluentui/react-icons";
+import type { PerceivedLegitimacy } from "../../api";
 import type { ActionType, Contact, DummyEmail, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
+import { JudgmentPanel, type JudgmentStep } from "./JudgmentPanel";
 
 function attachmentVisual(filename: string): { icon: ReactNode; color: string } {
   const ext = filename.split(".").pop()?.toLowerCase();
@@ -46,6 +48,9 @@ interface Props {
   composeMode: boolean;
   contacts: Contact[];
   participantEmail: string;
+  judgmentStep: JudgmentStep;
+  onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
+  onSelectJudgmentConfidence: (value: number) => void;
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
@@ -96,6 +101,9 @@ export function ReadingPane({
   composeMode,
   contacts,
   participantEmail,
+  judgmentStep,
+  onSelectLegitimacy,
+  onSelectJudgmentConfidence,
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
@@ -283,6 +291,12 @@ export function ReadingPane({
             <div className="reading-received-time">{formatReceivedTime(email.receivedAt)}</div>
           )}
         </div>
+
+        <JudgmentPanel
+          step={judgmentStep}
+          onSelectLegitimacy={onSelectLegitimacy}
+          onSelectConfidence={onSelectJudgmentConfidence}
+        />
 
         {email.attachment && (
           <div className="reading-attachment-top">

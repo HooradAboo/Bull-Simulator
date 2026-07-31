@@ -7,6 +7,7 @@ import { Ribbon } from "./Ribbon";
 import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
+import type { JudgmentStep } from "./JudgmentPanel";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
@@ -150,6 +151,7 @@ export function MailClientScreen({
   const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [judgmentStep, setJudgmentStep] = useState<JudgmentStep>("done");
   const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
   const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState(3);
   const [confidenceValue, setConfidenceValueState] = useState(3);
@@ -186,7 +188,11 @@ export function MailClientScreen({
   // too would null it out right as the search succeeds, wiping the Google
   // tab's own "recorded" confirmation before the participant ever sees it.
   const canStartVerifying =
-    !!selectedEmail && !processed.has(selectedEmail.id) && phase === "idle" && interactionId !== null;
+    !!selectedEmail &&
+    !processed.has(selectedEmail.id) &&
+    phase === "idle" &&
+    interactionId !== null &&
+    judgmentStep === "done";
 
   useEffect(() => {
     registerIndependentSearchHandler(() => {
@@ -223,6 +229,7 @@ export function MailClientScreen({
     setOpenedAt(null);
     setPendingAction(null);
     setPhase("idle");
+    setJudgmentStep("done");
   };
 
   const handleTogglePin = (emailId: string) => {
@@ -243,6 +250,7 @@ export function MailClientScreen({
       setOpenedAt(null);
       setPendingAction(null);
       setPhase("idle");
+      setJudgmentStep("done");
       return;
     }
 
@@ -253,6 +261,9 @@ export function MailClientScreen({
     setOpenedAt(now);
     setPendingAction(null);
     setPhase("idle");
+    setPerceivedLegitimacy(null);
+    setJudgmentConfidenceValue(3);
+    setJudgmentStep("trust");
   };
 
   // Most actions commit immediately (no separate confirm step), so
@@ -264,8 +275,24 @@ export function MailClientScreen({
   // Attachment show a "this action has been recorded" popup first
   // (rather than actually opening a tab or download) and commit once the
   // participant dismisses it.
+  const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
+    setPerceivedLegitimacy(value);
+    setJudgmentStep("confidence");
+  };
+
+  const handleSelectJudgmentConfidence = (value: number) => {
+    setJudgmentConfidenceValue(value);
+    setJudgmentStep("done");
+  };
+
   const handleSelectAction = (action: ActionType) => {
-    if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
+    if (
+      !selectedEmail ||
+      processed.has(selectedEmail.id) ||
+      phase !== "idle" ||
+      judgmentStep !== "done"
+    )
+      return;
 
     if (action === "click_link") {
       if (!selectedEmail.link) return;
@@ -358,8 +385,6 @@ export function MailClientScreen({
     setPendingAction(action);
     setPendingRecipient(recipient);
     setPhase("confidence");
-    setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(3);
     setConfidenceValueState(3);
     setDifficultyValue(3);
     setSelectedCues([]);
@@ -519,7 +544,10 @@ export function MailClientScreen({
 
   const processedInfo = selectedEmail ? processed.get(selectedEmail.id) ?? null : null;
   const ribbonDisabled =
-    !selectedEmail || processed.has(selectedEmail.id) || phase !== "idle";
+    !selectedEmail ||
+    processed.has(selectedEmail.id) ||
+    phase !== "idle" ||
+    judgmentStep !== "done";
   const visibleEmails = emails
     .filter((e) => folderOf(e.id) === currentFolder)
     .sort((a, b) => Number(pinnedIds.has(b.id)) - Number(pinnedIds.has(a.id)));
@@ -582,6 +610,9 @@ export function MailClientScreen({
               composeMode={composeOpen}
               contacts={contacts}
               participantEmail={participantEmail}
+              judgmentStep="done"
+              onSelectLegitimacy={() => {}}
+              onSelectJudgmentConfidence={() => {}}
               onLinkClick={() => {}}
               onLinkHoverStart={() => {}}
               onLinkHoverEnd={() => {}}
@@ -619,6 +650,9 @@ export function MailClientScreen({
               composeMode={composeOpen}
               contacts={contacts}
               participantEmail={participantEmail}
+              judgmentStep={judgmentStep}
+              onSelectLegitimacy={handleSelectLegitimacy}
+              onSelectJudgmentConfidence={handleSelectJudgmentConfidence}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}
@@ -654,10 +688,6 @@ export function MailClientScreen({
 
       {phase === "confidence" && (
         <ConfidenceModal
-          perceivedLegitimacy={perceivedLegitimacy}
-          onPerceivedLegitimacyChange={setPerceivedLegitimacy}
-          judgmentConfidenceValue={judgmentConfidenceValue}
-          onJudgmentConfidenceChange={setJudgmentConfidenceValue}
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}

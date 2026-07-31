@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { PerceivedLegitimacy } from "../../api";
 
 const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: "Not at all confident" },
@@ -30,13 +29,9 @@ const CUE_OPTIONS: { key: string; label: string }[] = [
   { key: "other", label: "Something else" },
 ];
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 2;
 
 interface Props {
-  perceivedLegitimacy: PerceivedLegitimacy | null;
-  onPerceivedLegitimacyChange: (value: PerceivedLegitimacy) => void;
-  judgmentConfidenceValue: number;
-  onJudgmentConfidenceChange: (value: number) => void;
   actionLabel: string;
   confidenceValue: number;
   onConfidenceChange: (value: number) => void;
@@ -50,10 +45,6 @@ interface Props {
 }
 
 export function ConfidenceModal({
-  perceivedLegitimacy,
-  onPerceivedLegitimacyChange,
-  judgmentConfidenceValue,
-  onJudgmentConfidenceChange,
   actionLabel,
   confidenceValue,
   onConfidenceChange,
@@ -76,42 +67,6 @@ export function ConfidenceModal({
         </div>
 
         {step === 1 && (
-          <>
-            <h3>Do you trust this email, or does it look suspicious?</h3>
-            <div className="judgment-buttons">
-              <button
-                type="button"
-                className={`judgment-button${perceivedLegitimacy === "trust" ? " selected" : ""}`}
-                onClick={() => onPerceivedLegitimacyChange("trust")}
-              >
-                I'd trust this email
-              </button>
-              <button
-                type="button"
-                className={`judgment-button${perceivedLegitimacy === "suspicious" ? " selected" : ""}`}
-                onClick={() => onPerceivedLegitimacyChange("suspicious")}
-              >
-                This looks suspicious
-              </button>
-            </div>
-
-            <h3>How confident are you in that decision?</h3>
-            <div className="likert-options confidence-scale-labels-step1">
-              {CONFIDENCE_OPTIONS.map((option) => (
-                <button
-                  type="button"
-                  key={option.value}
-                  className={`likert-option${judgmentConfidenceValue === option.value ? " selected" : ""}`}
-                  onClick={() => onJudgmentConfidenceChange(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        {step === 2 && (
           <>
             <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
             <div className="cue-options">
@@ -149,7 +104,7 @@ export function ConfidenceModal({
           </>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <>
             <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
             <div className="likert-options">
@@ -192,12 +147,7 @@ export function ConfidenceModal({
             </button>
           )}
           {step < TOTAL_STEPS ? (
-            <button
-              type="button"
-              className="confidence-submit"
-              onClick={() => setStep(step + 1)}
-              disabled={step === 1 && perceivedLegitimacy === null}
-            >
+            <button type="button" className="confidence-submit" onClick={() => setStep(step + 1)}>
               Next
             </button>
           ) : (

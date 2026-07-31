@@ -740,10 +740,8 @@
   gap: 10px;
   margin-bottom: 32px;
 }
-.confidence-scale-labels-step1 {
-  margin-bottom: 16px;
-}
-.confidence-box .judgment-button {
+.confidence-box .judgment-button,
+.judgment-panel .judgment-button {
   flex: 1;
   background: #fff;
   color: var(--text);
@@ -755,16 +753,19 @@
   cursor: pointer;
   margin-top: 0;
 }
-.confidence-box .judgment-button:hover:not(.selected) {
+.confidence-box .judgment-button:hover:not(.selected),
+.judgment-panel .judgment-button:hover:not(.selected) {
   background: var(--hover);
   border-color: var(--usf-green);
 }
-.confidence-box .judgment-button.selected {
+.confidence-box .judgment-button.selected,
+.judgment-panel .judgment-button.selected {
   background: var(--usf-green);
   color: #fff;
   border-color: var(--usf-green);
 }
-.confidence-box .judgment-button.selected:hover {
+.confidence-box .judgment-button.selected:hover,
+.judgment-panel .judgment-button.selected:hover {
   background: var(--usf-green-hover);
   border-color: var(--usf-green-hover);
 }
@@ -777,7 +778,8 @@
   gap: 6px;
   margin-bottom: 16px;
 }
-.confidence-box .likert-option {
+.confidence-box .likert-option,
+.judgment-panel .likert-option {
   flex: 1;
   background: #fff;
   color: var(--text);
@@ -791,18 +793,39 @@
   cursor: pointer;
   margin-top: 0;
 }
-.confidence-box .likert-option:hover:not(.selected) {
+.confidence-box .likert-option:hover:not(.selected),
+.judgment-panel .likert-option:hover:not(.selected) {
   background: var(--hover);
   border-color: var(--usf-green);
 }
-.confidence-box .likert-option.selected {
+.confidence-box .likert-option.selected,
+.judgment-panel .likert-option.selected {
   background: var(--usf-green);
   color: #fff;
   border-color: var(--usf-green);
 }
-.confidence-box .likert-option.selected:hover {
+.confidence-box .likert-option.selected:hover,
+.judgment-panel .likert-option.selected:hover {
   background: var(--usf-green-hover);
   border-color: var(--usf-green-hover);
+}
+
+.judgment-panel {
+  background: var(--selected);
+  border: 1px solid var(--usf-green);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 4px 0 16px;
+}
+.judgment-panel-question {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.judgment-panel .judgment-buttons,
+.judgment-panel .likert-options {
+  margin-bottom: 0;
 }
 
 .cue-options {
