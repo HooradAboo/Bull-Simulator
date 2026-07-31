@@ -816,6 +816,11 @@
   border-radius: 6px;
   padding: 14px 16px;
   margin: 4px 0 16px;
+  box-sizing: border-box;
+  min-height: 106px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .judgment-panel-question {
   font-size: 13.5px;
