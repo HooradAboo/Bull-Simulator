@@ -1,7 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Attach20Regular,
-  CheckmarkCircle20Filled,
   ChevronDown20Regular,
   Delete20Regular,
   DocumentPdf20Filled,
@@ -280,6 +279,8 @@ export function ReadingPane({
         step={judgmentStep}
         perceivedLegitimacy={perceivedLegitimacy}
         judgmentConfidenceValue={judgmentConfidenceValue}
+        processedInfo={processedInfo}
+        actionLabel={processedInfo ? ACTION_LABELS[processedInfo.action] : null}
         onSelectLegitimacy={onSelectLegitimacy}
         onSelectConfidence={onSelectJudgmentConfidence}
       />
@@ -322,15 +323,6 @@ export function ReadingPane({
               <span className="reading-attachment-name">{email.attachment}</span>
               <ChevronDown20Regular className="reading-attachment-chevron" />
             </span>
-          </div>
-        )}
-
-        {processedInfo && (
-          <div className="processed-banner">
-            <CheckmarkCircle20Filled /> You responded:{" "}
-            <strong>{ACTION_LABELS[processedInfo.action]}</strong>
-            {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}{" "}
-            (confidence {processedInfo.confidence})
           </div>
         )}
 

@@ -1,5 +1,6 @@
 import { CheckmarkCircle20Filled } from "@fluentui/react-icons";
 import type { PerceivedLegitimacy } from "../../api";
+import type { ProcessedInfo } from "../../types";
 
 const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: "Not at all confident" },
@@ -20,6 +21,8 @@ interface Props {
   step: JudgmentStep;
   perceivedLegitimacy: PerceivedLegitimacy | null;
   judgmentConfidenceValue: number;
+  processedInfo: ProcessedInfo | null;
+  actionLabel: string | null;
   onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
   onSelectConfidence: (value: number) => void;
 }
@@ -28,19 +31,33 @@ export function JudgmentPanel({
   step,
   perceivedLegitimacy,
   judgmentConfidenceValue,
+  processedInfo,
+  actionLabel,
   onSelectLegitimacy,
   onSelectConfidence,
 }: Props) {
   if (step === "done") {
-    if (!perceivedLegitimacy) return null;
+    if (!perceivedLegitimacy && !processedInfo) return null;
     const confidenceLabel = CONFIDENCE_OPTIONS.find(
       (option) => option.value === judgmentConfidenceValue
     )?.label;
     return (
       <div className="judgment-panel judgment-panel-done">
-        <CheckmarkCircle20Filled />
-        You said: <strong>{LEGITIMACY_LABELS[perceivedLegitimacy]}</strong>
-        {confidenceLabel ? <> ({confidenceLabel})</> : null}
+        {perceivedLegitimacy && (
+          <div className="judgment-panel-done-row">
+            <CheckmarkCircle20Filled />
+            You said: <strong>{LEGITIMACY_LABELS[perceivedLegitimacy]}</strong>
+            {confidenceLabel ? <> ({confidenceLabel})</> : null}
+          </div>
+        )}
+        {processedInfo && actionLabel && (
+          <div className="judgment-panel-done-row">
+            <CheckmarkCircle20Filled />
+            You responded: <strong>{actionLabel}</strong>
+            {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}{" "}
+            (confidence {processedInfo.confidence})
+          </div>
+        )}
       </div>
     );
   }

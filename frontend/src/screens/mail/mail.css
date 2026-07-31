@@ -829,12 +829,14 @@
   margin-bottom: 10px;
 }
 .judgment-panel-done {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
   color: var(--usf-green-dark);
   font-size: 13px;
+  gap: 6px;
+}
+.judgment-panel-done-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .judgment-panel .judgment-buttons,
 .judgment-panel .likert-options {
