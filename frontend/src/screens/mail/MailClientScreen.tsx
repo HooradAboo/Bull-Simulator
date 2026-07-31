@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import "./mail.css";
-import { useBrowserTabs } from "../browser/BrowserChrome";
 import { TopBar } from "./TopBar";
 import { TabBar } from "./TabBar";
 import { Ribbon } from "./Ribbon";
@@ -15,7 +14,7 @@ import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
-import { extractEmail, senderName } from "./avatar";
+import { extractEmail } from "./avatar";
 import {
   confirmInteraction,
   getActionReasons,
@@ -43,7 +42,6 @@ type Phase =
   | "forwarding"
   | "replying"
   | "action-recorded"
-  | "verifying"
   | "confidence";
 
 interface Props {
@@ -163,8 +161,6 @@ export function MailClientScreen({
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
   const hoverStart = useRef<number | null>(null);
-  const { isMailTabActive, registerIndependentSearchHandler, setIndependentSearchTarget } =
-    useBrowserTabs();
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
@@ -172,54 +168,6 @@ export function MailClientScreen({
     getActionReasons().then(setActionReasonOptions);
     getCueOptions().then(setCueOptions);
   }, []);
-
-  // Switching to the Google tab to verify independently doesn't commit
-  // immediately - it only commits once the participant comes back to the
-  // mail tab, so time_to_decision includes however long they spent there.
-  useEffect(() => {
-    if (isMailTabActive && phase === "verifying") {
-      commitAction("verify_independently", null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMailTabActive, phase]);
-
-  // Registers the handler the Google tab calls once the participant submits
-  // a search there. Only actually starts the action if nothing else is
-  // already in flight for this email (phase idle) - but note this is
-  // narrower than the "which email is this" label below: phase moves to
-  // "verifying" the instant this fires, so gating the *label* on phase idle
-  // too would null it out right as the search succeeds, wiping the Google
-  // tab's own "recorded" confirmation before the participant ever sees it.
-  const canStartVerifying =
-    !!selectedEmail &&
-    !processed.has(selectedEmail.id) &&
-    phase === "idle" &&
-    interactionId !== null &&
-    judgmentStep === "done";
-
-  useEffect(() => {
-    registerIndependentSearchHandler(() => {
-      if (!canStartVerifying) return;
-      setPhase("verifying");
-    });
-    return () => registerIndependentSearchHandler(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canStartVerifying]);
-
-  // The Google tab's displayed target: any selected, not-yet-processed email
-  // counts, all the way through its verifying/confidence sub-phases - it only
-  // clears once that email is actually processed (or a different one opens).
-  useEffect(() => {
-    setIndependentSearchTarget(
-      selectedEmail && !processed.has(selectedEmail.id)
-        ? {
-            id: selectedEmail.id,
-            label: `"${selectedEmail.subject}" from ${senderName(selectedEmail.sender)}`,
-          }
-        : null
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedEmail, processed]);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
 

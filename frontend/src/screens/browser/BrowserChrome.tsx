@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   ArrowClockwise16Regular,
   ArrowLeft16Regular,
@@ -14,39 +7,9 @@ import {
   MoreHorizontal20Regular,
 } from "@fluentui/react-icons";
 import { WindowControls } from "./WindowControls";
-import { SearchTabPage } from "./SearchTabPage";
 import "./browser.css";
 
 const MAIL_TAB_ID = "mail";
-const SEARCH_TAB_ID = "search";
-
-function GoogleGIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
-      <path
-        fill="#FFC107"
-        d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
-        c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
-        c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-      />
-      <path
-        fill="#FF3D00"
-        d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657
-        C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-      />
-      <path
-        fill="#4CAF50"
-        d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
-        c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-      />
-      <path
-        fill="#1976D2"
-        d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
-        c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-      />
-    </svg>
-  );
-}
 
 function OutlookIcon() {
   return (
@@ -64,27 +27,7 @@ interface BrowserTab {
   id: string;
   title: string;
   url: string;
-  kind: "mail" | "search";
-}
-
-export interface IndependentSearchTarget {
-  id: string;
-  label: string;
-}
-
-interface BrowserTabsApi {
-  isMailTabActive: boolean;
-  registerIndependentSearchHandler: (handler: ((query: string) => void) | null) => void;
-  independentSearchTarget: IndependentSearchTarget | null;
-  setIndependentSearchTarget: (target: IndependentSearchTarget | null) => void;
-}
-
-const BrowserTabsContext = createContext<BrowserTabsApi | null>(null);
-
-export function useBrowserTabs(): BrowserTabsApi {
-  const ctx = useContext(BrowserTabsContext);
-  if (!ctx) throw new Error("useBrowserTabs must be used within BrowserChrome");
-  return ctx;
+  kind: "mail";
 }
 
 const DEFAULT_PRIMARY_TITLE = "Inbox - Outlook";
@@ -94,10 +37,9 @@ interface Props {
   children: ReactNode;
   primaryTabTitle?: string;
   primaryTabUrl?: string;
-  showSearchTab?: boolean;
 }
 
-export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSearchTab }: Props) {
+export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl }: Props) {
   const [tabs, setTabs] = useState<BrowserTab[]>([
     {
       id: MAIL_TAB_ID,
@@ -106,39 +48,6 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSe
       kind: "mail",
     },
   ]);
-  const [activeTabId, setActiveTabId] = useState(MAIL_TAB_ID);
-  const independentSearchHandler = useRef<((query: string) => void) | null>(null);
-  const [independentSearchTarget, setIndependentSearchTarget] =
-    useState<IndependentSearchTarget | null>(null);
-
-  const registerIndependentSearchHandler = (handler: ((query: string) => void) | null) => {
-    independentSearchHandler.current = handler;
-  };
-
-  // The Google tab only exists once the participant is signed in and in the
-  // inbox (not on the login page) - added/removed here rather than always
-  // present, since showSearchTab flips on the same long-lived BrowserChrome
-  // instance as loggedIn changes.
-  useEffect(() => {
-    setTabs((prev) => {
-      const hasSearchTab = prev.some((t) => t.id === SEARCH_TAB_ID);
-      if (showSearchTab && !hasSearchTab) {
-        const mailIndex = prev.findIndex((t) => t.id === MAIL_TAB_ID);
-        const next = [...prev];
-        next.splice(mailIndex + 1, 0, {
-          id: SEARCH_TAB_ID,
-          title: "Google",
-          url: "https://www.google.com",
-          kind: "search",
-        });
-        return next;
-      }
-      if (!showSearchTab && hasSearchTab) {
-        return prev.filter((t) => t.id !== SEARCH_TAB_ID);
-      }
-      return prev;
-    });
-  }, [showSearchTab]);
 
   // The primary tab's title/url can be overridden (e.g. to show a login
   // page's URL before the participant signs in, then switch to Outlook's).
@@ -152,76 +61,48 @@ export function BrowserChrome({ children, primaryTabTitle, primaryTabUrl, showSe
     );
   }, [primaryTabTitle, primaryTabUrl]);
 
-  const activeTab = tabs.find((t) => t.id === activeTabId) ?? tabs[0];
+  const activeTab = tabs[0];
 
   return (
-    <BrowserTabsContext.Provider
-      value={{
-        isMailTabActive: activeTabId === MAIL_TAB_ID,
-        registerIndependentSearchHandler,
-        independentSearchTarget,
-        setIndependentSearchTarget,
-      }}
-    >
-      <div className="browser-shell">
-        <div className="browser-titlebar">
-          <div className="browser-tabstrip">
-            {tabs.map((tab) => (
-              <div
-                key={tab.id}
-                className={`browser-tab ${tab.id === activeTabId ? "active" : ""}`}
-                onClick={() => setActiveTabId(tab.id)}
-              >
-                <span className="browser-tab-favicon" aria-hidden="true">
-                  {tab.kind === "mail" ? <OutlookIcon /> : <GoogleGIcon />}
-                </span>
-                <span className="browser-tab-title">{tab.title}</span>
-              </div>
-            ))}
-          </div>
-          <WindowControls />
-        </div>
-
-        <div className="browser-toolbar">
-          <button className="browser-nav-btn" disabled title="Back">
-            <ArrowLeft16Regular />
-          </button>
-          <button className="browser-nav-btn" disabled title="Forward">
-            <ArrowRight16Regular />
-          </button>
-          <button className="browser-nav-btn" disabled title="Reload">
-            <ArrowClockwise16Regular />
-          </button>
-          <div className="browser-address-bar">
-            <LockClosed16Regular aria-hidden="true" />
-            <span>{activeTab.url}</span>
-          </div>
-          <button className="browser-nav-btn" disabled title="More">
-            <MoreHorizontal20Regular />
-          </button>
-        </div>
-
-        <div className="browser-content">
-          <div
-            className="browser-tab-panel"
-            style={{ display: activeTabId === MAIL_TAB_ID ? "flex" : "none" }}
-          >
-            {children}
-          </div>
-          {tabs.some((t) => t.id === SEARCH_TAB_ID) && (
-            <div
-              className="browser-tab-panel search-page"
-              style={{ display: activeTabId === SEARCH_TAB_ID ? "flex" : "none" }}
-            >
-              <SearchTabPage
-                target={independentSearchTarget}
-                onSearch={(query) => independentSearchHandler.current?.(query)}
-                onReturnToMail={() => setActiveTabId(MAIL_TAB_ID)}
-              />
+    <div className="browser-shell">
+      <div className="browser-titlebar">
+        <div className="browser-tabstrip">
+          {tabs.map((tab) => (
+            <div key={tab.id} className="browser-tab active">
+              <span className="browser-tab-favicon" aria-hidden="true">
+                <OutlookIcon />
+              </span>
+              <span className="browser-tab-title">{tab.title}</span>
             </div>
-          )}
+          ))}
+        </div>
+        <WindowControls />
+      </div>
+
+      <div className="browser-toolbar">
+        <button className="browser-nav-btn" disabled title="Back">
+          <ArrowLeft16Regular />
+        </button>
+        <button className="browser-nav-btn" disabled title="Forward">
+          <ArrowRight16Regular />
+        </button>
+        <button className="browser-nav-btn" disabled title="Reload">
+          <ArrowClockwise16Regular />
+        </button>
+        <div className="browser-address-bar">
+          <LockClosed16Regular aria-hidden="true" />
+          <span>{activeTab.url}</span>
+        </div>
+        <button className="browser-nav-btn" disabled title="More">
+          <MoreHorizontal20Regular />
+        </button>
+      </div>
+
+      <div className="browser-content">
+        <div className="browser-tab-panel" style={{ display: "flex" }}>
+          {children}
         </div>
       </div>
-    </BrowserTabsContext.Provider>
+    </div>
   );
 }
