@@ -56,6 +56,10 @@ class EmailInteraction(Base):
     difficulty_rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
     cues_noticed: Mapped[list | None] = mapped_column(JSON, nullable=True)
     cues_other_text: Mapped[str | None] = mapped_column(String, nullable=True)
+    # Why the participant chose the action they took (distinct from
+    # cues_noticed, which is about what stood out in the message itself).
+    action_reasons: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    action_reasons_other_text: Mapped[str | None] = mapped_column(String, nullable=True)
     time_to_decision_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     confirmed_at: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     recipient: Mapped[str | None] = mapped_column(String, nullable=True)

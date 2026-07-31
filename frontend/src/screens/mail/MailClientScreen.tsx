@@ -90,6 +90,20 @@ const CUE_KEYS = [
   "branding_logo",
 ];
 
+// Mirrors ConfidenceModal's per-action reason groups, kept as a flat lookup
+// here since the DEV skip-all path fills ratings directly via the API
+// without ever rendering the modal itself.
+const ACTION_REASON_KEYS: Record<ActionType, string[]> = {
+  delete: ["unfamiliar_sender", "asked_for_info", "urgent_pressure", "wording_off", "distrust_link_attachment"],
+  report_phishing: ["unfamiliar_sender", "asked_for_info", "urgent_pressure", "wording_off", "distrust_link_attachment"],
+  reply: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
+  forward: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
+  click_link: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
+  open_attachment: ["trusted_sender", "reasonable_request", "curious", "relevant", "needed_info"],
+  ignore: ["unsure", "not_urgent", "deal_later", "legit_no_response"],
+  verify_independently: ["not_sure_legit", "confirm_first", "somewhat_suspicious", "habit_check"],
+};
+
 function randomOf<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -158,6 +172,8 @@ export function MailClientScreen({
   const [difficultyValue, setDifficultyValue] = useState(3);
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
+  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
+  const [otherReasonText, setOtherReasonText] = useState("");
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -390,6 +406,8 @@ export function MailClientScreen({
     setDifficultyValue(3);
     setSelectedCues([]);
     setOtherCueText("");
+    setSelectedReasons([]);
+    setOtherReasonText("");
 
     if (action === "forward" && recipient) {
       const note = composedBody ? `${composedBody}\n\n` : "";
@@ -454,6 +472,12 @@ export function MailClientScreen({
     );
   };
 
+  const handleToggleReason = (reasonKey: string) => {
+    setSelectedReasons((prev) =>
+      prev.includes(reasonKey) ? prev.filter((r) => r !== reasonKey) : [...prev, reasonKey]
+    );
+  };
+
   const handleSubmitConfidence = async () => {
     if (!selectedEmail || !pendingAction || interactionId === null || !perceivedLegitimacy) return;
     await submitInteractionRatings(interactionId, {
@@ -463,6 +487,8 @@ export function MailClientScreen({
       difficultyRating: difficultyValue,
       cuesNoticed: selectedCues,
       cuesOtherText: selectedCues.includes("other") ? otherCueText : null,
+      actionReasons: selectedReasons,
+      actionReasonsOtherText: selectedReasons.includes("other") ? otherReasonText : null,
     });
 
     const updated = new Map(processed);
@@ -514,6 +540,9 @@ export function MailClientScreen({
       const numCues = Math.floor(Math.random() * 3);
       const cuesNoticed = [...CUE_KEYS].sort(() => Math.random() - 0.5).slice(0, numCues);
       const confidence = Math.floor(Math.random() * 101);
+      const reasonPool = ACTION_REASON_KEYS[action];
+      const numReasons = 1 + Math.floor(Math.random() * 2);
+      const actionReasons = [...reasonPool].sort(() => Math.random() - 0.5).slice(0, numReasons);
 
       await submitInteractionRatings(id, {
         perceivedLegitimacy: Math.random() < 0.5 ? "trust" : "suspicious",
@@ -522,6 +551,8 @@ export function MailClientScreen({
         difficultyRating: 1 + Math.floor(Math.random() * 5),
         cuesNoticed,
         cuesOtherText: null,
+        actionReasons,
+        actionReasonsOtherText: null,
       });
 
       updated.set(email.id, { action, confidence, recipient });
@@ -693,6 +724,7 @@ export function MailClientScreen({
 
       {phase === "confidence" && (
         <ConfidenceModal
+          action={pendingAction}
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
@@ -702,6 +734,10 @@ export function MailClientScreen({
           onToggleCue={handleToggleCue}
           otherCueText={otherCueText}
           onOtherCueTextChange={setOtherCueText}
+          selectedReasons={selectedReasons}
+          onToggleReason={handleToggleReason}
+          otherReasonText={otherReasonText}
+          onOtherReasonTextChange={setOtherReasonText}
           onSubmit={handleSubmitConfidence}
         />
       )}

@@ -153,6 +153,8 @@ export interface InteractionRatings {
   difficultyRating: number;
   cuesNoticed: string[];
   cuesOtherText: string | null;
+  actionReasons: string[];
+  actionReasonsOtherText: string | null;
 }
 
 export function submitInteractionRatings(interactionId: number, ratings: InteractionRatings) {
@@ -163,6 +165,8 @@ export function submitInteractionRatings(interactionId: number, ratings: Interac
     difficulty_rating: ratings.difficultyRating,
     cues_noticed: ratings.cuesNoticed,
     cues_other_text: ratings.cuesOtherText,
+    action_reasons: ratings.actionReasons,
+    action_reasons_other_text: ratings.actionReasonsOtherText,
   });
 }
 

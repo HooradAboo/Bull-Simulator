@@ -187,6 +187,8 @@ def set_interaction_ratings(
     interaction.difficulty_rating = payload.difficulty_rating
     interaction.cues_noticed = payload.cues_noticed
     interaction.cues_other_text = payload.cues_other_text
+    interaction.action_reasons = payload.action_reasons
+    interaction.action_reasons_other_text = payload.action_reasons_other_text
     db.commit()
     return {"status": "ok"}
 

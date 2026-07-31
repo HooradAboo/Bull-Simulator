@@ -49,6 +49,8 @@ class InteractionRatings(BaseModel):
     difficulty_rating: int
     cues_noticed: list[str]
     cues_other_text: str | None = None
+    action_reasons: list[str]
+    action_reasons_other_text: str | None = None
 
 
 class ComposeEmailLog(BaseModel):
