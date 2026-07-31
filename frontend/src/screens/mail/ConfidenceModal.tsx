@@ -68,6 +68,38 @@ export function ConfidenceModal({
 
         {step === 1 && (
           <>
+            <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
+            <div className="likert-options">
+              {CONFIDENCE_OPTIONS.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`likert-option${confidenceValue === option.value ? " selected" : ""}`}
+                  onClick={() => onConfidenceChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+
+            <h3 className="confidence-second-h3">How difficult was this decision?</h3>
+            <div className="likert-options">
+              {DIFFICULTY_OPTIONS.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`likert-option${difficultyValue === option.value ? " selected" : ""}`}
+                  onClick={() => onDifficultyChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
             <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
             <div className="cue-options">
               {CUE_OPTIONS.filter((cue) => cue.key !== "other").map((cue) => (
@@ -100,38 +132,6 @@ export function ConfidenceModal({
                   "Something else"
                 )}
               </label>
-            </div>
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
-            <div className="likert-options">
-              {CONFIDENCE_OPTIONS.map((option) => (
-                <button
-                  type="button"
-                  key={option.value}
-                  className={`likert-option${confidenceValue === option.value ? " selected" : ""}`}
-                  onClick={() => onConfidenceChange(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-
-            <h3 className="confidence-second-h3">How difficult was this decision?</h3>
-            <div className="likert-options">
-              {DIFFICULTY_OPTIONS.map((option) => (
-                <button
-                  type="button"
-                  key={option.value}
-                  className={`likert-option${difficultyValue === option.value ? " selected" : ""}`}
-                  onClick={() => onDifficultyChange(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
             </div>
           </>
         )}
