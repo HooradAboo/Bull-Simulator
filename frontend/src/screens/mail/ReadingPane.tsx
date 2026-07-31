@@ -272,6 +272,12 @@ export function ReadingPane({
 
   return (
     <div className="mail-reading-pane">
+      <JudgmentPanel
+        step={judgmentStep}
+        onSelectLegitimacy={onSelectLegitimacy}
+        onSelectConfidence={onSelectJudgmentConfidence}
+      />
+
       <div className="reading-content">
         <div className="reading-subject">{email.subject}</div>
         <div className="reading-sender-row">
@@ -291,12 +297,6 @@ export function ReadingPane({
             <div className="reading-received-time">{formatReceivedTime(email.receivedAt)}</div>
           )}
         </div>
-
-        <JudgmentPanel
-          step={judgmentStep}
-          onSelectLegitimacy={onSelectLegitimacy}
-          onSelectConfidence={onSelectJudgmentConfidence}
-        />
 
         {email.attachment && (
           <div className="reading-attachment-top">
