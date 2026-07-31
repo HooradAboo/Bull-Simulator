@@ -274,7 +274,8 @@ export function ReadingPane({
   }
 
   return (
-    <div className="mail-reading-pane">
+    <div className="mail-reading-pane has-judgment">
+      <div className="reading-scroll-area">
       <div className="reading-content">
         <div className="reading-subject">{email.subject}</div>
         <div className="reading-sender-row">
@@ -390,6 +391,7 @@ export function ReadingPane({
             </div>
           </div>
         )}
+      </div>
       </div>
 
       <JudgmentPanel
