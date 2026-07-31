@@ -150,7 +150,7 @@ export function ConfidenceModal({
         {step === 3 && (
           <>
             <h3>Why did you choose {actionLabel ? `"${actionLabel}"` : "this response"}? Select all that apply.</h3>
-            <div className="cue-options">
+            <div className="cue-options cue-options-single-column">
               {reasonOptions
                 .filter((reason) => reason.key !== "other")
                 .map((reason) => (

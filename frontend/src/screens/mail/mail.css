@@ -865,6 +865,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px 12px;
 }
+.cue-options.cue-options-single-column {
+  grid-template-columns: 1fr;
+}
 .cue-option {
   display: flex;
   align-items: center;
