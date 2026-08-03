@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
-import { Attach20Regular } from "@fluentui/react-icons";
+import { useEffect, type ReactNode, useState } from "react";
+import {
+  Attach20Regular,
+  DocumentPdf20Filled,
+  FolderZip20Filled,
+} from "@fluentui/react-icons";
 import {
   getActionReasons,
   getCueOptions,
@@ -8,6 +12,14 @@ import {
   type EmailReview,
 } from "../api";
 import { avatarColor, initials, senderName } from "./mail/avatar";
+import "./mail/mail.css";
+
+function attachmentVisual(filename: string): { icon: ReactNode; color: string } {
+  const ext = filename.split(".").pop()?.toLowerCase();
+  if (ext === "pdf") return { icon: <DocumentPdf20Filled />, color: "#c8262f" };
+  if (ext === "zip") return { icon: <FolderZip20Filled />, color: "#8a8886" };
+  return { icon: <Attach20Regular />, color: "#605e5c" };
+}
 
 function formatReceivedTime(ts: number): string {
   const d = new Date(ts);
@@ -185,39 +197,52 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
         </div>
 
         <div className="email-review-picture">
-          <div className="email-review-picture-subject">{review.subject}</div>
-          <div className="email-review-picture-sender-row">
-            <div
-              className="email-review-picture-avatar"
-              style={{ background: avatarColor(review.sender) }}
-            >
-              {initials(review.sender)}
-            </div>
-            <div className="email-review-picture-sender-text">
-              <div className="email-review-picture-sender-name">{senderName(review.sender)}</div>
-              <div className="email-review-picture-sender-meta">{review.sender}</div>
-            </div>
-            {review.receivedAt != null && (
-              <div className="email-review-picture-time">
-                {formatReceivedTime(review.receivedAt)}
+          <div className="email-review-mailview">
+            <div className="reading-content">
+              <div className="reading-subject">{review.subject}</div>
+              <div className="reading-sender-row">
+                <div className="reading-sender-left">
+                  <div
+                    className="reading-sender-avatar"
+                    style={{ background: avatarColor(review.sender) }}
+                  >
+                    {initials(review.sender)}
+                  </div>
+                  <div>
+                    <div className="reading-sender-name">{senderName(review.sender)}</div>
+                    <div className="reading-sender-meta">{review.sender}</div>
+                  </div>
+                </div>
+                {review.receivedAt != null && (
+                  <div className="reading-received-time">
+                    {formatReceivedTime(review.receivedAt)}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {review.attachment && (
-            <div className="email-review-picture-attachment">
-              <Attach20Regular /> {review.attachment}
+              {review.attachment && (
+                <div className="reading-attachment-top">
+                  <span className="reading-attachment">
+                    <span
+                      className="reading-attachment-icon"
+                      style={{ background: attachmentVisual(review.attachment).color }}
+                    >
+                      {attachmentVisual(review.attachment).icon}
+                    </span>
+                    <span className="reading-attachment-name">{review.attachment}</span>
+                  </span>
+                </div>
+              )}
+
+              <div className="reading-body" dangerouslySetInnerHTML={{ __html: review.body }} />
+
+              {review.link && !review.body.includes("data-tracked-link") && (
+                <p>
+                  <span className="reading-link">{review.link}</span>
+                </p>
+              )}
             </div>
-          )}
-
-          <div
-            className="email-review-picture-body"
-            dangerouslySetInnerHTML={{ __html: review.body }}
-          />
-
-          {review.link && !review.body.includes("data-tracked-link") && (
-            <p className="email-review-picture-link">{review.link}</p>
-          )}
+          </div>
         </div>
       </div>
     </div>

@@ -828,74 +828,19 @@
   min-width: 0;
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 20px 24px;
-  background: #fff;
+  padding: 16px;
+  background: #f4f4f5;
   overflow-y: auto;
   max-height: 560px;
 }
-.email-review-picture-subject {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 14px;
+/* Reuses the real mail client's .reading-* markup/classes (see mail.css) so
+   this is an actual reconstruction of the email, not a bespoke summary card -
+   zoom shrinks it down to fit alongside the report column. */
+.email-review-mailview {
+  zoom: 0.78;
 }
-.email-review-picture-sender-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-.email-review-picture-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: #fff;
-}
-.email-review-picture-sender-text {
-  flex: 1;
-  min-width: 0;
-}
-.email-review-picture-sender-name {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-.email-review-picture-sender-meta {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-.email-review-picture-time {
-  font-size: 11.5px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.email-review-picture-attachment {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  color: var(--text-primary);
-  border: 1px solid var(--card-border);
-  border-radius: 6px;
-  padding: 6px 10px;
-  margin-bottom: 14px;
-  width: fit-content;
-}
-.email-review-picture-body {
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-.email-review-picture-link {
-  font-size: 12.5px;
-  color: var(--accent);
-  word-break: break-all;
+.email-review-mailview .reading-content {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 .email-review-header {
   display: flex;
