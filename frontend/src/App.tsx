@@ -6,6 +6,7 @@ import { SelfEfficacyScreen } from "./screens/SelfEfficacyScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
 import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
+import { ReportScreen } from "./screens/ReportScreen";
 import { BrowserChrome } from "./screens/browser/BrowserChrome";
 import { PlainTitleBar } from "./screens/browser/PlainTitleBar";
 import { LoginScreen } from "./screens/login/LoginScreen";
@@ -31,7 +32,8 @@ type Screen =
   | "instructions"
   | "mail"
   | "self-efficacy-post"
-  | "debrief";
+  | "debrief"
+  | "report";
 
 function App() {
   const [screen, setScreen] = useState<Screen>("researcher-setup");
@@ -143,7 +145,10 @@ function App() {
           }}
         />
       )}
-      {screen === "debrief" && <DebriefScreen participantId={participantId} />}
+      {screen === "debrief" && (
+        <DebriefScreen onViewReport={() => setScreen("report")} />
+      )}
+      {screen === "report" && <ReportScreen participantId={participantId} />}
     </>
   );
 }
