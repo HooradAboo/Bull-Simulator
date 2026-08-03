@@ -820,7 +820,7 @@
   min-width: 0;
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 20px 24px;
+  padding: 16px 20px;
   background: #fbfbfc;
 }
 .email-review-picture {
@@ -846,7 +846,7 @@
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 .email-review-truth-tag {
   flex-shrink: 0;
@@ -865,7 +865,7 @@
   color: var(--sync);
 }
 .email-review-outcome {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 .email-review-outcome-tag {
   display: inline-block;
@@ -884,12 +884,12 @@
 }
 .email-review-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px 24px;
-  margin-bottom: 16px;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 .email-review-field {
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 .email-review-field:last-child {
   margin-bottom: 0;
@@ -906,7 +906,39 @@
   font-size: 13.5px;
   color: var(--text-primary);
 }
+.email-review-field-value-icon {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.email-review-field-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--usf-green-dark, var(--text-muted));
+}
 .email-review-sub {
   color: var(--text-muted);
   font-size: 12.5px;
+}
+.email-review-reason-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  color: var(--text-primary);
+}
+.email-review-reason-list li {
+  margin-bottom: 3px;
+}
+.email-review-reason-list li:last-child {
+  margin-bottom: 0;
+}
+.email-review-reason-list-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 12px;
+}
+.email-review-reason-list-2col li {
+  margin-bottom: 0;
 }

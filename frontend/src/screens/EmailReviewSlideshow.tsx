@@ -1,8 +1,18 @@
 import { useEffect, type ReactNode, useState } from "react";
 import {
+  Archive20Regular,
+  ArrowForward20Regular,
+  ArrowReply20Regular,
   Attach20Regular,
+  CheckmarkCircle20Filled,
+  Delete20Regular,
   DocumentPdf20Filled,
   FolderZip20Filled,
+  Link20Regular,
+  MailRead20Regular,
+  ShieldCheckmark20Regular,
+  ShieldError20Regular,
+  Warning20Filled,
 } from "@fluentui/react-icons";
 import {
   getActionReasons,
@@ -37,17 +47,14 @@ const CONFIDENCE_LABELS: Record<number, string> = {
   5: "Extremely confident",
 };
 
-const DIFFICULTY_LABELS: Record<number, string> = {
-  1: "Very easy",
-  2: "Somewhat easy",
-  3: "Neutral",
-  4: "Somewhat difficult",
-  5: "Very difficult",
-};
-
 const JUDGMENT_LABELS: Record<string, string> = {
   trust: "Trusted it",
   suspicious: "Flagged as suspicious",
+};
+
+const JUDGMENT_ICONS: Record<string, ReactNode> = {
+  trust: <CheckmarkCircle20Filled />,
+  suspicious: <Warning20Filled />,
 };
 
 const ACTION_LABELS: Record<string, string> = {
@@ -60,6 +67,18 @@ const ACTION_LABELS: Record<string, string> = {
   ignore: "Marked as read",
   verify_independently: "Verified independently",
   archive: "Archived",
+};
+
+const ACTION_ICONS: Record<string, ReactNode> = {
+  click_link: <Link20Regular />,
+  open_attachment: <Attach20Regular />,
+  reply: <ArrowReply20Regular />,
+  forward: <ArrowForward20Regular />,
+  report_phishing: <ShieldError20Regular />,
+  delete: <Delete20Regular />,
+  ignore: <MailRead20Regular />,
+  verify_independently: <ShieldCheckmark20Regular />,
+  archive: <Archive20Regular />,
 };
 
 function ratingLabel(labels: Record<number, string>, value: number | null): string {
@@ -144,7 +163,12 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
           <div className="email-review-grid">
             <div className="email-review-field">
               <div className="email-review-field-label">Your judgment</div>
-              <div className="email-review-field-value">
+              <div className="email-review-field-value email-review-field-value-icon">
+                {review.perceivedLegitimacy && (
+                  <span className="email-review-field-icon">
+                    {JUDGMENT_ICONS[review.perceivedLegitimacy]}
+                  </span>
+                )}
                 {review.perceivedLegitimacy ? JUDGMENT_LABELS[review.perceivedLegitimacy] : "—"}
                 {review.judgmentConfidenceRating != null && (
                   <span className="email-review-sub">
@@ -156,39 +180,43 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
             </div>
             <div className="email-review-field">
               <div className="email-review-field-label">Your action</div>
-              <div className="email-review-field-value">
+              <div className="email-review-field-value email-review-field-value-icon">
+                <span className="email-review-field-icon">{ACTION_ICONS[review.actionTaken]}</span>
                 {ACTION_LABELS[review.actionTaken] ?? review.actionTaken}
-                {review.recipient && (
-                  <span className="email-review-sub"> to {review.recipient}</span>
+                {review.confidenceRating != null && (
+                  <span className="email-review-sub">
+                    {" "}
+                    ({ratingLabel(CONFIDENCE_LABELS, review.confidenceRating)})
+                  </span>
                 )}
-              </div>
-            </div>
-            <div className="email-review-field">
-              <div className="email-review-field-label">Confidence in that response</div>
-              <div className="email-review-field-value">
-                {ratingLabel(CONFIDENCE_LABELS, review.confidenceRating)}
-              </div>
-            </div>
-            <div className="email-review-field">
-              <div className="email-review-field-label">Difficulty</div>
-              <div className="email-review-field-value">
-                {ratingLabel(DIFFICULTY_LABELS, review.difficultyRating)}
               </div>
             </div>
           </div>
 
           <div className="email-review-field">
             <div className="email-review-field-label">Signals you noticed</div>
-            <div className="email-review-field-value">
-              {signals.length > 0 ? signals.join(", ") : "None selected"}
-            </div>
+            {signals.length > 0 ? (
+              <ul className="email-review-reason-list email-review-reason-list-2col">
+                {signals.map((signal) => (
+                  <li key={signal}>{signal}</li>
+                ))}
+              </ul>
+            ) : (
+              <div className="email-review-field-value">None selected</div>
+            )}
           </div>
 
           <div className="email-review-field">
             <div className="email-review-field-label">Why you chose that response</div>
-            <div className="email-review-field-value">
-              {reasons.length > 0 ? reasons.join(", ") : "None selected"}
-            </div>
+            {reasons.length > 0 ? (
+              <ul className="email-review-reason-list">
+                {reasons.map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
+            ) : (
+              <div className="email-review-field-value">None selected</div>
+            )}
           </div>
         </div>
 
