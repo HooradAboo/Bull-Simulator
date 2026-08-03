@@ -50,6 +50,19 @@
   color: var(--text-primary);
 }
 
+.page-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.page-header-row .page-title {
+  margin: 0 0 10px;
+}
+.page-header-actions {
+  flex-shrink: 0;
+}
+
 .page-subtitle {
   color: var(--text-muted);
   font-size: 14.5px;
@@ -969,4 +982,40 @@
 }
 .email-review-reason-list-2col li {
   margin-bottom: 0;
+}
+
+/* Printing/exporting the report: hide interactive-only chrome and let the
+   content that's normally clipped to a scrollable panel (report-scroll,
+   the email review picture) flow across pages instead. Note this only
+   prints whichever "Email by Email" slide is currently showing, since the
+   slideshow only ever renders one review at a time. */
+@media print {
+  .plain-titlebar,
+  .page-header-actions,
+  .email-review-nav {
+    display: none !important;
+  }
+  .page-shell {
+    overflow: visible;
+    padding: 0;
+    background: #fff;
+  }
+  .page-shell-flush,
+  .page-shell-flush .page-card {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  .page-card {
+    box-shadow: none;
+    border: none;
+  }
+  .report-scroll {
+    max-height: none;
+    overflow: visible;
+  }
+  .email-review-picture {
+    max-height: none;
+    overflow: visible;
+  }
 }

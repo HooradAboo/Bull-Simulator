@@ -454,7 +454,22 @@ export function ReportScreen({ participantId }: Props) {
   }, [participantId]);
 
   return (
-    <PageTemplate title="Your Report" wide flush>
+    <PageTemplate
+      title="Your Report"
+      wide
+      flush
+      headerActions={
+        report && (
+          <button
+            type="button"
+            className="page-button-secondary"
+            onClick={() => window.print()}
+          >
+            Print / Save as PDF
+          </button>
+        )
+      }
+    >
       {report && (
         <>
           <hr className="page-divider" />

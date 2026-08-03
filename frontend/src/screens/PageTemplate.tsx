@@ -9,6 +9,9 @@ interface Props {
   // page grow past it - used by the debrief so only its inner
   // `.report-scroll` panel scrolls, not the whole screen.
   flush?: boolean;
+  // Rendered next to the title (e.g. a "Print" button) - excluded from
+  // print output via .page-header-actions' @media print rule.
+  headerActions?: ReactNode;
   children?: ReactNode;
 }
 
@@ -16,7 +19,7 @@ interface Props {
 // experience - researcher setup, consent, instructions, self-efficacy
 // surveys, and the debrief/report. Keeps a single, wide, light-card look
 // across all of them instead of each screen inventing its own layout.
-export function PageTemplate({ title, subtitle, wide, flush, children }: Props) {
+export function PageTemplate({ title, subtitle, wide, flush, headerActions, children }: Props) {
   const shellClass = [
     "page-shell",
     wide && "page-shell-wide",
@@ -28,7 +31,14 @@ export function PageTemplate({ title, subtitle, wide, flush, children }: Props) 
   return (
     <div className={shellClass}>
       <div className="page-card">
-        <h1 className="page-title">{title}</h1>
+        {headerActions ? (
+          <div className="page-header-row">
+            <h1 className="page-title">{title}</h1>
+            <div className="page-header-actions">{headerActions}</div>
+          </div>
+        ) : (
+          <h1 className="page-title">{title}</h1>
+        )}
         {subtitle && <p className="page-subtitle">{subtitle}</p>}
         {children}
       </div>
