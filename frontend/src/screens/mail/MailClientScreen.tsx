@@ -8,6 +8,7 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import type { JudgmentStep } from "./JudgmentPanel";
 import { ConfidenceModal } from "./ConfidenceModal";
+import { ComposeFollowupModal } from "./ComposeFollowupModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
 import { SentItemsPane } from "./SentItemsPane";
@@ -18,6 +19,7 @@ import { extractEmail } from "./avatar";
 import {
   confirmInteraction,
   getActionReasons,
+  getContactRoles,
   getCueOptions,
   logComposedEmail,
   logHover,
@@ -137,6 +139,13 @@ export function MailClientScreen({
   const [composeRecipient, setComposeRecipient] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
   const [composeBody, setComposeBody] = useState("");
+  const [composeFollowupOpen, setComposeFollowupOpen] = useState(false);
+  const [pendingComposeSentAt, setPendingComposeSentAt] = useState<number | null>(null);
+  const [composeRecipientRole, setComposeRecipientRole] = useState<string | null>(null);
+  const [composeOtherRoleText, setComposeOtherRoleText] = useState("");
+  const [composeReasons, setComposeReasons] = useState<string[]>([]);
+  const [composeOtherReasonText, setComposeOtherReasonText] = useState("");
+  const [contactRoles, setContactRoles] = useState<CueOption[]>([]);
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(null);
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
@@ -170,6 +179,7 @@ export function MailClientScreen({
   useEffect(() => {
     getActionReasons().then(setActionReasonOptions);
     getCueOptions().then(setCueOptions);
+    getContactRoles().then(setContactRoles);
   }, []);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
@@ -292,14 +302,47 @@ export function MailClientScreen({
 
   // Composing a fresh message isn't a graded action on any particular
   // email - it's just an outlet participants can use if they want to reach
-  // out (e.g. to IT or the sender), so it's only logged, not scored. Still
-  // lands in Sent Items so the inbox stays internally consistent.
-  const handleComposeSend = async () => {
+  // out (e.g. to IT or the sender), so it's only logged, not scored (no
+  // confidence/difficulty rating, not part of the performance report). It
+  // does still ask who they sent it to (their role, not just a name/address)
+  // and why, then lands in Sent Items so the inbox stays internally
+  // consistent.
+  const handleComposeSend = () => {
+    if (composeRecipient.trim().length === 0) return;
+    setPendingComposeSentAt(Date.now());
+    setComposeRecipientRole(null);
+    setComposeOtherRoleText("");
+    setComposeReasons([]);
+    setComposeOtherReasonText("");
+    setComposeFollowupOpen(true);
+  };
+
+  const handleComposeDiscard = () => {
+    setComposeOpen(false);
+  };
+
+  const handleSelectComposeRole = (roleKey: string) => {
+    setComposeRecipientRole(roleKey);
+  };
+
+  const handleToggleComposeReason = (reasonKey: string) => {
+    setComposeReasons((prev) =>
+      prev.includes(reasonKey) ? prev.filter((r) => r !== reasonKey) : [...prev, reasonKey]
+    );
+  };
+
+  const handleSubmitComposeFollowup = async () => {
+    if (!composeRecipientRole || pendingComposeSentAt === null) return;
     const recipient = composeRecipient.trim();
     const subject = composeSubject.trim();
     const body = composeBody.trim();
-    const sentAt = Date.now();
-    await logComposedEmail(participantId, recipient, subject, body, sentAt);
+    const sentAt = pendingComposeSentAt;
+    await logComposedEmail(participantId, recipient, subject, body, sentAt, {
+      recipientRole: composeRecipientRole,
+      recipientRoleOtherText: composeRecipientRole === "other" ? composeOtherRoleText : null,
+      reasons: composeReasons,
+      reasonsOtherText: composeReasons.includes("other") ? composeOtherReasonText : null,
+    });
     setSentItems((prev) => [
       ...prev,
       {
@@ -315,11 +358,9 @@ export function MailClientScreen({
         sentAt,
       },
     ]);
+    setComposeFollowupOpen(false);
     setComposeOpen(false);
-  };
-
-  const handleComposeDiscard = () => {
-    setComposeOpen(false);
+    setPendingComposeSentAt(null);
   };
 
   const handleConfirmDestructiveAction = () => {
@@ -688,6 +729,22 @@ export function MailClientScreen({
           otherReasonText={otherReasonText}
           onOtherReasonTextChange={setOtherReasonText}
           onSubmit={handleSubmitConfidence}
+        />
+      )}
+
+      {composeFollowupOpen && (
+        <ComposeFollowupModal
+          roleOptions={contactRoles}
+          selectedRole={composeRecipientRole}
+          onSelectRole={handleSelectComposeRole}
+          otherRoleText={composeOtherRoleText}
+          onOtherRoleTextChange={setComposeOtherRoleText}
+          reasonOptions={actionReasonOptions["compose"] ?? []}
+          selectedReasons={composeReasons}
+          onToggleReason={handleToggleComposeReason}
+          otherReasonText={composeOtherReasonText}
+          onOtherReasonTextChange={setComposeOtherReasonText}
+          onSubmit={handleSubmitComposeFollowup}
         />
       )}
     </div>

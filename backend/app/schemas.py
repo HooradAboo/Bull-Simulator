@@ -59,6 +59,10 @@ class ComposeEmailLog(BaseModel):
     subject: str
     body: str
     composed_at: int
+    recipient_role: str
+    recipient_role_other_text: str | None = None
+    reasons: list[str]
+    reasons_other_text: str | None = None
 
 
 class HoverEventIn(BaseModel):

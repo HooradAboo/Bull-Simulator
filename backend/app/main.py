@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app import models, schemas
 from app.action_reasons import ActionReasonOption, load_action_reasons
+from app.contact_roles import ContactRole, load_contact_roles
 from app.contacts import Contact, load_contacts, load_contacts_for_participant
 from app.cue_options import CueOption, load_cue_options
 from app.database import Base, engine, get_db
@@ -81,6 +82,14 @@ def get_action_reasons():
 def get_cue_options():
     try:
         return load_cue_options()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/contact-roles", response_model=list[ContactRole])
+def get_contact_roles():
+    try:
+        return load_contact_roles()
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -240,6 +249,10 @@ def log_composed_email(payload: schemas.ComposeEmailLog, db: Session = Depends(g
             "recipient": payload.recipient,
             "subject": payload.subject,
             "body": payload.body,
+            "recipient_role": payload.recipient_role,
+            "recipient_role_other_text": payload.recipient_role_other_text,
+            "reasons": payload.reasons,
+            "reasons_other_text": payload.reasons_other_text,
         },
     )
     db.add(event)

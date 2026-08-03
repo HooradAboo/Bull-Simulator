@@ -306,12 +306,20 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
   };
 }
 
+export interface ComposeFollowup {
+  recipientRole: string;
+  recipientRoleOtherText: string | null;
+  reasons: string[];
+  reasonsOtherText: string | null;
+}
+
 export function logComposedEmail(
   participantId: string,
   recipient: string,
   subject: string,
   body: string,
-  composedAt: number
+  composedAt: number,
+  followup: ComposeFollowup
 ) {
   return post("/events/compose-email", {
     participant_id: participantId,
@@ -319,7 +327,15 @@ export function logComposedEmail(
     subject,
     body,
     composed_at: composedAt,
+    recipient_role: followup.recipientRole,
+    recipient_role_other_text: followup.recipientRoleOtherText,
+    reasons: followup.reasons,
+    reasons_other_text: followup.reasonsOtherText,
   });
+}
+
+export function getContactRoles(): Promise<CueOption[]> {
+  return get("/contact-roles");
 }
 
 export function logHover(

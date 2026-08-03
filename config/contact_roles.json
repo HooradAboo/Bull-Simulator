@@ -1,0 +1,7 @@
+[
+  { "key": "advisor", "label": "Advisor" },
+  { "key": "supervisor", "label": "Supervisor" },
+  { "key": "friend_peer", "label": "Friend or Peer" },
+  { "key": "it_help_desk", "label": "IT / Help Desk" },
+  { "key": "other", "label": "Other" }
+]
