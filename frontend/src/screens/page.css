@@ -566,7 +566,7 @@
 
 .legend-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 .legend-chip {
@@ -588,14 +588,6 @@
   color: var(--text-muted);
 }
 
-.group-label {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  margin: 16px 0 8px;
-}
 .action-table {
   border: 1px solid var(--card-border);
   border-radius: 10px;

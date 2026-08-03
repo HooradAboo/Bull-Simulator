@@ -181,10 +181,7 @@ function insightNarrative(claimedPhishing: CalibrationBucket, claimedLegit: Cali
 
 function ConfidenceSection({ report }: { report: PerformanceReport }) {
   const { confidence } = report;
-  const protectiveKeys = ACTION_CHART_ORDER.filter((key) => confidence.byAction[key]?.isProtective);
-  const engagementKeys = ACTION_CHART_ORDER.filter(
-    (key) => confidence.byAction[key] && !confidence.byAction[key].isProtective
-  );
+  const actionKeys = ACTION_CHART_ORDER.filter((key) => confidence.byAction[key]);
 
   const renderActionTable = (keys: string[]) => (
     <div className="action-table">
@@ -280,18 +277,7 @@ function ConfidenceSection({ report }: { report: PerformanceReport }) {
       </div>
 
       <h2>By Action</h2>
-      {protectiveKeys.length > 0 && (
-        <>
-          <div className="group-label">Protective actions</div>
-          {renderActionTable(protectiveKeys)}
-        </>
-      )}
-      {engagementKeys.length > 0 && (
-        <>
-          <div className="group-label">Engagement actions</div>
-          {renderActionTable(engagementKeys)}
-        </>
-      )}
+      {renderActionTable(actionKeys)}
       <p className="report-footnote">
         Within about 10 points, confidence and accuracy count as "in sync"; beyond that,
         whichever one is higher determines "undersold" or "oversold."
