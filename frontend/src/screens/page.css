@@ -871,7 +871,6 @@
   border-radius: 6px;
   border: 3px solid;
   white-space: nowrap;
-  transform: rotate(-9deg);
   opacity: 0.85;
   pointer-events: none;
   user-select: none;
@@ -881,33 +880,13 @@
   color: #c2604a;
   border-color: #c2604a;
   background: rgba(194, 96, 74, 0.08);
+  transform: rotate(-13deg);
 }
 .email-stamp.legit {
   color: #2f9e6e;
   border-color: #2f9e6e;
   background: rgba(47, 158, 110, 0.08);
-}
-.email-review-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 8px;
-}
-.email-review-truth-tag {
-  flex-shrink: 0;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-.email-review-truth-tag.phishing {
-  background: rgba(194, 96, 74, 0.12);
-  color: var(--oversold);
-}
-.email-review-truth-tag.legit {
-  background: rgba(47, 158, 110, 0.12);
-  color: var(--sync);
+  transform: rotate(-5deg);
 }
 .email-review-outcome {
   margin-bottom: 10px;

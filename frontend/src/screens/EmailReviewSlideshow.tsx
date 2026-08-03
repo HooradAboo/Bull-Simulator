@@ -161,12 +161,6 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
 
       <div className="email-review-columns">
         <div className="email-review-card">
-          <div className="email-review-header">
-            <div className={`email-review-truth-tag ${review.isPhishing ? "phishing" : "legit"}`}>
-              {review.isPhishing ? "Actually phishing" : "Actually legitimate"}
-            </div>
-          </div>
-
           <div className="email-review-outcome">
             <span className={`email-review-outcome-tag ${outcomeTagClass(review)}`}>
               {outcomeLabel(review)}
