@@ -840,7 +840,52 @@
   zoom: 0.78;
 }
 .email-review-mailview .reading-content {
+  position: relative;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+/* Ground-truth stamp - only ever shown here (post-task review), never
+   during the live task where ground truth must stay hidden. Absolutely
+   positioned and rotated so it reads as a rubber stamp landing on the page,
+   overlapping nearby text is expected/fine. */
+.reading-received-col {
+  flex-shrink: 0;
+}
+.email-stamp {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  width: 150px;
+  height: 46px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 3px solid;
+  white-space: nowrap;
+  transform: rotate(-9deg);
+  opacity: 0.85;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+.email-stamp.phishing {
+  color: #c2604a;
+  border-color: #c2604a;
+  background: rgba(194, 96, 74, 0.08);
+}
+.email-stamp.legit {
+  color: #2f9e6e;
+  border-color: #2f9e6e;
+  background: rgba(47, 158, 110, 0.08);
 }
 .email-review-header {
   display: flex;

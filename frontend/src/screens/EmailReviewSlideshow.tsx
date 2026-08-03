@@ -250,11 +250,16 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
                     <div className="reading-sender-meta">{review.sender}</div>
                   </div>
                 </div>
-                {review.receivedAt != null && (
-                  <div className="reading-received-time">
-                    {formatReceivedTime(review.receivedAt)}
+                <div className="reading-received-col">
+                  <div className={`email-stamp ${review.isPhishing ? "phishing" : "legit"}`}>
+                    {review.isPhishing ? "Phishing" : "Legitimate"}
                   </div>
-                )}
+                  {review.receivedAt != null && (
+                    <div className="reading-received-time">
+                      {formatReceivedTime(review.receivedAt)}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {review.attachment && (
