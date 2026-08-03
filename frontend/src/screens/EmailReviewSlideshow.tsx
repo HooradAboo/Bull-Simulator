@@ -49,7 +49,7 @@ const CONFIDENCE_LABELS: Record<number, string> = {
 
 const JUDGMENT_LABELS: Record<string, string> = {
   trust: "Trusted it",
-  suspicious: "Flagged as suspicious",
+  suspicious: "Suspected it",
 };
 
 const JUDGMENT_ICONS: Record<string, ReactNode> = {

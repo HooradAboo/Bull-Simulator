@@ -294,14 +294,24 @@
   border: 1px solid var(--card-border);
   border-radius: 10px;
   overflow: hidden;
+  width: fit-content;
+  margin: 0 auto;
 }
 .confusion-matrix {
-  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 .confusion-matrix th,
 .confusion-matrix td {
   border: 1px solid var(--card-border);
+}
+.confusion-matrix th:first-child,
+.confusion-matrix td:first-child {
+  width: 150px;
+}
+.confusion-matrix th:not(:first-child),
+.confusion-matrix td:not(:first-child) {
+  width: 140px;
 }
 .confusion-matrix thead th {
   background: #fafafb;

@@ -69,7 +69,7 @@ function ConfusionMatrix({ report }: { report: PerformanceReport }) {
         <thead>
           <tr>
             <th />
-            <th>Flagged as suspicious</th>
+            <th>Suspected it</th>
             <th>Trusted it</th>
           </tr>
         </thead>
