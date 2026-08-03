@@ -89,7 +89,10 @@ function App() {
             participantEmail={participantEmail}
             emails={emails}
             contacts={contacts}
-            onAllProcessed={() => setScreen("self-efficacy-post")}
+            onAllProcessed={() => {
+              setSessionStarted(false);
+              setScreen("self-efficacy-post");
+            }}
           />
         ) : (
           <LoginScreen
