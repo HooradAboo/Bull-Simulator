@@ -100,14 +100,14 @@ class ActionBreakdown(BaseModel):
 
 class GroundTruthBreakdown(BaseModel):
     total: int
-    caught: int  # phishing correctly identified as a threat (report/forward_to_it/delete)
-    missed: int  # phishing engaged with as if it were legitimate
+    caught: int  # phishing the participant flagged as suspicious
+    missed: int  # phishing the participant trusted
 
 
 class LegitBreakdown(BaseModel):
     total: int
-    handled_well: int  # engaged with normally, or safely ignored/deleted
-    false_positive: int  # incorrectly reported or forwarded to IT as if it were phishing
+    handled_well: int  # legitimate email the participant trusted
+    false_positive: int  # legitimate email the participant flagged as suspicious
 
 
 CALIBRATION_SYNC_THRESHOLD = 10
@@ -299,6 +299,14 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
 
         score = matrix[category][truth_key]
 
+        # Caught/missed/false-alarm/handled-well are about whether the
+        # participant's stated judgment matched reality - not the action
+        # they went on to take. Flagging a legitimate email as suspicious is
+        # a false alarm even if the action they then took (e.g. archiving)
+        # happened to be harmless.
+        flagged_suspicious = interaction.perceived_legitimacy == "suspicious"
+        judgment_correct = flagged_suspicious if email.is_phishing else not flagged_suspicious
+
         total_score += score
         total_count += 1
         if score > 0:
@@ -306,14 +314,14 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
 
         if email.is_phishing:
             phishing_total += 1
-            if score > 0:
+            if flagged_suspicious:
                 phishing_caught += 1
             else:
                 phishing_missed += 1
             action_breakdown[category].phishing_count += 1
         else:
             legit_total += 1
-            if score < 0:
+            if flagged_suspicious:
                 legit_false_positive += 1
             else:
                 legit_handled_well += 1
@@ -353,7 +361,7 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
                 action_taken=interaction.action_taken,
                 category=category,
                 recipient=interaction.recipient,
-                was_correct=score > 0,
+                was_correct=judgment_correct,
                 perceived_legitimacy=interaction.perceived_legitimacy,
                 judgment_confidence_rating=interaction.judgment_confidence_rating,
                 confidence_rating=interaction.confidence_rating,

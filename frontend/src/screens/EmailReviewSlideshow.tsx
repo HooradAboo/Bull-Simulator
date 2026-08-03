@@ -81,6 +81,19 @@ const ACTION_ICONS: Record<string, ReactNode> = {
   archive: <Archive20Regular />,
 };
 
+// Mirrors the four confusion-matrix outcomes (caught/missed/handled-well/
+// false-alarm) so a single email's card uses the same labels and colors as
+// the aggregate matrix earlier in the report.
+function outcomeLabel(review: EmailReview): string {
+  if (review.isPhishing) return review.wasCorrect ? "Caught it" : "Missed it";
+  return review.wasCorrect ? "Trusted correctly" : "False alarm";
+}
+
+function outcomeTagClass(review: EmailReview): string {
+  if (!review.isPhishing && !review.wasCorrect) return "warn";
+  return review.wasCorrect ? "good" : "bad";
+}
+
 function ratingLabel(labels: Record<number, string>, value: number | null): string {
   if (value == null) return "—";
   return labels[value] ?? String(value);
@@ -155,8 +168,8 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
           </div>
 
           <div className="email-review-outcome">
-            <span className={`email-review-outcome-tag ${review.wasCorrect ? "good" : "bad"}`}>
-              {review.wasCorrect ? "Safe decision" : "Missed it"}
+            <span className={`email-review-outcome-tag ${outcomeTagClass(review)}`}>
+              {outcomeLabel(review)}
             </span>
           </div>
 

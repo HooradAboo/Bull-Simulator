@@ -882,6 +882,10 @@
   background: rgba(194, 96, 74, 0.12);
   color: var(--oversold);
 }
+.email-review-outcome-tag.warn {
+  background: rgba(217, 160, 40, 0.15);
+  color: #b8860b;
+}
 .email-review-grid {
   display: grid;
   grid-template-columns: 1fr;
