@@ -226,6 +226,38 @@
   margin: 30px 0 12px;
 }
 
+/* Top-level report sections (Performance, Confidence Calibration, etc.) -
+   each a separate bordered block with its own header and one-line
+   explanation, so the report reads as distinct parts rather than one
+   continuous scroll. */
+.report-section {
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 20px 24px 24px;
+  margin: 0 0 20px;
+}
+.report-section:last-child {
+  margin-bottom: 0;
+}
+.report-section-title {
+  margin: 0 0 4px !important;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-primary);
+}
+.report-section-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+.report-section h2:not(.report-section-title) {
+  margin-top: 12px;
+}
+
 .report-score-headline {
   display: flex;
   align-items: baseline;

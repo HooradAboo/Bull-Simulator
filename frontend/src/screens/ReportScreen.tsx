@@ -480,45 +480,63 @@ export function ReportScreen({ participantId }: Props) {
               worry over.
             </p>
 
-            <h2>Performance</h2>
-            <div className="report-score-headline">
-              <div className="report-score-value">
-                {report.totalScore} / {report.maxPossibleScore}
+            <section className="report-section">
+              <h2 className="report-section-title">Performance</h2>
+              <p className="report-section-desc">
+                Your overall score, and how the emails you classified compared to what they
+                actually were.
+              </p>
+
+              <div className="report-score-headline">
+                <div className="report-score-value">
+                  {report.totalScore} / {report.maxPossibleScore}
+                </div>
+                <div className="report-score-tag">
+                  {scoreLabel(report.totalScore, report.maxPossibleScore)}
+                </div>
               </div>
-              <div className="report-score-tag">
-                {scoreLabel(report.totalScore, report.maxPossibleScore)}
-              </div>
-            </div>
-            <p className="body">
-              You made <strong>{report.correctCount}</strong> out of{" "}
-              <strong>{report.totalCount}</strong> safe decisions.
-            </p>
+              <p className="body">
+                You made <strong>{report.correctCount}</strong> out of{" "}
+                <strong>{report.totalCount}</strong> safe decisions.
+              </p>
 
-            <p className="chart-intro">
-              This shows how you classified each email compared to what it actually was.
-            </p>
-            <ConfusionMatrix report={report} />
+              <p className="chart-intro">
+                This shows how you classified each email compared to what it actually was.
+              </p>
+              <ConfusionMatrix report={report} />
 
-            <p className="chart-intro">
-              This shows which actions you took on legitimate emails versus phishing emails.
-            </p>
-            <ActionChart report={report} />
+              <p className="chart-intro">
+                This shows which actions you took on legitimate emails versus phishing emails.
+              </p>
+              <ActionChart report={report} />
+            </section>
 
-            <ConfidenceSection report={report} />
+            <section className="report-section">
+              <h2 className="report-section-title">Confidence Calibration</h2>
+              <p className="report-section-desc">
+                How confident you felt about your decisions, and whether that confidence matched
+                how often you were actually right.
+              </p>
+              <ConfidenceSection report={report} />
+            </section>
 
-            <h2>How Confidence Shifted, By Competency</h2>
-            <p className="chart-intro">
-              Each item was asked with identical wording before the session and again after,
-              in the same order as the questionnaire.
-            </p>
-            <SelfEfficacyShift report={report} />
+            <section className="report-section">
+              <h2 className="report-section-title">Confidence Shift, By Competency</h2>
+              <p className="report-section-desc">
+                Each item was asked with identical wording before the session and again after, in
+                the same order as the questionnaire.
+              </p>
+              <SelfEfficacyShift report={report} />
+            </section>
 
-            <h2>Email by Email</h2>
-            <p className="chart-intro">
-              A walkthrough of each email you acted on - your call, the signals you noticed, why
-              you responded the way you did, and what it actually was.
-            </p>
-            <EmailReviewSlideshow emailReviews={report.emailReviews} />
+            <section className="report-section">
+              <h2 className="report-section-title">Email by Email</h2>
+              <p className="report-section-desc">
+                A walkthrough of each email you acted on - your call, the signals you noticed, why
+                you responded the way you did, and what it actually was.
+              </p>
+              <EmailReviewSlideshow emailReviews={report.emailReviews} />
+            </section>
           </div>
         </>
       )}
