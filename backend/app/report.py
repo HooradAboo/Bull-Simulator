@@ -161,6 +161,27 @@ class SelfEfficacyBreakdown(BaseModel):
     post_average: float | None
 
 
+class EmailReview(BaseModel):
+    email_id: str
+    subject: str
+    sender: str
+    is_phishing: bool
+    days_before: int
+    received_time: str | None
+    action_taken: str
+    category: str
+    recipient: str | None
+    was_correct: bool
+    perceived_legitimacy: str | None
+    judgment_confidence_rating: int | None
+    confidence_rating: int | None
+    difficulty_rating: int | None
+    cues_noticed: list[str]
+    cues_other_text: str | None
+    action_reasons: list[str]
+    action_reasons_other_text: str | None
+
+
 class PerformanceReport(BaseModel):
     total_score: int
     max_possible_score: int
@@ -171,6 +192,7 @@ class PerformanceReport(BaseModel):
     action_breakdown: dict[str, ActionBreakdown]
     confidence: ConfidenceAverages
     self_efficacy: SelfEfficacyBreakdown
+    email_reviews: list[EmailReview]
 
 
 class _CalibrationAccumulator:
@@ -242,6 +264,7 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
     conf_by_action: dict[str, _CalibrationAccumulator] = {
         category: _CalibrationAccumulator() for category in matrix
     }
+    email_reviews: list[EmailReview] = []
 
     for interaction in interactions:
         email = emails_by_id.get(interaction.email_id)
@@ -291,6 +314,34 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
             judgment_score = -1 if email.is_phishing else 1
             conf_claimed_legit.add(judgment_score, interaction.judgment_confidence_rating)
 
+        email_reviews.append(
+            EmailReview(
+                email_id=email.id,
+                subject=email.subject,
+                sender=email.sender,
+                is_phishing=email.is_phishing,
+                days_before=email.days_before,
+                received_time=email.received_time,
+                action_taken=interaction.action_taken,
+                category=category,
+                recipient=interaction.recipient,
+                was_correct=score > 0,
+                perceived_legitimacy=interaction.perceived_legitimacy,
+                judgment_confidence_rating=interaction.judgment_confidence_rating,
+                confidence_rating=interaction.confidence_rating,
+                difficulty_rating=interaction.difficulty_rating,
+                cues_noticed=interaction.cues_noticed or [],
+                cues_other_text=interaction.cues_other_text,
+                action_reasons=interaction.action_reasons or [],
+                action_reasons_other_text=interaction.action_reasons_other_text,
+            )
+        )
+
+    # Chronological (oldest to newest) - the order the emails would have
+    # actually arrived in, not the order the participant happened to act on
+    # them, so the review reads like a walkthrough of their inbox day.
+    email_reviews.sort(key=lambda r: (-r.days_before, r.received_time or ""))
+
     statements = [
         SelfEfficacyStatement(
             key=question.key,
@@ -338,4 +389,5 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
             pre_average=pre_average,
             post_average=post_average,
         ),
+        email_reviews=email_reviews,
     )

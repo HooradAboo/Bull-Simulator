@@ -524,7 +524,7 @@ export function MailClientScreen({
       const cueKeys = cueOptions.map((option) => option.key).filter((key) => key !== "other");
       const numCues = Math.floor(Math.random() * 3);
       const cuesNoticed = [...cueKeys].sort(() => Math.random() - 0.5).slice(0, numCues);
-      const confidence = Math.floor(Math.random() * 101);
+      const confidence = 1 + Math.floor(Math.random() * 5);
       const reasonPool = (actionReasonOptions[action] ?? [])
         .map((option) => option.key)
         .filter((key) => key !== "other");
@@ -533,7 +533,7 @@ export function MailClientScreen({
 
       await submitInteractionRatings(id, {
         perceivedLegitimacy: Math.random() < 0.5 ? "trust" : "suspicious",
-        judgmentConfidenceRating: Math.floor(Math.random() * 101),
+        judgmentConfidenceRating: 1 + Math.floor(Math.random() * 5),
         confidenceRating: confidence,
         difficultyRating: 1 + Math.floor(Math.random() * 5),
         cuesNoticed,

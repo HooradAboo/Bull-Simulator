@@ -7,6 +7,7 @@ import {
   type PerformanceReport,
 } from "../api";
 import { PageTemplate } from "./PageTemplate";
+import { EmailReviewSlideshow } from "./EmailReviewSlideshow";
 
 interface Props {
   participantId: string;
@@ -502,6 +503,13 @@ export function DebriefScreen({ participantId }: Props) {
               in the same order as the questionnaire.
             </p>
             <SelfEfficacyShift report={report} />
+
+            <h2>Email by Email</h2>
+            <p className="chart-intro">
+              A walkthrough of each email you acted on - your call, the signals you noticed, why
+              you responded the way you did, and what it actually was.
+            </p>
+            <EmailReviewSlideshow emailReviews={report.emailReviews} />
           </div>
         </>
       )}

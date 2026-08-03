@@ -223,6 +223,27 @@ export interface SelfEfficacyBreakdown {
   postAverage: number | null;
 }
 
+export interface EmailReview {
+  emailId: string;
+  subject: string;
+  sender: string;
+  isPhishing: boolean;
+  daysBefore: number;
+  receivedTime: string | null;
+  actionTaken: string;
+  category: string;
+  recipient: string | null;
+  wasCorrect: boolean;
+  perceivedLegitimacy: string | null;
+  judgmentConfidenceRating: number | null;
+  confidenceRating: number | null;
+  difficultyRating: number | null;
+  cuesNoticed: string[];
+  cuesOtherText: string | null;
+  actionReasons: string[];
+  actionReasonsOtherText: string | null;
+}
+
 export interface PerformanceReport {
   totalScore: number;
   maxPossibleScore: number;
@@ -233,6 +254,7 @@ export interface PerformanceReport {
   actionBreakdown: Record<string, { legitCount: number; phishingCount: number }>;
   confidence: ConfidenceAverages;
   selfEfficacy: SelfEfficacyBreakdown;
+  emailReviews: EmailReview[];
 }
 
 interface PerformanceReportResponse {
@@ -256,6 +278,26 @@ interface PerformanceReportResponse {
     pre_average: number;
     post_average: number | null;
   };
+  email_reviews: {
+    email_id: string;
+    subject: string;
+    sender: string;
+    is_phishing: boolean;
+    days_before: number;
+    received_time: string | null;
+    action_taken: string;
+    category: string;
+    recipient: string | null;
+    was_correct: boolean;
+    perceived_legitimacy: string | null;
+    judgment_confidence_rating: number | null;
+    confidence_rating: number | null;
+    difficulty_rating: number | null;
+    cues_noticed: string[];
+    cues_other_text: string | null;
+    action_reasons: string[];
+    action_reasons_other_text: string | null;
+  }[];
 }
 
 export async function getPerformanceReport(participantId: string): Promise<PerformanceReport> {
@@ -303,6 +345,26 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
       preAverage: data.self_efficacy.pre_average,
       postAverage: data.self_efficacy.post_average,
     },
+    emailReviews: data.email_reviews.map((r) => ({
+      emailId: r.email_id,
+      subject: r.subject,
+      sender: r.sender,
+      isPhishing: r.is_phishing,
+      daysBefore: r.days_before,
+      receivedTime: r.received_time,
+      actionTaken: r.action_taken,
+      category: r.category,
+      recipient: r.recipient,
+      wasCorrect: r.was_correct,
+      perceivedLegitimacy: r.perceived_legitimacy,
+      judgmentConfidenceRating: r.judgment_confidence_rating,
+      confidenceRating: r.confidence_rating,
+      difficultyRating: r.difficulty_rating,
+      cuesNoticed: r.cues_noticed,
+      cuesOtherText: r.cues_other_text,
+      actionReasons: r.action_reasons,
+      actionReasonsOtherText: r.action_reasons_other_text,
+    })),
   };
 }
 
