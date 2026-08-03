@@ -333,28 +333,6 @@ function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
   }));
 
   const overallChange = Math.round((selfEfficacy.postAverage - selfEfficacy.preAverage) * 10) / 10;
-  const overallSign = Math.sign(overallChange);
-  const allSameDirection = rows.every((r) => r.change === 0 || Math.sign(r.change) === overallSign);
-
-  const moveNote = allSameDirection
-    ? overallChange > 0
-      ? "Confidence grew across every area you rated."
-      : overallChange < 0
-        ? "Confidence dropped across every area you rated."
-        : "Confidence stayed about the same across the board."
-    : "The average moved, but the items underneath it did not move together - see below.";
-
-  const minAbsChange = Math.min(...rows.map((r) => Math.abs(r.change)));
-  const barelyMoved = rows.filter((r) => Math.abs(r.change) <= Math.max(3, minAbsChange));
-  const footnote =
-    barelyMoved.length > 0 && barelyMoved.length < rows.length
-      ? `${barelyMoved.map((r) => r.label).join(" and ")} ${
-          barelyMoved.length === 1 ? "is the item" : "are the items"
-        } that barely moved. That's worth checking against whether the task actually gives
-        participants a moment to practice ${
-          barelyMoved.length === 1 ? "it" : "either one"
-        } - a competency can't shift much if nothing in the session exercises it.`
-      : "";
 
   return (
     <>
@@ -369,7 +347,6 @@ function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
           {overallChange}
         </div>
       </div>
-      <p className="chart-intro">{moveNote}</p>
 
       <div className="shift-legend">
         <span className="shift-legend-item">
@@ -418,8 +395,6 @@ function SelfEfficacyShift({ report }: { report: PerformanceReport }) {
           <div className="shift-row-change" />
         </div>
       </div>
-
-      {footnote && <p className="report-footnote">{footnote}</p>}
     </>
   );
 }
