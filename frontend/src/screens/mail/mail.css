@@ -900,11 +900,6 @@
   height: auto;
   max-height: 85vh;
 }
-.compose-followup-role-input {
-  display: block;
-  width: 100%;
-  margin: 8px 0 4px;
-}
 
 .forward-box {
   background: #fff;

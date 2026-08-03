@@ -37,28 +37,42 @@ export function ComposeFollowupModal({
     <div className="modal-backdrop">
       <div className="confidence-box compose-followup-box">
         <h3>Who did you send this to? What is their role to you?</h3>
-        <div className="likert-options">
-          {roleOptions.map((option) => (
-            <button
-              type="button"
-              key={option.key}
-              className={`likert-option${selectedRole === option.key ? " selected" : ""}`}
-              onClick={() => onSelectRole(option.key)}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="cue-options">
+          {roleOptions
+            .filter((option) => option.key !== "other")
+            .map((option) => (
+              <label key={option.key} className="cue-option">
+                <input
+                  type="radio"
+                  name="compose-role"
+                  checked={selectedRole === option.key}
+                  onChange={() => onSelectRole(option.key)}
+                />
+                {option.label}
+              </label>
+            ))}
+          <label className="cue-option cue-option-other">
+            <input
+              type="radio"
+              name="compose-role"
+              checked={isOtherRoleSelected}
+              onChange={() => onSelectRole("other")}
+            />
+            {isOtherRoleSelected ? (
+              <input
+                type="text"
+                className="cue-other-inline-input"
+                placeholder="Describe their role..."
+                value={otherRoleText}
+                onChange={(e) => onOtherRoleTextChange(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                autoFocus
+              />
+            ) : (
+              "Other"
+            )}
+          </label>
         </div>
-        {isOtherRoleSelected && (
-          <input
-            type="text"
-            className="cue-other-inline-input compose-followup-role-input"
-            placeholder="Describe their role..."
-            value={otherRoleText}
-            onChange={(e) => onOtherRoleTextChange(e.target.value)}
-            autoFocus
-          />
-        )}
 
         <h3 className="confidence-second-h3">Why did you send this email? Select all that apply.</h3>
         <div className="cue-options cue-options-single-column">
