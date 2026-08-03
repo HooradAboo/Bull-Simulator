@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Print20Regular } from "@fluentui/react-icons";
 import "./page.css";
 import {
   getPerformanceReport,
@@ -423,10 +424,12 @@ export function ReportScreen({ participantId }: Props) {
         report && (
           <button
             type="button"
-            className="page-button-secondary"
+            className="report-print-button"
             onClick={() => window.print()}
+            title="Print / Save as PDF"
+            aria-label="Print / Save as PDF"
           >
-            Print / Save as PDF
+            <Print20Regular />
           </button>
         )
       }
