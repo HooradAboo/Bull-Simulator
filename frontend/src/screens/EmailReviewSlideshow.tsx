@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Attach20Regular } from "@fluentui/react-icons";
 import {
   getActionReasons,
   getCueOptions,
@@ -6,6 +7,15 @@ import {
   type CueOption,
   type EmailReview,
 } from "../api";
+import { avatarColor, initials, senderName } from "./mail/avatar";
+
+function formatReceivedTime(ts: number): string {
+  const d = new Date(ts);
+  const weekday = d.toLocaleDateString(undefined, { weekday: "short" });
+  const date = d.toLocaleDateString(undefined, { month: "numeric", day: "numeric", year: "numeric" });
+  const time = d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return `${weekday} ${date} ${time}`;
+}
 
 const CONFIDENCE_LABELS: Record<number, string> = {
   1: "Not at all confident",
@@ -105,69 +115,109 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
         </button>
       </div>
 
-      <div className="email-review-card">
-        <div className="email-review-header">
-          <div>
-            <div className="email-review-subject">{review.subject}</div>
-            <div className="email-review-sender">{review.sender}</div>
+      <div className="email-review-columns">
+        <div className="email-review-card">
+          <div className="email-review-header">
+            <div>
+              <div className="email-review-subject">{review.subject}</div>
+              <div className="email-review-sender">{review.sender}</div>
+            </div>
+            <div className={`email-review-truth-tag ${review.isPhishing ? "phishing" : "legit"}`}>
+              {review.isPhishing ? "Actually phishing" : "Actually legitimate"}
+            </div>
           </div>
-          <div className={`email-review-truth-tag ${review.isPhishing ? "phishing" : "legit"}`}>
-            {review.isPhishing ? "Actually phishing" : "Actually legitimate"}
+
+          <div className="email-review-outcome">
+            <span className={`email-review-outcome-tag ${review.wasCorrect ? "good" : "bad"}`}>
+              {review.wasCorrect ? "Safe decision" : "Missed it"}
+            </span>
+          </div>
+
+          <div className="email-review-grid">
+            <div className="email-review-field">
+              <div className="email-review-field-label">Your judgment</div>
+              <div className="email-review-field-value">
+                {review.perceivedLegitimacy ? JUDGMENT_LABELS[review.perceivedLegitimacy] : "—"}
+                {review.judgmentConfidenceRating != null && (
+                  <span className="email-review-sub">
+                    {" "}
+                    ({ratingLabel(CONFIDENCE_LABELS, review.judgmentConfidenceRating)})
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="email-review-field">
+              <div className="email-review-field-label">Your action</div>
+              <div className="email-review-field-value">
+                {ACTION_LABELS[review.actionTaken] ?? review.actionTaken}
+                {review.recipient && (
+                  <span className="email-review-sub"> to {review.recipient}</span>
+                )}
+              </div>
+            </div>
+            <div className="email-review-field">
+              <div className="email-review-field-label">Confidence in that response</div>
+              <div className="email-review-field-value">
+                {ratingLabel(CONFIDENCE_LABELS, review.confidenceRating)}
+              </div>
+            </div>
+            <div className="email-review-field">
+              <div className="email-review-field-label">Difficulty</div>
+              <div className="email-review-field-value">
+                {ratingLabel(DIFFICULTY_LABELS, review.difficultyRating)}
+              </div>
+            </div>
+          </div>
+
+          <div className="email-review-field">
+            <div className="email-review-field-label">Signals you noticed</div>
+            <div className="email-review-field-value">
+              {signals.length > 0 ? signals.join(", ") : "None selected"}
+            </div>
+          </div>
+
+          <div className="email-review-field">
+            <div className="email-review-field-label">Why you chose that response</div>
+            <div className="email-review-field-value">
+              {reasons.length > 0 ? reasons.join(", ") : "None selected"}
+            </div>
           </div>
         </div>
 
-        <div className="email-review-outcome">
-          <span className={`email-review-outcome-tag ${review.wasCorrect ? "good" : "bad"}`}>
-            {review.wasCorrect ? "Safe decision" : "Missed it"}
-          </span>
-        </div>
+        <div className="email-review-picture">
+          <div className="email-review-picture-subject">{review.subject}</div>
+          <div className="email-review-picture-sender-row">
+            <div
+              className="email-review-picture-avatar"
+              style={{ background: avatarColor(review.sender) }}
+            >
+              {initials(review.sender)}
+            </div>
+            <div className="email-review-picture-sender-text">
+              <div className="email-review-picture-sender-name">{senderName(review.sender)}</div>
+              <div className="email-review-picture-sender-meta">{review.sender}</div>
+            </div>
+            {review.receivedAt != null && (
+              <div className="email-review-picture-time">
+                {formatReceivedTime(review.receivedAt)}
+              </div>
+            )}
+          </div>
 
-        <div className="email-review-grid">
-          <div className="email-review-field">
-            <div className="email-review-field-label">Your judgment</div>
-            <div className="email-review-field-value">
-              {review.perceivedLegitimacy ? JUDGMENT_LABELS[review.perceivedLegitimacy] : "—"}
-              {review.judgmentConfidenceRating != null && (
-                <span className="email-review-sub">
-                  {" "}
-                  ({ratingLabel(CONFIDENCE_LABELS, review.judgmentConfidenceRating)})
-                </span>
-              )}
+          {review.attachment && (
+            <div className="email-review-picture-attachment">
+              <Attach20Regular /> {review.attachment}
             </div>
-          </div>
-          <div className="email-review-field">
-            <div className="email-review-field-label">Your action</div>
-            <div className="email-review-field-value">
-              {ACTION_LABELS[review.actionTaken] ?? review.actionTaken}
-              {review.recipient && <span className="email-review-sub"> to {review.recipient}</span>}
-            </div>
-          </div>
-          <div className="email-review-field">
-            <div className="email-review-field-label">Confidence in that response</div>
-            <div className="email-review-field-value">
-              {ratingLabel(CONFIDENCE_LABELS, review.confidenceRating)}
-            </div>
-          </div>
-          <div className="email-review-field">
-            <div className="email-review-field-label">Difficulty</div>
-            <div className="email-review-field-value">
-              {ratingLabel(DIFFICULTY_LABELS, review.difficultyRating)}
-            </div>
-          </div>
-        </div>
+          )}
 
-        <div className="email-review-field">
-          <div className="email-review-field-label">Signals you noticed</div>
-          <div className="email-review-field-value">
-            {signals.length > 0 ? signals.join(", ") : "None selected"}
-          </div>
-        </div>
+          <div
+            className="email-review-picture-body"
+            dangerouslySetInnerHTML={{ __html: review.body }}
+          />
 
-        <div className="email-review-field">
-          <div className="email-review-field-label">Why you chose that response</div>
-          <div className="email-review-field-value">
-            {reasons.length > 0 ? reasons.join(", ") : "None selected"}
-          </div>
+          {review.link && !review.body.includes("data-tracked-link") && (
+            <p className="email-review-picture-link">{review.link}</p>
+          )}
         </div>
       </div>
     </div>

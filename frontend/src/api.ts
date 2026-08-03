@@ -227,6 +227,10 @@ export interface EmailReview {
   emailId: string;
   subject: string;
   sender: string;
+  body: string;
+  link: string | null;
+  attachment: string | null;
+  receivedAt: number | null;
   isPhishing: boolean;
   daysBefore: number;
   receivedTime: string | null;
@@ -282,6 +286,10 @@ interface PerformanceReportResponse {
     email_id: string;
     subject: string;
     sender: string;
+    body: string;
+    link: string | null;
+    attachment: string | null;
+    received_at: number | null;
     is_phishing: boolean;
     days_before: number;
     received_time: string | null;
@@ -349,6 +357,10 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
       emailId: r.email_id,
       subject: r.subject,
       sender: r.sender,
+      body: r.body,
+      link: r.link,
+      attachment: r.attachment,
+      receivedAt: r.received_at,
       isPhishing: r.is_phishing,
       daysBefore: r.days_before,
       receivedTime: r.received_time,

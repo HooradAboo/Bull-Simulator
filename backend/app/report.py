@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from app import models
 from app.config import settings
 from app.contacts import load_contacts
-from app.emails import load_emails
+from app.emails import build_template_context, load_emails, load_public_emails
+from app.participant_profile import load_participant_profile
 from app.self_efficacy import load_self_efficacy_questions
 
 IT_CONTACT_NAME = "USF IT Help Desk"
@@ -165,6 +166,10 @@ class EmailReview(BaseModel):
     email_id: str
     subject: str
     sender: str
+    body: str
+    link: str | None
+    attachment: str | None
+    received_at: int | None
     is_phishing: bool
     days_before: int
     received_time: str | None
@@ -233,6 +238,24 @@ class _CalibrationAccumulator:
 
 def build_performance_report(db: Session, participant: models.Participant) -> PerformanceReport:
     emails_by_id = {e.id: e for e in load_emails()}
+
+    # Rendered (personalized) versions of the same emails, for showing "what
+    # the email actually looked like" in the review section - is_phishing is
+    # deliberately excluded from this public form, so ground truth still
+    # comes from emails_by_id above.
+    profile = load_participant_profile(participant.netid)
+    template_context = build_template_context(
+        participant.first_name,
+        participant.last_name,
+        participant.session_start_ts,
+        contacts=profile.contacts if profile else None,
+        variables=profile.variables if profile else None,
+        email=profile.email if profile else None,
+    )
+    public_emails_by_id = {
+        e.id: e for e in load_public_emails(template_context, participant.session_start_ts)
+    }
+
     it_email = _it_contact_email()
     matrix = load_safe_action_matrix()
     matrix_max = max(score for row in matrix.values() for score in row.values())
@@ -314,11 +337,16 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
             judgment_score = -1 if email.is_phishing else 1
             conf_claimed_legit.add(judgment_score, interaction.judgment_confidence_rating)
 
+        public_email = public_emails_by_id.get(email.id)
         email_reviews.append(
             EmailReview(
                 email_id=email.id,
-                subject=email.subject,
-                sender=email.sender,
+                subject=public_email.subject if public_email else email.subject,
+                sender=public_email.sender if public_email else email.sender,
+                body=public_email.body if public_email else email.body,
+                link=public_email.link if public_email else email.link,
+                attachment=public_email.attachment if public_email else email.attachment,
+                received_at=public_email.received_at if public_email else None,
                 is_phishing=email.is_phishing,
                 days_before=email.days_before,
                 received_time=email.received_time,
