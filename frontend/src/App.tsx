@@ -4,6 +4,7 @@ import { ResearcherSetupScreen } from "./screens/ResearcherSetupScreen";
 import { ConsentScreen } from "./screens/ConsentScreen";
 import { SelfEfficacyScreen } from "./screens/SelfEfficacyScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
+import { TaskStartScreen } from "./screens/TaskStartScreen";
 import { MailClientScreen } from "./screens/mail/MailClientScreen";
 import { TutorialScreen } from "./screens/mail/TutorialScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
@@ -32,6 +33,7 @@ type Screen =
   | "self-efficacy"
   | "instructions"
   | "tutorial"
+  | "task-start"
   | "mail"
   | "self-efficacy-post"
   | "debrief"
@@ -84,7 +86,7 @@ function App() {
   if (screen === "tutorial") {
     return (
       <BrowserChrome primaryTabTitle="Practice Inbox - Outlook" primaryTabUrl="outlook.office.com/mail/inbox">
-        <TutorialScreen onFinish={handleBegin} />
+        <TutorialScreen onFinish={() => setScreen("task-start")} />
       </BrowserChrome>
     );
   }
@@ -146,6 +148,7 @@ function App() {
       {screen === "instructions" && (
         <InstructionsScreen onBegin={() => setScreen("tutorial")} />
       )}
+      {screen === "task-start" && <TaskStartScreen onBegin={handleBegin} />}
       {screen === "self-efficacy-post" && (
         <SelfEfficacyScreen
           heading="Rate Your Confidence, Revisited"
