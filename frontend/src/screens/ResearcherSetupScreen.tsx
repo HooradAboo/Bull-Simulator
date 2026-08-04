@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { getParticipantProfile } from "../api";
+import { getParticipantProfile, lookupParticipantByNetid, type ParticipantLookup } from "../api";
 import { PageTemplate } from "./PageTemplate";
+
+interface ResolvedProfile {
+  email: string;
+  firstName: string;
+  lastName: string;
+  netid: string;
+}
 
 interface Props {
   onContinue: (
@@ -9,12 +16,17 @@ interface Props {
     lastName: string,
     netid: string
   ) => void;
+  onResume: (lookup: ParticipantLookup, profile: ResolvedProfile) => void;
 }
 
-export function ResearcherSetupScreen({ onContinue }: Props) {
+export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
   const [netid, setNetid] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingChoice, setPendingChoice] = useState<{
+    lookup: ParticipantLookup;
+    profile: ResolvedProfile;
+  } | null>(null);
 
   const isValid = netid.trim().length > 0;
 
@@ -30,13 +42,48 @@ export function ResearcherSetupScreen({ onContinue }: Props) {
         );
         return;
       }
-      onContinue(profile.email, profile.firstName, profile.lastName, profile.netid);
+      const resolvedProfile: ResolvedProfile = {
+        email: profile.email,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        netid: profile.netid,
+      };
+      const lookup = await lookupParticipantByNetid(trimmed);
+      if (lookup && !lookup.selfEfficacyPostSubmitted) {
+        setPendingChoice({ lookup, profile: resolvedProfile });
+        return;
+      }
+      onContinue(resolvedProfile.email, resolvedProfile.firstName, resolvedProfile.lastName, resolvedProfile.netid);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load participant profile.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (pendingChoice) {
+    const { lookup, profile } = pendingChoice;
+    return (
+      <PageTemplate
+        title="In-Progress Session Found"
+        subtitle={`${profile.firstName} ${profile.lastName} (${profile.netid}) already has an unfinished session, with ${lookup.completedInteractions.length} email${lookup.completedInteractions.length === 1 ? "" : "s"} already processed. Resume where they left off, or start over from the beginning.`}
+      >
+        <div className="page-actions">
+          <button className="page-button" onClick={() => onResume(lookup, profile)}>
+            Resume
+          </button>
+          <button
+            className="page-button-secondary"
+            onClick={() =>
+              onContinue(profile.email, profile.firstName, profile.lastName, profile.netid)
+            }
+          >
+            Start Over
+          </button>
+        </div>
+      </PageTemplate>
+    );
+  }
 
   return (
     <PageTemplate

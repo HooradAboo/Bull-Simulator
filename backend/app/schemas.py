@@ -15,6 +15,22 @@ class SessionStart(BaseModel):
     session_start_ts: int
 
 
+class CompletedInteractionSummary(BaseModel):
+    email_id: str
+    action_taken: str
+    confidence_rating: int
+    recipient: str | None = None
+
+
+class ParticipantLookup(BaseModel):
+    participant_id: str
+    first_name: str
+    last_name: str
+    netid: str
+    self_efficacy_post_submitted: bool
+    completed_interactions: list[CompletedInteractionSummary]
+
+
 class SelfEfficacyPost(BaseModel):
     self_efficacy_post_recognize_links: int
     self_efficacy_post_verify_legitimacy: int

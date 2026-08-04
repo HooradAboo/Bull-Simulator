@@ -51,6 +51,10 @@ interface Props {
   participantEmail: string;
   emails: DummyEmail[];
   contacts: Contact[];
+  // Pre-populates `processed` on mount - used when resuming an in-progress
+  // participant after a crash, so already-completed emails show as done
+  // right away instead of being re-openable.
+  initialProcessed?: Map<string, ProcessedInfo>;
   onAllProcessed: () => void;
 }
 
@@ -130,6 +134,7 @@ export function MailClientScreen({
   participantEmail,
   emails,
   contacts,
+  initialProcessed,
   onAllProcessed,
 }: Props) {
   const [composeOpen, setComposeOpen] = useState(false);
@@ -163,7 +168,9 @@ export function MailClientScreen({
     Record<string, ActionReasonOption[]>
   >({});
   const [cueOptions, setCueOptions] = useState<CueOption[]>([]);
-  const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
+  const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(
+    () => new Map(initialProcessed)
+  );
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);

@@ -69,6 +69,56 @@ export async function getParticipantProfile(netid: string): Promise<ParticipantP
   return res.json();
 }
 
+export interface CompletedInteractionSummary {
+  emailId: string;
+  actionTaken: string;
+  confidenceRating: number;
+  recipient: string | null;
+}
+
+export interface ParticipantLookup {
+  participantId: string;
+  firstName: string;
+  lastName: string;
+  netid: string;
+  selfEfficacyPostSubmitted: boolean;
+  completedInteractions: CompletedInteractionSummary[];
+}
+
+interface ParticipantLookupResponse {
+  participant_id: string;
+  first_name: string;
+  last_name: string;
+  netid: string;
+  self_efficacy_post_submitted: boolean;
+  completed_interactions: {
+    email_id: string;
+    action_taken: string;
+    confidence_rating: number;
+    recipient: string | null;
+  }[];
+}
+
+export async function lookupParticipantByNetid(netid: string): Promise<ParticipantLookup | null> {
+  const res = await fetch(`${BASE_URL}/participants/by-netid/${encodeURIComponent(netid)}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GET /participants/by-netid/${netid} failed: ${res.status}`);
+  const data: ParticipantLookupResponse = await res.json();
+  return {
+    participantId: data.participant_id,
+    firstName: data.first_name,
+    lastName: data.last_name,
+    netid: data.netid,
+    selfEfficacyPostSubmitted: data.self_efficacy_post_submitted,
+    completedInteractions: data.completed_interactions.map((c) => ({
+      emailId: c.email_id,
+      actionTaken: c.action_taken,
+      confidenceRating: c.confidence_rating,
+      recipient: c.recipient,
+    })),
+  };
+}
+
 export interface SelfEfficacyQuestion {
   key: string;
   text: string;

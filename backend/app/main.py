@@ -108,6 +108,49 @@ def get_contacts(participant_id: str | None = None, db: Session = Depends(get_db
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/participants/by-netid/{netid}", response_model=schemas.ParticipantLookup)
+def lookup_participant_by_netid(netid: str, db: Session = Depends(get_db)):
+    participant = (
+        db.query(models.Participant)
+        .filter(models.Participant.netid == netid)
+        .order_by(models.Participant.created_at.desc())
+        .first()
+    )
+    if not participant:
+        raise HTTPException(status_code=404, detail="no participant found for this netid")
+
+    # A crash-and-retry can leave more than one interaction row for the same
+    # email (e.g. the email was reopened after a failed first attempt) - keep
+    # only the latest fully-rated one per email so the resumed inbox doesn't
+    # show stale duplicates.
+    completed_by_email: dict[str, models.EmailInteraction] = {}
+    for interaction in sorted(participant.interactions, key=lambda i: i.id):
+        if (
+            interaction.action_taken is not None
+            and interaction.confirmed_at is not None
+            and interaction.perceived_legitimacy is not None
+            and interaction.confidence_rating is not None
+        ):
+            completed_by_email[interaction.email_id] = interaction
+
+    return schemas.ParticipantLookup(
+        participant_id=participant.id,
+        first_name=participant.first_name,
+        last_name=participant.last_name,
+        netid=participant.netid,
+        self_efficacy_post_submitted=participant.self_efficacy_post_recognize_links is not None,
+        completed_interactions=[
+            schemas.CompletedInteractionSummary(
+                email_id=interaction.email_id,
+                action_taken=interaction.action_taken,
+                confidence_rating=interaction.confidence_rating,
+                recipient=interaction.recipient,
+            )
+            for interaction in completed_by_email.values()
+        ],
+    )
+
+
 @app.post("/session/start")
 def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
     existing = db.get(models.Participant, payload.participant_id)
