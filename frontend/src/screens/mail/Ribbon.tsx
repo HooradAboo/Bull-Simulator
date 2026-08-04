@@ -27,6 +27,18 @@ interface Props {
   onCompose: () => void;
 }
 
+const ACTION_DESCRIPTIONS: Record<ActionType, string> = {
+  delete: "Delete this message",
+  report_phishing: "Report this message as phishing",
+  reply: "Reply to this message",
+  forward: "Forward this message",
+  ignore: "Mark this message as read",
+  verify_independently:
+    "Confirm the sender or request through a separate, trusted channel before acting on it.",
+  click_link: "Open a link contained in this email.",
+  open_attachment: "Open a file attached to this email.",
+};
+
 function DecorativeButton({ icon, label }: { icon: ReactNode; label: string }) {
   return (
     <button className="ribbon-btn" disabled title="Not used in this study">
@@ -51,6 +63,7 @@ export function Ribbon({
       className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
       disabled={disabled || disabledActions.includes(action)}
       onClick={() => onSelectAction(action)}
+      title={ACTION_DESCRIPTIONS[action]}
       data-tour={action}
     >
       <span className="ribbon-icon" aria-hidden="true">
@@ -66,6 +79,7 @@ export function Ribbon({
         className="ribbon-btn primary"
         disabled={composeDisabled}
         onClick={onCompose}
+        title="Start a new email"
         data-tour="compose"
       >
         <MailAdd20Regular /> New mail

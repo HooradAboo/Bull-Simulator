@@ -175,6 +175,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .ribbon-btn:hover:not(:disabled) {
   background: var(--hover);
   border-color: var(--border);
