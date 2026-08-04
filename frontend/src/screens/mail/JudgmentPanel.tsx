@@ -54,8 +54,8 @@ export function JudgmentPanel({
           <div className="judgment-panel-done-row">
             <CheckmarkCircle20Filled />
             You responded: <strong>{actionLabel}</strong>
-            {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}{" "}
-            (confidence {processedInfo.confidence})
+            {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}
+            {processedInfo.confidence != null && <> (confidence {processedInfo.confidence})</>}
           </div>
         )}
       </div>

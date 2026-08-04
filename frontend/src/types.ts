@@ -21,7 +21,8 @@ export interface DummyEmail {
 
 export interface ProcessedInfo {
   action: ActionType;
-  confidence: number;
+  // null in practice mode, where no confidence rating is ever collected.
+  confidence: number | null;
   recipient?: string | null;
 }
 

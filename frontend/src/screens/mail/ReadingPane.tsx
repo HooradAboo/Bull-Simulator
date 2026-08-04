@@ -301,6 +301,7 @@ export function ReadingPane({
           <div className="reading-attachment-top">
             <span
               className="reading-attachment"
+              data-tour="open_attachment"
               onClick={(e) => {
                 e.preventDefault();
                 if (!processedInfo) onAttachmentClick();
@@ -342,6 +343,7 @@ export function ReadingPane({
           <p>
             <span
               className="reading-link"
+              data-tour="click_link"
               onClick={(e) => {
                 e.preventDefault();
                 if (!processedInfo) onLinkClick();

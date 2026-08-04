@@ -41,6 +41,7 @@ export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectActio
       className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
       disabled={disabled}
       onClick={() => onSelectAction(action)}
+      data-tour={action}
     >
       <span className="ribbon-icon" aria-hidden="true">
         {icon}
@@ -51,7 +52,12 @@ export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectActio
 
   return (
     <div className="mail-ribbon">
-      <button className="ribbon-btn primary" disabled={composeDisabled} onClick={onCompose}>
+      <button
+        className="ribbon-btn primary"
+        disabled={composeDisabled}
+        onClick={onCompose}
+        data-tour="compose"
+      >
         <MailAdd20Regular /> New mail
       </button>
 

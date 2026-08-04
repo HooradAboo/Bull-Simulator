@@ -5,6 +5,7 @@ import { ConsentScreen } from "./screens/ConsentScreen";
 import { SelfEfficacyScreen } from "./screens/SelfEfficacyScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
 import { MailClientScreen } from "./screens/mail/MailClientScreen";
+import { TutorialScreen } from "./screens/mail/TutorialScreen";
 import { DebriefScreen } from "./screens/DebriefScreen";
 import { ReportScreen } from "./screens/ReportScreen";
 import { BrowserChrome } from "./screens/browser/BrowserChrome";
@@ -30,6 +31,7 @@ type Screen =
   | "consent"
   | "self-efficacy"
   | "instructions"
+  | "tutorial"
   | "mail"
   | "self-efficacy-post"
   | "debrief"
@@ -78,6 +80,14 @@ function App() {
     setSessionStarted(true);
     setScreen("mail");
   };
+
+  if (screen === "tutorial") {
+    return (
+      <BrowserChrome primaryTabTitle="Practice Inbox - Outlook" primaryTabUrl="outlook.office.com/mail/inbox">
+        <TutorialScreen onFinish={handleBegin} />
+      </BrowserChrome>
+    );
+  }
 
   if (screen === "mail") {
     return (
@@ -133,7 +143,9 @@ function App() {
           }}
         />
       )}
-      {screen === "instructions" && <InstructionsScreen onBegin={handleBegin} />}
+      {screen === "instructions" && (
+        <InstructionsScreen onBegin={() => setScreen("tutorial")} />
+      )}
       {screen === "self-efficacy-post" && (
         <SelfEfficacyScreen
           heading="Rate Your Confidence, Revisited"
