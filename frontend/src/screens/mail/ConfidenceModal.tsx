@@ -22,9 +22,9 @@ interface Props {
   actionLabel: string;
   cueOptions: { key: string; label: string }[];
   reasonOptions: { key: string; label: string }[];
-  confidenceValue: number;
+  confidenceValue: number | null;
   onConfidenceChange: (value: number) => void;
-  difficultyValue: number;
+  difficultyValue: number | null;
   onDifficultyChange: (value: number) => void;
   selectedCues: string[];
   onToggleCue: (cueKey: string) => void;
@@ -58,6 +58,9 @@ export function ConfidenceModal({
   const [step, setStep] = useState(1);
   const isOtherCueSelected = selectedCues.includes("other");
   const isOtherReasonSelected = selectedReasons.includes("other");
+  // Step 1 has no default selection anymore, so it can't be skipped without
+  // an explicit answer to both questions.
+  const canLeaveStep1 = confidenceValue !== null && difficultyValue !== null;
 
   return (
     <div className="modal-backdrop">
@@ -187,7 +190,12 @@ export function ConfidenceModal({
             </button>
           )}
           {step < TOTAL_STEPS ? (
-            <button type="button" className="confidence-submit" onClick={() => setStep(step + 1)}>
+            <button
+              type="button"
+              className="confidence-submit"
+              disabled={step === 1 && !canLeaveStep1}
+              onClick={() => setStep(step + 1)}
+            >
               Next
             </button>
           ) : (

@@ -49,7 +49,7 @@ interface Props {
   participantEmail: string;
   judgmentStep: JudgmentStep;
   perceivedLegitimacy: PerceivedLegitimacy | null;
-  judgmentConfidenceValue: number;
+  judgmentConfidenceValue: number | null;
   onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
   onSelectJudgmentConfidence: (value: number) => void;
   onLinkClick: () => void;

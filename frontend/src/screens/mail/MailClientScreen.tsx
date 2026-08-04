@@ -152,9 +152,9 @@ export function MailClientScreen({
   const [phase, setPhase] = useState<Phase>("idle");
   const [judgmentStep, setJudgmentStep] = useState<JudgmentStep>("done");
   const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
-  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState(3);
-  const [confidenceValue, setConfidenceValueState] = useState(3);
-  const [difficultyValue, setDifficultyValue] = useState(3);
+  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState<number | null>(null);
+  const [confidenceValue, setConfidenceValueState] = useState<number | null>(null);
+  const [difficultyValue, setDifficultyValue] = useState<number | null>(null);
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
@@ -224,7 +224,7 @@ export function MailClientScreen({
     setPendingAction(null);
     setPhase("idle");
     setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(3);
+    setJudgmentConfidenceValue(null);
     setJudgmentStep("trust");
   };
 
@@ -383,8 +383,8 @@ export function MailClientScreen({
     setPendingAction(action);
     setPendingRecipient(recipient);
     setPhase("confidence");
-    setConfidenceValueState(3);
-    setDifficultyValue(3);
+    setConfidenceValueState(null);
+    setDifficultyValue(null);
     setSelectedCues([]);
     setOtherCueText("");
     setSelectedReasons([]);
@@ -460,7 +460,16 @@ export function MailClientScreen({
   };
 
   const handleSubmitConfidence = async () => {
-    if (!selectedEmail || !pendingAction || interactionId === null || !perceivedLegitimacy) return;
+    if (
+      !selectedEmail ||
+      !pendingAction ||
+      interactionId === null ||
+      !perceivedLegitimacy ||
+      judgmentConfidenceValue === null ||
+      confidenceValue === null ||
+      difficultyValue === null
+    )
+      return;
     await submitInteractionRatings(interactionId, {
       perceivedLegitimacy,
       judgmentConfidenceRating: judgmentConfidenceValue,
@@ -632,7 +641,7 @@ export function MailClientScreen({
               participantEmail={participantEmail}
               judgmentStep="done"
               perceivedLegitimacy={null}
-              judgmentConfidenceValue={3}
+              judgmentConfidenceValue={null}
               onSelectLegitimacy={() => {}}
               onSelectJudgmentConfidence={() => {}}
               onLinkClick={() => {}}

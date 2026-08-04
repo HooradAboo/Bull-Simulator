@@ -206,7 +206,7 @@ export function TutorialScreen({ onFinish }: Props) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [judgmentStep, setJudgmentStep] = useState<JudgmentStep>("trust");
   const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
-  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState(3);
+  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState<number | null>(null);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -233,7 +233,7 @@ export function TutorialScreen({ onFinish }: Props) {
     setComposeBody("");
     setJudgmentStep("trust");
     setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(3);
+    setJudgmentConfidenceValue(null);
     // Remounts TutorialSpotlight fresh, so its own step index resets to 0.
     setTourActive(true);
   };
@@ -265,7 +265,7 @@ export function TutorialScreen({ onFinish }: Props) {
     setPendingAction(null);
     setPhase("idle");
     setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(3);
+    setJudgmentConfidenceValue(null);
     setJudgmentStep("trust");
   };
 
@@ -480,7 +480,7 @@ export function TutorialScreen({ onFinish }: Props) {
               participantEmail={PRACTICE_EMAIL}
               judgmentStep="done"
               perceivedLegitimacy={null}
-              judgmentConfidenceValue={3}
+              judgmentConfidenceValue={null}
               onSelectLegitimacy={() => {}}
               onSelectJudgmentConfidence={() => {}}
               onLinkClick={() => {}}

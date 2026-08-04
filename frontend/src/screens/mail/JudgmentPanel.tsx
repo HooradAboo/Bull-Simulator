@@ -20,7 +20,7 @@ export type JudgmentStep = "trust" | "confidence" | "done";
 interface Props {
   step: JudgmentStep;
   perceivedLegitimacy: PerceivedLegitimacy | null;
-  judgmentConfidenceValue: number;
+  judgmentConfidenceValue: number | null;
   processedInfo: ProcessedInfo | null;
   actionLabel: string | null;
   onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
