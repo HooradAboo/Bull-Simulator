@@ -180,13 +180,19 @@ const TOUR_STEPS: TutorialStep[] = [
       "Links in this study are simulated - clicking one just records that you clicked it. It never opens a real page.",
     targetSelector: '[data-tour="click_link"]',
   },
-  
   {
     key: "compose",
     title: "New Mail",
     description:
       "Use this to write and send a new message - for example, if you wanted to reach out to IT directly.",
     targetSelector: '[data-tour="compose"]',
+  },
+  {
+    key: "one-action-only",
+    title: "One Action, No Going Back",
+    description:
+      "In the real task, you can only take one action per email - once you pick one, it's final. There's no undo and no second choice, so take your time and be sure before you click.",
+    targetSelector: null,
   },
 ];
 
