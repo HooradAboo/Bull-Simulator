@@ -103,6 +103,13 @@ const TOUR_STEPS: TutorialStep[] = [
     targetSelector: ".mail-list-pane",
   },
   {
+    key: "unread-count",
+    title: "Finishing the Task",
+    description:
+      "This number shows how many emails still need a response. The task isn't finished until you've taken an action on every email in your inbox.",
+    targetSelector: ".mail-list-header .count",
+  },
+  {
     key: "all-actions",
     title: "Your Actions",
     description: "These are your 9 actions - we'll go through each one next.",
