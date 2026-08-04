@@ -121,10 +121,9 @@ const TOUR_STEPS: TutorialStep[] = [
   {
     key: "all-actions",
     title: "Your Actions",
-    description: "These are your 9 actions - we'll go through each one next.",
+    description: "These are your 8 actions - we'll go through each one next.",
     targetSelector: [
       '[data-tour="delete"]',
-      '[data-tour="archive"]',
       '[data-tour="report_phishing"]',
       '[data-tour="reply"]',
       '[data-tour="forward"]',
@@ -144,12 +143,6 @@ const TOUR_STEPS: TutorialStep[] = [
     title: "Delete",
     description: "Moves the email to Deleted Items.",
     targetSelector: '[data-tour="delete"]',
-  },
-  {
-    key: "archive",
-    title: "Archive",
-    description: "Puts the email away without deleting it - useful when it doesn't need a response.",
-    targetSelector: '[data-tour="archive"]',
   },
   {
     key: "report_phishing",
@@ -195,13 +188,6 @@ const TOUR_STEPS: TutorialStep[] = [
     description:
       "Links in this study are simulated - clicking one just records that you clicked it. It never opens a real page.",
     targetSelector: '[data-tour="click_link"]',
-  },
-  {
-    key: "compose",
-    title: "New Mail",
-    description:
-      "Use this to write and send a new message - for example, if you wanted to reach out to IT directly.",
-    targetSelector: '[data-tour="compose"]',
   },
   {
     key: "one-action-only",
@@ -454,7 +440,8 @@ export function TutorialScreen({ onFinish }: Props) {
       <Ribbon
         pendingAction={pendingAction}
         disabled={ribbonDisabled}
-        composeDisabled={tourActive || phase !== "idle"}
+        composeDisabled
+        disabledActions={["archive"]}
         onSelectAction={handleSelectAction}
         onCompose={handleStartCompose}
       />

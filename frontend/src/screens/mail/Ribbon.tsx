@@ -20,6 +20,9 @@ interface Props {
   pendingAction: ActionType | null;
   disabled: boolean;
   composeDisabled: boolean;
+  // Individually disabled regardless of `disabled` - used by the practice
+  // tutorial to take an action out of scope entirely.
+  disabledActions?: ActionType[];
   onSelectAction: (action: ActionType) => void;
   onCompose: () => void;
 }
@@ -35,11 +38,18 @@ function DecorativeButton({ icon, label }: { icon: ReactNode; label: string }) {
   );
 }
 
-export function Ribbon({ pendingAction, disabled, composeDisabled, onSelectAction, onCompose }: Props) {
+export function Ribbon({
+  pendingAction,
+  disabled,
+  composeDisabled,
+  disabledActions = [],
+  onSelectAction,
+  onCompose,
+}: Props) {
   const actionButton = (action: ActionType, icon: ReactNode, label: string) => (
     <button
       className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
-      disabled={disabled}
+      disabled={disabled || disabledActions.includes(action)}
       onClick={() => onSelectAction(action)}
       data-tour={action}
     >

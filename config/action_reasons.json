@@ -1,18 +1,4 @@
 {
-  "compose": [
-    { "key": "verify_suspicious", "label": "To verify something suspicious I received" },
-    { "key": "unrelated_question", "label": "To ask a question unrelated to a suspicious email" },
-    { "key": "report_phishing", "label": "To report a phishing attempt" },
-    { "key": "follow_up", "label": "To follow up on a previous email" },
-    { "key": "other", "label": "Something else" }
-  ],
-  "archive": [
-    { "key": "out_of_inbox_not_delete", "label": "I wanted it out of my inbox but didn't want to delete it" },
-    { "key": "legit_no_action_now", "label": "It seemed legitimate but I didn't need to act on it now" },
-    { "key": "might_need_later", "label": "I might need to reference it later" },
-    { "key": "not_urgent", "label": "It didn't seem urgent" },
-    { "key": "other", "label": "Something else" }
-  ],
   "delete": [
     { "key": "unfamiliar_sender", "label": "The sender looked unfamiliar or suspicious" },
     { "key": "seemed_spam", "label": "It seemed like spam or irrelevant" },
