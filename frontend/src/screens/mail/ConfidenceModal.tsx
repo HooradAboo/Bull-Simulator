@@ -58,9 +58,14 @@ export function ConfidenceModal({
   const [step, setStep] = useState(1);
   const isOtherCueSelected = selectedCues.includes("other");
   const isOtherReasonSelected = selectedReasons.includes("other");
-  // Step 1 has no default selection anymore, so it can't be skipped without
-  // an explicit answer to both questions.
+  // Every step requires an explicit answer before moving on - none of these
+  // questions have a default, so Next/Submit stays disabled until at least
+  // one option is picked.
   const canLeaveStep1 = confidenceValue !== null && difficultyValue !== null;
+  const canLeaveStep2 = selectedCues.length > 0;
+  const canLeaveStep3 = selectedReasons.length > 0;
+  const canLeaveCurrentStep =
+    step === 1 ? canLeaveStep1 : step === 2 ? canLeaveStep2 : canLeaveStep3;
 
   return (
     <div className="modal-backdrop">
@@ -193,13 +198,13 @@ export function ConfidenceModal({
             <button
               type="button"
               className="confidence-submit"
-              disabled={step === 1 && !canLeaveStep1}
+              disabled={!canLeaveCurrentStep}
               onClick={() => setStep(step + 1)}
             >
               Next
             </button>
           ) : (
-            <button className="confidence-submit" onClick={onSubmit}>
+            <button className="confidence-submit" disabled={!canLeaveCurrentStep} onClick={onSubmit}>
               Submit
             </button>
           )}

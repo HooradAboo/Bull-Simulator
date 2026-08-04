@@ -112,7 +112,11 @@ export function ComposeFollowupModal({
 
         <div className="confidence-nav">
           <span />
-          <button className="confidence-submit" onClick={onSubmit} disabled={!selectedRole}>
+          <button
+            className="confidence-submit"
+            onClick={onSubmit}
+            disabled={!selectedRole || selectedReasons.length === 0}
+          >
             Submit
           </button>
         </div>
