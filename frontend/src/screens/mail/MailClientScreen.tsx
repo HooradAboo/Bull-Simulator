@@ -586,7 +586,11 @@ export function MailClientScreen({
       <Ribbon
         pendingAction={pendingAction}
         disabled={ribbonDisabled}
-        composeDisabled={phase !== "idle"}
+        // Composing is turned off for now - swap this back to
+        // `phase !== "idle"` to bring it back. Everything else (the
+        // followup modal, backend logging, Drafts/Sent wiring) is left
+        // intact, just unreachable while this stays true.
+        composeDisabled={true}
         onSelectAction={handleSelectAction}
         onCompose={handleStartCompose}
       />

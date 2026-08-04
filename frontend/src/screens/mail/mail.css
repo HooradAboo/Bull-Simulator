@@ -197,8 +197,13 @@
   font-weight: 600;
   padding: 8px 14px;
 }
-.ribbon-btn.primary:hover {
+.ribbon-btn.primary:hover:not(:disabled) {
   background: var(--usf-green-dark);
+}
+.ribbon-btn.primary:disabled {
+  background: #e1dfdd;
+  color: #a19f9d;
+  cursor: not-allowed;
 }
 
 .ribbon-divider {
