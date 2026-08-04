@@ -57,7 +57,6 @@ interface Props {
 function folderForAction(action: ActionType | undefined): FolderName {
   if (action === "delete") return "deleted";
   if (action === "report_phishing") return "junk";
-  if (action === "archive") return "archive";
   return "inbox";
 }
 
@@ -70,7 +69,6 @@ const ACTION_LABELS: Record<ActionType, string> = {
   delete: "Delete",
   ignore: "Mark as read",
   verify_independently: "Verify Independently",
-  archive: "Archive",
 };
 
 const ALL_ACTIONS: ActionType[] = [
@@ -82,7 +80,6 @@ const ALL_ACTIONS: ActionType[] = [
   "delete",
   "ignore",
   "verify_independently",
-  "archive",
 ];
 
 function randomOf<T>(arr: T[]): T {
@@ -572,7 +569,6 @@ export function MailClientScreen({
     .sort((a, b) => Number(pinnedIds.has(b.id)) - Number(pinnedIds.has(a.id)));
   const deletedCount = emails.filter((e) => folderOf(e.id) === "deleted").length;
   const junkCount = emails.filter((e) => folderOf(e.id) === "junk").length;
-  const archiveCount = emails.filter((e) => folderOf(e.id) === "archive").length;
   const unreadInboxCount = emails.filter(
     (e) => folderOf(e.id) === "inbox" && !processed.has(e.id)
   ).length;
@@ -600,7 +596,6 @@ export function MailClientScreen({
           unreadCount={unreadInboxCount}
           deletedCount={deletedCount}
           junkCount={junkCount}
-          archiveCount={archiveCount}
           sentCount={sentItems.length}
           draftsCount={composeOpen ? 1 : 0}
           participantEmail={participantEmail}

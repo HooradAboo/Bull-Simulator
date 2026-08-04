@@ -1,6 +1,5 @@
 import { useEffect, type ReactNode, useState } from "react";
 import {
-  Archive20Regular,
   ArrowForward20Regular,
   ArrowReply20Regular,
   Attach20Regular,
@@ -66,7 +65,6 @@ const ACTION_LABELS: Record<string, string> = {
   delete: "Deleted",
   ignore: "Marked as read",
   verify_independently: "Verified independently",
-  archive: "Archived",
 };
 
 const ACTION_ICONS: Record<string, ReactNode> = {
@@ -78,7 +76,6 @@ const ACTION_ICONS: Record<string, ReactNode> = {
   delete: <Delete20Regular />,
   ignore: <MailRead20Regular />,
   verify_independently: <ShieldCheckmark20Regular />,
-  archive: <Archive20Regular />,
 };
 
 // Mirrors the four confusion-matrix outcomes (caught/missed/handled-well/

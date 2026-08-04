@@ -39,7 +39,6 @@ const EMPTY_PINNED_IDS = new Set<string>();
 function folderForAction(action: ActionType | undefined): FolderName {
   if (action === "delete") return "deleted";
   if (action === "report_phishing") return "junk";
-  if (action === "archive") return "archive";
   return "inbox";
 }
 
@@ -427,7 +426,6 @@ export function TutorialScreen({ onFinish }: Props) {
   const visibleEmails = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === currentFolder);
   const deletedCount = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === "deleted").length;
   const junkCount = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === "junk").length;
-  const archiveCount = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === "archive").length;
   const unreadInboxCount = PRACTICE_EMAILS.filter(
     (e) => folderOf(e.id) === "inbox" && !processed.has(e.id)
   ).length;
@@ -441,7 +439,6 @@ export function TutorialScreen({ onFinish }: Props) {
         pendingAction={pendingAction}
         disabled={ribbonDisabled}
         composeDisabled
-        disabledActions={["archive"]}
         onSelectAction={handleSelectAction}
         onCompose={handleStartCompose}
       />
@@ -451,7 +448,6 @@ export function TutorialScreen({ onFinish }: Props) {
           unreadCount={unreadInboxCount}
           deletedCount={deletedCount}
           junkCount={junkCount}
-          archiveCount={archiveCount}
           sentCount={sentItems.length}
           draftsCount={composeOpen ? 1 : 0}
           participantEmail={PRACTICE_EMAIL}

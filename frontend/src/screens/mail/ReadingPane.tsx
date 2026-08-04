@@ -37,7 +37,6 @@ const ACTION_LABELS: Record<ActionType, string> = {
   delete: "Delete",
   ignore: "Mark as read",
   verify_independently: "Verify Independently",
-  archive: "Archive",
 };
 
 interface Props {

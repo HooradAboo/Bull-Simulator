@@ -4,7 +4,6 @@
   "forward": { "phishing": 0, "legit": 5 },
   "forward_to_it": { "phishing": 5, "legit": 3 },
   "delete": { "phishing": 4, "legit": 5 },
-  "archive": { "phishing": 3, "legit": 5 },
   "report": { "phishing": 5, "legit": 0 },
   "click_link": { "phishing": 0, "legit": 5 },
   "open_attachment": { "phishing": 0, "legit": 5 },

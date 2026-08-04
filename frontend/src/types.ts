@@ -6,8 +6,7 @@ export type ActionType =
   | "report_phishing"
   | "delete"
   | "ignore"
-  | "verify_independently"
-  | "archive";
+  | "verify_independently";
 
 export interface DummyEmail {
   id: string;
@@ -26,7 +25,7 @@ export interface ProcessedInfo {
   recipient?: string | null;
 }
 
-export type FolderName = "inbox" | "deleted" | "junk" | "sent" | "drafts" | "archive";
+export type FolderName = "inbox" | "deleted" | "junk" | "sent" | "drafts";
 
 export interface Contact {
   name: string;

@@ -15,7 +15,7 @@ export function InstructionsScreen({ onBegin }: Props) {
       </p>
       <div className="page-actions">
         <button className="page-button" onClick={onBegin}>
-          Begin Task
+          Start Practice Round
         </button>
       </div>
     </PageTemplate>
