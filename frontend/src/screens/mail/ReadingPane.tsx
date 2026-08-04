@@ -131,6 +131,7 @@ export function ReadingPane({
   // spans/anchors styled as plain text, so without this there's no way to
   // see where a link actually goes before clicking it.
   const [hoveredLinkUrl, setHoveredLinkUrl] = useState<string | null>(null);
+  const [linkHoverPos, setLinkHoverPos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (replyMode) setReplyBody("");
@@ -334,9 +335,10 @@ export function ReadingPane({
           }}
           onMouseOver={(e) => {
             const target = (e.target as HTMLElement).closest("[data-tracked-link]");
-            if (target) {
+            if (target && !hoveredLinkUrl) {
               onLinkHoverStart();
               setHoveredLinkUrl(target.getAttribute("href") || email.link);
+              setLinkHoverPos({ x: e.clientX, y: e.clientY });
             }
           }}
           onMouseOut={(e) => {
@@ -345,6 +347,7 @@ export function ReadingPane({
             if (target && !(related && target.contains(related))) {
               onLinkHoverEnd();
               setHoveredLinkUrl(null);
+              setLinkHoverPos(null);
             }
           }}
         />
@@ -358,13 +361,15 @@ export function ReadingPane({
                 e.preventDefault();
                 if (!processedInfo) onLinkClick();
               }}
-              onMouseEnter={() => {
+              onMouseEnter={(e) => {
                 onLinkHoverStart();
                 setHoveredLinkUrl(email.link);
+                setLinkHoverPos({ x: e.clientX, y: e.clientY });
               }}
               onMouseLeave={() => {
                 onLinkHoverEnd();
                 setHoveredLinkUrl(null);
+                setLinkHoverPos(null);
               }}
             >
               {email.link}
@@ -423,7 +428,14 @@ export function ReadingPane({
         onSelectConfidence={onSelectJudgmentConfidence}
       />
 
-      {hoveredLinkUrl && <div className="link-status-bar">{hoveredLinkUrl}</div>}
+      {hoveredLinkUrl && linkHoverPos && (
+        <div
+          className="link-status-bar"
+          style={{ left: linkHoverPos.x + 14, top: linkHoverPos.y + 18 }}
+        >
+          {hoveredLinkUrl}
+        </div>
+      )}
     </div>
   );
 }
