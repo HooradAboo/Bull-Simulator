@@ -124,25 +124,6 @@ const TOUR_STEPS: TutorialStep[] = [
     targetSelector: ['[data-tour="click_link"]', '[data-tour="open_attachment"]'],
   },
   {
-    key: "compose",
-    title: "New Mail",
-    description:
-      "Use this to write and send a new message - for example, if you wanted to reach out to IT directly.",
-    targetSelector: '[data-tour="compose"]',
-  },
-  {
-    key: "reply",
-    title: "Reply",
-    description: "Sends a response straight back to whoever sent the email.",
-    targetSelector: '[data-tour="reply"]',
-  },
-  {
-    key: "forward",
-    title: "Forward",
-    description: "Sends the email on to someone else, like a colleague or IT.",
-    targetSelector: '[data-tour="forward"]',
-  },
-  {
     key: "delete",
     title: "Delete",
     description: "Moves the email to Deleted Items.",
@@ -161,17 +142,29 @@ const TOUR_STEPS: TutorialStep[] = [
     targetSelector: '[data-tour="report_phishing"]',
   },
   {
+    key: "reply",
+    title: "Reply",
+    description: "Sends a response straight back to whoever sent the email.",
+    targetSelector: '[data-tour="reply"]',
+  },
+  {
+    key: "forward",
+    title: "Forward",
+    description: "Sends the email on to someone else, like a colleague or IT.",
+    targetSelector: '[data-tour="forward"]',
+  },
+  {
     key: "ignore",
     title: "Mark as Read",
     description: "Dismisses the email without taking any other action on it.",
     targetSelector: '[data-tour="ignore"]',
   },
   {
-    key: "click_link",
-    title: "Clicking a Link",
+    key: "verify_independently",
+    title: "Verify Independently",
     description:
-      "Links in this study are simulated - clicking one just records that you clicked it. It never opens a real page.",
-    targetSelector: '[data-tour="click_link"]',
+      "Use this when you'd want to double-check something outside of email - for example, calling the sender directly instead of replying.",
+    targetSelector: '[data-tour="verify_independently"]',
   },
   {
     key: "open_attachment",
@@ -181,11 +174,19 @@ const TOUR_STEPS: TutorialStep[] = [
     targetSelector: '[data-tour="open_attachment"]',
   },
   {
-    key: "verify_independently",
-    title: "Verify Independently",
+    key: "click_link",
+    title: "Clicking a Link",
     description:
-      "Use this when you'd want to double-check something outside of email - for example, calling the sender directly instead of replying.",
-    targetSelector: '[data-tour="verify_independently"]',
+      "Links in this study are simulated - clicking one just records that you clicked it. It never opens a real page.",
+    targetSelector: '[data-tour="click_link"]',
+  },
+  
+  {
+    key: "compose",
+    title: "New Mail",
+    description:
+      "Use this to write and send a new message - for example, if you wanted to reach out to IT directly.",
+    targetSelector: '[data-tour="compose"]',
   },
 ];
 
