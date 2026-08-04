@@ -13,8 +13,10 @@ import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
+import type { JudgmentStep } from "./JudgmentPanel";
 import { TutorialSpotlight, type TutorialStep } from "./TutorialSpotlight";
 import { extractEmail } from "./avatar";
+import type { PerceivedLegitimacy } from "../../api";
 import type {
   ActionType,
   Contact,
@@ -210,6 +212,9 @@ export function TutorialScreen({ onFinish }: Props) {
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
   const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [judgmentStep, setJudgmentStep] = useState<JudgmentStep>("trust");
+  const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
+  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState(3);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -234,6 +239,9 @@ export function TutorialScreen({ onFinish }: Props) {
     setComposeRecipient("");
     setComposeSubject("");
     setComposeBody("");
+    setJudgmentStep("trust");
+    setPerceivedLegitimacy(null);
+    setJudgmentConfidenceValue(3);
     // Remounts TutorialSpotlight fresh, so its own step index resets to 0.
     setTourActive(true);
   };
@@ -246,13 +254,37 @@ export function TutorialScreen({ onFinish }: Props) {
     setSelectedEmail(null);
     setSelectedSentItem(null);
     setPhase("idle");
+    setJudgmentStep("done");
   };
 
   const handleSelectEmail = (email: DummyEmail) => {
     if (tourActive || isMidFlow || composeOpen) return;
+
+    if (processed.has(email.id)) {
+      setSelectedEmail(email);
+      setPendingAction(null);
+      setPhase("idle");
+      setJudgmentStep("done");
+      setPerceivedLegitimacy(null);
+      return;
+    }
+
     setSelectedEmail(email);
     setPendingAction(null);
     setPhase("idle");
+    setPerceivedLegitimacy(null);
+    setJudgmentConfidenceValue(3);
+    setJudgmentStep("trust");
+  };
+
+  const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
+    setPerceivedLegitimacy(value);
+    setJudgmentStep("confidence");
+  };
+
+  const handleSelectJudgmentConfidence = (value: number) => {
+    setJudgmentConfidenceValue(value);
+    setJudgmentStep("done");
   };
 
   const commitAction = (action: ActionType, recipient: string | null, composedBody?: string) => {
@@ -310,7 +342,14 @@ export function TutorialScreen({ onFinish }: Props) {
   };
 
   const handleSelectAction = (action: ActionType) => {
-    if (tourActive || !selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
+    if (
+      tourActive ||
+      !selectedEmail ||
+      processed.has(selectedEmail.id) ||
+      phase !== "idle" ||
+      judgmentStep !== "done"
+    )
+      return;
 
     if (action === "click_link" || action === "open_attachment" || action === "verify_independently") {
       setPendingAction(action);
@@ -387,7 +426,11 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const processedInfo = selectedEmail ? processed.get(selectedEmail.id) ?? null : null;
   const ribbonDisabled =
-    tourActive || !selectedEmail || processed.has(selectedEmail.id) || phase !== "idle";
+    tourActive ||
+    !selectedEmail ||
+    processed.has(selectedEmail.id) ||
+    phase !== "idle" ||
+    judgmentStep !== "done";
   const visibleEmails = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === currentFolder);
   const deletedCount = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === "deleted").length;
   const junkCount = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === "junk").length;
@@ -397,7 +440,7 @@ export function TutorialScreen({ onFinish }: Props) {
   ).length;
 
   return (
-    <div className="mail-shell">
+    <div className="mail-shell mail-shell-tutorial">
       <HelpButton />
       <TopBar participantEmail={PRACTICE_EMAIL} />
       <TabBar />
@@ -487,11 +530,11 @@ export function TutorialScreen({ onFinish }: Props) {
               composeMode={composeOpen}
               contacts={PRACTICE_CONTACTS}
               participantEmail={PRACTICE_EMAIL}
-              judgmentStep="done"
-              perceivedLegitimacy={null}
-              judgmentConfidenceValue={3}
-              onSelectLegitimacy={() => {}}
-              onSelectJudgmentConfidence={() => {}}
+              judgmentStep={judgmentStep}
+              perceivedLegitimacy={perceivedLegitimacy}
+              judgmentConfidenceValue={judgmentConfidenceValue}
+              onSelectLegitimacy={handleSelectLegitimacy}
+              onSelectJudgmentConfidence={handleSelectJudgmentConfidence}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={() => {}}
               onLinkHoverEnd={() => {}}

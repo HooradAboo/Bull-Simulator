@@ -1,3 +1,10 @@
+/* Reserves room at the bottom of the reading pane so the judgment panel
+   (pinned to the bottom of the email, same as the real task) never sits
+   under the fixed Restart/Start buttons below. */
+.mail-shell-tutorial .mail-reading-pane.has-judgment {
+  padding-bottom: 68px;
+}
+
 /* Practice-round spotlight walkthrough - dims the whole screen except the
    element(s) currently being explained (a step can highlight several at
    once, e.g. every action scattered across the ribbon and reading pane).
