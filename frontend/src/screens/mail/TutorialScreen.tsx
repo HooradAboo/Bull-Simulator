@@ -214,6 +214,23 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
+  const handleRestartTutorial = () => {
+    setSelectedEmail(PRACTICE_EMAILS[0]);
+    setPendingAction(null);
+    setConfirmingAction(null);
+    setPhase("idle");
+    setProcessed(new Map());
+    setCurrentFolder("inbox");
+    setSentItems([]);
+    setSelectedSentItem(null);
+    setComposeOpen(false);
+    setComposeRecipient("");
+    setComposeSubject("");
+    setComposeBody("");
+    // Remounts TutorialSpotlight fresh, so its own step index resets to 0.
+    setTourActive(true);
+  };
+
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
 
   const handleSelectFolder = (folder: FolderName) => {
@@ -502,9 +519,18 @@ export function TutorialScreen({ onFinish }: Props) {
       )}
 
       {!tourActive && (
-        <button type="button" className="tutorial-start-button" onClick={onFinish}>
-          Start the Real Task
-        </button>
+        <>
+          <button
+            type="button"
+            className="tutorial-restart-button"
+            onClick={handleRestartTutorial}
+          >
+            Restart Tutorial
+          </button>
+          <button type="button" className="tutorial-start-button" onClick={onFinish}>
+            Start the Real Task
+          </button>
+        </>
       )}
 
       {tourActive && (

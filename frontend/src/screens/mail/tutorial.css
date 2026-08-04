@@ -99,22 +99,35 @@
   background: #f5f5f7;
 }
 
-.tutorial-start-button {
+.tutorial-start-button,
+.tutorial-restart-button {
   position: fixed;
   bottom: 20px;
-  right: 84px;
   z-index: 1001;
   appearance: none;
   cursor: pointer;
-  border: none;
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 700;
   font-family: inherit;
+}
+.tutorial-start-button {
+  right: 84px;
+  border: none;
   background: #006747;
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 103, 71, 0.35);
+}
+.tutorial-restart-button {
+  right: 270px;
+  border: 1px solid #e1dfdd;
+  background: #fff;
+  color: #16181d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.tutorial-restart-button:hover {
+  background: #f5f5f7;
 }
 .tutorial-start-button:hover {
   background: #005d40;
