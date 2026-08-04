@@ -1268,3 +1268,26 @@
 .help-steps li:last-child {
   margin-bottom: 0;
 }
+
+/* Mimics a real browser's link-preview status bar, shown while hovering a
+   link in the email body. */
+.link-status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  max-width: 60%;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: none;
+  border-bottom: none;
+  border-top-right-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}

@@ -127,6 +127,10 @@ export function ReadingPane({
   const [replyBody, setReplyBody] = useState("");
   const [forwardRecipient, setForwardRecipient] = useState("");
   const [forwardNote, setForwardNote] = useState("");
+  // Mimics a real browser's link-preview status bar - these links are
+  // spans/anchors styled as plain text, so without this there's no way to
+  // see where a link actually goes before clicking it.
+  const [hoveredLinkUrl, setHoveredLinkUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (replyMode) setReplyBody("");
@@ -329,12 +333,19 @@ export function ReadingPane({
             }
           }}
           onMouseOver={(e) => {
-            if ((e.target as HTMLElement).closest("[data-tracked-link]")) onLinkHoverStart();
+            const target = (e.target as HTMLElement).closest("[data-tracked-link]");
+            if (target) {
+              onLinkHoverStart();
+              setHoveredLinkUrl(target.getAttribute("href") || email.link);
+            }
           }}
           onMouseOut={(e) => {
             const related = e.relatedTarget as HTMLElement | null;
             const target = (e.target as HTMLElement).closest("[data-tracked-link]");
-            if (target && !(related && target.contains(related))) onLinkHoverEnd();
+            if (target && !(related && target.contains(related))) {
+              onLinkHoverEnd();
+              setHoveredLinkUrl(null);
+            }
           }}
         />
 
@@ -347,8 +358,14 @@ export function ReadingPane({
                 e.preventDefault();
                 if (!processedInfo) onLinkClick();
               }}
-              onMouseEnter={onLinkHoverStart}
-              onMouseLeave={onLinkHoverEnd}
+              onMouseEnter={() => {
+                onLinkHoverStart();
+                setHoveredLinkUrl(email.link);
+              }}
+              onMouseLeave={() => {
+                onLinkHoverEnd();
+                setHoveredLinkUrl(null);
+              }}
             >
               {email.link}
             </span>
@@ -405,6 +422,8 @@ export function ReadingPane({
         onSelectLegitimacy={onSelectLegitimacy}
         onSelectConfidence={onSelectJudgmentConfidence}
       />
+
+      {hoveredLinkUrl && <div className="link-status-bar">{hoveredLinkUrl}</div>}
     </div>
   );
 }
