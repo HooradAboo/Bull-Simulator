@@ -112,6 +112,13 @@ const TOUR_STEPS: TutorialStep[] = [
     targetSelector: ".mail-list-header .count",
   },
   {
+    key: "judgment",
+    title: "Before You Act, Judge It",
+    description:
+      "Before you can take any action on an email, you'll be asked whether you trust it or find it suspicious, and how confident you are in that call. The toolbar stays locked until you've answered both.",
+    targetSelector: ".judgment-panel",
+  },
+  {
     key: "all-actions",
     title: "Your Actions",
     description: "These are your 9 actions - we'll go through each one next.",
