@@ -60,10 +60,13 @@ export function ConfidenceModal({
   const isOtherReasonSelected = selectedReasons.includes("other");
   // Every step requires an explicit answer before moving on - none of these
   // questions have a default, so Next/Submit stays disabled until at least
-  // one option is picked.
+  // one option is picked, and picking "Something else" also requires
+  // actually writing it down.
   const canLeaveStep1 = confidenceValue !== null && difficultyValue !== null;
-  const canLeaveStep2 = selectedCues.length > 0;
-  const canLeaveStep3 = selectedReasons.length > 0;
+  const canLeaveStep2 =
+    selectedCues.length > 0 && (!isOtherCueSelected || otherCueText.trim().length > 0);
+  const canLeaveStep3 =
+    selectedReasons.length > 0 && (!isOtherReasonSelected || otherReasonText.trim().length > 0);
   const canLeaveCurrentStep =
     step === 1 ? canLeaveStep1 : step === 2 ? canLeaveStep2 : canLeaveStep3;
 
