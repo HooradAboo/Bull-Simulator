@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import {
   Archive20Regular,
   ArrowForward20Regular,
@@ -67,12 +67,19 @@ export function Ribbon({
   onCompose,
 }: Props) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const tooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showTooltip = (e: React.MouseEvent<HTMLButtonElement>, description: string) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setTooltip({ description, x: rect.left + rect.width / 2, y: rect.bottom });
+    const x = rect.left + rect.width / 2;
+    const y = rect.bottom;
+    if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
+    tooltipTimer.current = setTimeout(() => setTooltip({ description, x, y }), 500);
   };
-  const hideTooltip = () => setTooltip(null);
+  const hideTooltip = () => {
+    if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
+    setTooltip(null);
+  };
 
   const actionButton = (action: ActionType, icon: ReactNode, label: string) => (
     <button
