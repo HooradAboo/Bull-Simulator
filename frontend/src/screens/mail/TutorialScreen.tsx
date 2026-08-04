@@ -82,6 +82,20 @@ const PRACTICE_EMAILS: DummyEmail[] = [
 
 const TOUR_STEPS: TutorialStep[] = [
   {
+    key: "intro",
+    title: "Welcome to the Practice Round",
+    description:
+      "Below is a simulated inbox, styled just like the one you'll use for the real task. Before you try anything yourself, we'll walk you through each of the actions available in the toolbar above - nothing you do in this practice round counts, and there's nothing to answer afterward.",
+    targetSelector: null,
+  },
+  {
+    key: "task-explainer",
+    title: "What You'll Be Doing",
+    description:
+      "In the real task, you'll go through your inbox one email at a time - read each one, decide how you'd respond to it, and then take the action that fits, using the toolbar above. Next, we'll go through what each of those actions does.",
+    targetSelector: null,
+  },
+  {
     key: "compose",
     title: "New Mail",
     description:

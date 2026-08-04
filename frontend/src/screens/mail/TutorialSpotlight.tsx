@@ -5,7 +5,9 @@ export interface TutorialStep {
   key: string;
   title: string;
   description: string;
-  targetSelector: string;
+  // null for a broad, scene-setting step with no specific UI target - the
+  // whole screen just dims and the caption centers itself.
+  targetSelector: string | null;
 }
 
 interface Props {
@@ -13,10 +15,14 @@ interface Props {
   onFinish: () => void;
 }
 
-function useTargetRect(selector: string): DOMRect | null {
+function useTargetRect(selector: string | null): DOMRect | null {
   const [rect, setRect] = useState<DOMRect | null>(null);
 
   useLayoutEffect(() => {
+    if (!selector) {
+      setRect(null);
+      return;
+    }
     const measure = () => {
       const el = document.querySelector(selector);
       setRect(el ? el.getBoundingClientRect() : null);
@@ -67,7 +73,7 @@ export function TutorialSpotlight({ steps, onFinish }: Props) {
 
   return (
     <div className="tutorial-overlay">
-      {highlight && (
+      {highlight ? (
         <>
           <div
             className="tutorial-mask"
@@ -92,6 +98,8 @@ export function TutorialSpotlight({ steps, onFinish }: Props) {
           />
           <div className="tutorial-highlight-ring" style={highlight} />
         </>
+      ) : (
+        <div className="tutorial-mask" style={{ top: 0, left: 0, right: 0, bottom: 0 }} />
       )}
 
       <div
