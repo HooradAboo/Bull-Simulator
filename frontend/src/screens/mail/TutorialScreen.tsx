@@ -92,8 +92,36 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "task-explainer",
     title: "What You'll Be Doing",
     description:
-      "In the real task, you'll go through your inbox one email at a time - read each one, decide how you'd respond to it, and then take the action that fits, using the toolbar above. Next, we'll go through what each of those actions does.",
+      "In the real task, you'll go through your inbox one email at a time - read each one, decide how you'd respond to it, and then take the action that fits, using the toolbar above.",
     targetSelector: null,
+  },
+  {
+    key: "email-list",
+    title: "Your Inbox",
+    description:
+      "Each row here is an email waiting for a response. Click one to read it, then use the toolbar above to act on it.",
+    targetSelector: ".mail-list-pane",
+  },
+  {
+    key: "all-actions",
+    title: "Your Actions",
+    description: "These are your 9 actions - we'll go through each one next.",
+    targetSelector: [
+      '[data-tour="delete"]',
+      '[data-tour="archive"]',
+      '[data-tour="report_phishing"]',
+      '[data-tour="reply"]',
+      '[data-tour="forward"]',
+      '[data-tour="ignore"]',
+      '[data-tour="verify_independently"]',
+    ],
+  },
+  {
+    key: "email-actions",
+    title: "Two More, Inside the Email",
+    description:
+      "Not every action lives in the toolbar - clicking a link or opening an attachment happens right inside the email itself, like the two highlighted below.",
+    targetSelector: ['[data-tour="click_link"]', '[data-tour="open_attachment"]'],
   },
   {
     key: "compose",

@@ -1,27 +1,36 @@
 /* Practice-round spotlight walkthrough - dims the whole screen except the
-   ribbon button (or reading-pane link/attachment) currently being
-   explained. The highlighted element itself is not clickable during the
-   tour (the ring layer captures clicks) - this is explanation-only, real
-   interaction happens afterward in free practice. */
+   element(s) currently being explained (a step can highlight several at
+   once, e.g. every action scattered across the ribbon and reading pane).
+   Nothing is clickable during the tour (the click-blocker layer plus the
+   real handlers, already gated on tourActive) - this is explanation-only,
+   real interaction happens afterward in free practice. */
 .tutorial-overlay {
   position: fixed;
   inset: 0;
   z-index: 4000;
 }
-.tutorial-mask {
+.tutorial-click-blocker {
   position: fixed;
-  background: rgba(10, 12, 16, 0.68);
-  pointer-events: auto;
+  inset: 0;
+  z-index: 1;
+}
+.tutorial-mask-svg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
 }
 .tutorial-highlight-ring {
   position: fixed;
+  z-index: 3;
   border: 2px solid #fff;
   border-radius: 8px;
   box-shadow:
     0 0 0 4px rgba(255, 255, 255, 0.22),
     0 0 24px 4px rgba(0, 0, 0, 0.35);
-  pointer-events: auto;
-  cursor: default;
+  pointer-events: none;
 }
 .tutorial-caption {
   position: fixed;
