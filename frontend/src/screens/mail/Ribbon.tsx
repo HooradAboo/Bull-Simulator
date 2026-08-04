@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Archive20Regular,
   ArrowForward20Regular,
@@ -39,6 +39,14 @@ const ACTION_DESCRIPTIONS: Record<ActionType, string> = {
   open_attachment: "Open a file attached to this email.",
 };
 
+const COMPOSE_DESCRIPTION = "Start a new email";
+
+interface TooltipState {
+  description: string;
+  x: number;
+  y: number;
+}
+
 function DecorativeButton({ icon, label }: { icon: ReactNode; label: string }) {
   return (
     <button className="ribbon-btn" disabled title="Not used in this study">
@@ -58,12 +66,21 @@ export function Ribbon({
   onSelectAction,
   onCompose,
 }: Props) {
+  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+
+  const showTooltip = (e: React.MouseEvent<HTMLButtonElement>, description: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({ description, x: rect.left + rect.width / 2, y: rect.bottom });
+  };
+  const hideTooltip = () => setTooltip(null);
+
   const actionButton = (action: ActionType, icon: ReactNode, label: string) => (
     <button
       className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
       disabled={disabled || disabledActions.includes(action)}
       onClick={() => onSelectAction(action)}
-      title={ACTION_DESCRIPTIONS[action]}
+      onMouseEnter={(e) => showTooltip(e, ACTION_DESCRIPTIONS[action])}
+      onMouseLeave={hideTooltip}
       data-tour={action}
     >
       <span className="ribbon-icon" aria-hidden="true">
@@ -79,7 +96,8 @@ export function Ribbon({
         className="ribbon-btn primary"
         disabled={composeDisabled}
         onClick={onCompose}
-        title="Start a new email"
+        onMouseEnter={(e) => showTooltip(e, COMPOSE_DESCRIPTION)}
+        onMouseLeave={hideTooltip}
         data-tour="compose"
       >
         <MailAdd20Regular /> New mail
@@ -111,6 +129,12 @@ export function Ribbon({
       <div className="ribbon-divider" />
 
       {actionButton("verify_independently", <ShieldCheckmark20Regular />, "Verify")}
+
+      {tooltip && (
+        <div className="ribbon-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
+          {tooltip.description}
+        </div>
+      )}
     </div>
   );
 }
