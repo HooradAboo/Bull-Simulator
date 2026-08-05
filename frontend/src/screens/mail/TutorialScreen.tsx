@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./mail.css";
 import "./tutorial.css";
 import { TopBar } from "./TopBar";
@@ -7,6 +7,7 @@ import { Ribbon } from "./Ribbon";
 import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
+import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
 import { SentItemsPane } from "./SentItemsPane";
@@ -16,7 +17,13 @@ import { HelpButton } from "./HelpButton";
 import type { JudgmentStep } from "./JudgmentPanel";
 import { TutorialSpotlight, type TutorialStep } from "./TutorialSpotlight";
 import { extractEmail } from "./avatar";
-import type { PerceivedLegitimacy } from "../../api";
+import {
+  getActionReasons,
+  getCueOptions,
+  type ActionReasonOption,
+  type CueOption,
+  type PerceivedLegitimacy,
+} from "../../api";
 import type {
   ActionType,
   Contact,
@@ -26,7 +33,13 @@ import type {
   SentItem,
 } from "../../types";
 
-type Phase = "idle" | "confirming" | "forwarding" | "replying" | "action-recorded";
+type Phase =
+  | "idle"
+  | "confirming"
+  | "forwarding"
+  | "replying"
+  | "action-recorded"
+  | "confidence";
 
 interface Props {
   onFinish: () => void;
@@ -35,6 +48,17 @@ interface Props {
 const PRACTICE_EMAIL = "you@usf.edu";
 
 const EMPTY_PINNED_IDS = new Set<string>();
+
+const ACTION_LABELS: Record<ActionType, string> = {
+  click_link: "Click a link",
+  open_attachment: "Open an attachment",
+  reply: "Reply",
+  forward: "Forward",
+  report_phishing: "Report as Phishing",
+  delete: "Delete",
+  ignore: "Mark as read",
+  verify_independently: "Verify Independently",
+};
 
 function folderForAction(action: ActionType | undefined): FolderName {
   if (action === "delete") return "deleted";
@@ -202,11 +226,22 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(PRACTICE_EMAILS[0]);
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
+  const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [judgmentStep, setJudgmentStep] = useState<JudgmentStep>("trust");
   const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
   const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState<number | null>(null);
+  const [confidenceValue, setConfidenceValueState] = useState<number | null>(null);
+  const [difficultyValue, setDifficultyValue] = useState<number | null>(null);
+  const [selectedCues, setSelectedCues] = useState<string[]>([]);
+  const [otherCueText, setOtherCueText] = useState("");
+  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
+  const [otherReasonText, setOtherReasonText] = useState("");
+  const [actionReasonOptions, setActionReasonOptions] = useState<
+    Record<string, ActionReasonOption[]>
+  >({});
+  const [cueOptions, setCueOptions] = useState<CueOption[]>([]);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -218,9 +253,15 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
+  useEffect(() => {
+    getActionReasons().then(setActionReasonOptions);
+    getCueOptions().then(setCueOptions);
+  }, []);
+
   const handleRestartTutorial = () => {
     setSelectedEmail(PRACTICE_EMAILS[0]);
     setPendingAction(null);
+    setPendingRecipient(null);
     setConfirmingAction(null);
     setPhase("idle");
     setProcessed(new Map());
@@ -234,6 +275,12 @@ export function TutorialScreen({ onFinish }: Props) {
     setJudgmentStep("trust");
     setPerceivedLegitimacy(null);
     setJudgmentConfidenceValue(null);
+    setConfidenceValueState(null);
+    setDifficultyValue(null);
+    setSelectedCues([]);
+    setOtherCueText("");
+    setSelectedReasons([]);
+    setOtherReasonText("");
     // Remounts TutorialSpotlight fresh, so its own step index resets to 0.
     setTourActive(true);
   };
@@ -283,11 +330,15 @@ export function TutorialScreen({ onFinish }: Props) {
     if (!selectedEmail) return;
     const sentAt = Date.now();
 
-    const updated = new Map(processed);
-    updated.set(selectedEmail.id, { action, confidence: null, recipient });
-    setProcessed(updated);
-    setPendingAction(null);
-    setPhase("idle");
+    setPendingAction(action);
+    setPendingRecipient(recipient);
+    setPhase("confidence");
+    setConfidenceValueState(null);
+    setDifficultyValue(null);
+    setSelectedCues([]);
+    setOtherCueText("");
+    setSelectedReasons([]);
+    setOtherReasonText("");
 
     if (action === "forward" && recipient) {
       const note = composedBody ? `${composedBody}\n\n` : "";
@@ -327,8 +378,34 @@ export function TutorialScreen({ onFinish }: Props) {
         },
       ]);
     }
+  };
 
-    if (folderForAction(action) !== currentFolder) {
+  const handleToggleCue = (cueKey: string) => {
+    setSelectedCues((prev) =>
+      prev.includes(cueKey) ? prev.filter((c) => c !== cueKey) : [...prev, cueKey]
+    );
+  };
+
+  const handleToggleReason = (reasonKey: string) => {
+    setSelectedReasons((prev) =>
+      prev.includes(reasonKey) ? prev.filter((r) => r !== reasonKey) : [...prev, reasonKey]
+    );
+  };
+
+  const handleSubmitConfidence = () => {
+    if (!selectedEmail || !pendingAction || confidenceValue === null || difficultyValue === null)
+      return;
+
+    const updated = new Map(processed);
+    updated.set(selectedEmail.id, {
+      action: pendingAction,
+      confidence: confidenceValue,
+      recipient: pendingRecipient,
+    });
+    setProcessed(updated);
+    setPhase("idle");
+
+    if (folderForAction(pendingAction) !== currentFolder) {
       setSelectedEmail(null);
     }
   };
@@ -556,6 +633,27 @@ export function TutorialScreen({ onFinish }: Props) {
 
       {phase === "action-recorded" && pendingAction && (
         <ActionRecordedModal onContinue={() => commitAction(pendingAction, null)} />
+      )}
+
+      {phase === "confidence" && (
+        <ConfidenceModal
+          actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
+          cueOptions={cueOptions}
+          reasonOptions={pendingAction ? actionReasonOptions[pendingAction] ?? [] : []}
+          confidenceValue={confidenceValue}
+          onConfidenceChange={setConfidenceValueState}
+          difficultyValue={difficultyValue}
+          onDifficultyChange={setDifficultyValue}
+          selectedCues={selectedCues}
+          onToggleCue={handleToggleCue}
+          otherCueText={otherCueText}
+          onOtherCueTextChange={setOtherCueText}
+          selectedReasons={selectedReasons}
+          onToggleReason={handleToggleReason}
+          otherReasonText={otherReasonText}
+          onOtherReasonTextChange={setOtherReasonText}
+          onSubmit={handleSubmitConfidence}
+        />
       )}
 
       {!tourActive && (
