@@ -106,11 +106,16 @@
   background: #f5f5f7;
 }
 
-.tutorial-start-button,
-.tutorial-restart-button {
+.tutorial-actions {
   position: fixed;
   bottom: 20px;
+  left: 20px;
   z-index: 1001;
+  display: flex;
+  gap: 12px;
+}
+.tutorial-start-button,
+.tutorial-restart-button {
   appearance: none;
   cursor: pointer;
   border-radius: 8px;
@@ -120,14 +125,12 @@
   font-family: inherit;
 }
 .tutorial-start-button {
-  right: 84px;
   border: none;
   background: #006747;
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 103, 71, 0.35);
 }
 .tutorial-restart-button {
-  right: 270px;
   border: 1px solid #e1dfdd;
   background: #fff;
   color: #16181d;

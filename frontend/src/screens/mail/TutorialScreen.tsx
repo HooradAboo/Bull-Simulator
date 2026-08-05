@@ -657,7 +657,7 @@ export function TutorialScreen({ onFinish }: Props) {
       )}
 
       {!tourActive && (
-        <>
+        <div className="tutorial-actions">
           <button
             type="button"
             className="tutorial-restart-button"
@@ -668,7 +668,7 @@ export function TutorialScreen({ onFinish }: Props) {
           <button type="button" className="tutorial-start-button" onClick={onFinish}>
             Start the Real Task
           </button>
-        </>
+        </div>
       )}
 
       {tourActive && (
