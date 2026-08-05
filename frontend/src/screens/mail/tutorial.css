@@ -116,6 +116,23 @@
   pointer-events: none;
 }
 
+/* Instruction-only guided step - no dim/highlight, just a plain floating
+   box. Anchored bottom-left (over the folder sidebar / email list, not the
+   reading pane) so it never covers the ribbon or judgment/action buttons
+   on the right side of the screen. */
+.guided-instruction {
+  position: fixed;
+  bottom: 20%;
+  left: 10%;
+  z-index: 4001;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  width: 320px;
+}
+
 .guided-skip-link {
   appearance: none;
   cursor: pointer;

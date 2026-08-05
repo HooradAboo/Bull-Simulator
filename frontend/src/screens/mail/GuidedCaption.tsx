@@ -11,15 +11,54 @@ interface Props {
   description: string;
   targetSelector: string | string[] | null;
   onSkip: () => void;
+  // Only the transition step between the two practice emails uses this -
+  // it has no real interaction to auto-advance on, so it needs an explicit
+  // button instead.
+  onContinue?: () => void;
+  continueLabel?: string;
+  // Skips the dim/mask/highlight-ring treatment entirely and renders just
+  // the instruction box, fixed at the bottom of the screen - used for the
+  // second practice email so the repeat pass feels lighter than the first.
+  noSpotlight?: boolean;
 }
 
-export function GuidedCaption({ stepLabel, title, description, targetSelector, onSkip }: Props) {
-  const selectors = !targetSelector
-    ? []
-    : Array.isArray(targetSelector)
-      ? targetSelector
-      : [targetSelector];
+export function GuidedCaption({
+  stepLabel,
+  title,
+  description,
+  targetSelector,
+  onSkip,
+  onContinue,
+  continueLabel,
+  noSpotlight,
+}: Props) {
+  const selectors =
+    noSpotlight || !targetSelector
+      ? []
+      : Array.isArray(targetSelector)
+        ? targetSelector
+        : [targetSelector];
   const rects = useTargetRects(selectors, selectors.join("|"));
+
+  if (noSpotlight) {
+    return (
+      <div className="guided-instruction">
+        <div className="tutorial-caption-step">{stepLabel}</div>
+        <div className="tutorial-caption-title">{title}</div>
+        <div className="tutorial-caption-desc">{description}</div>
+        <div className="tutorial-caption-actions">
+          <button type="button" className="guided-skip-link" onClick={onSkip}>
+            Skip
+          </button>
+          {onContinue && (
+            <button type="button" className="tutorial-btn-primary" onClick={onContinue}>
+              {continueLabel ?? "Continue"}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const highlights = rects.map((r) => ({
     top: r.top - HIGHLIGHT_PAD,

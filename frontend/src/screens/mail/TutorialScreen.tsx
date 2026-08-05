@@ -241,21 +241,21 @@ const TOUR_STEPS: TutorialStep[] = [
     //   '[data-tour="decorative-quick-steps"]',
     // ],
   },
-  {
-    key: "help-hover",
-    title: "Forget What Something Does?",
-    description: "Hover over any button and it'll tell you exactly what it does.",
-    targetSelector: ".mail-ribbon",
-  },
+  // {
+  //   key: "help-hover",
+  //   title: "Forget What Something Does?",
+  //   description: "Hover over any button and it'll tell you exactly what it does.",
+  //   targetSelector: ".mail-ribbon",
+  // },
   {
     key: "help-button",
-    title: "Need the Full List?",
+    title: "Forget What Something Does?",
     description: "Click the help button anytime to see every action laid out in one place.",
     targetSelector: ".help-fab",
   },
   {
     key: "before-after-intro",
-    title: "One More Thing Before You Practice",
+    title: "Before You Practice",
     description:
       "Here's what happens right before, and right after, you take action on an email.",
     targetSelector: null,
@@ -295,8 +295,10 @@ const CLOSING_TOUR_STEPS: TutorialStep[] = [
 
 const GUIDED_EMAIL_1 = "practice-1";
 const GUIDED_EMAIL_2 = "practice-2";
+const GUIDED_EMAIL_2_SUBJECT = "Lunch on Thursday?";
 
 type GuidedStepKey =
+  | "email-transition"
   | "email1-open"
   | "email1-judge-trust"
   | "email1-judge-confidence"
@@ -313,12 +315,24 @@ interface GuidedStepContent {
   title: string;
   description: string;
   targetSelector: string | string[] | null;
+  // Email 1 gets the full dim/highlight spotlight treatment since it's the
+  // first time through. Email 2 (and the transition between them) skip
+  // that and just show the instruction, so the second pass feels lighter
+  // rather than repeating the same heavy walkthrough.
+  noSpotlight?: boolean;
 }
 
 const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
+  "email-transition": {
+    stepLabel: "Nice Work",
+    title: "One Down, One to Go",
+    description: "Let's try one more practice email so you get comfortable with the flow.",
+    targetSelector: null,
+    noSpotlight: true,
+  },
   "email1-open": {
     stepLabel: "Email 1 of 2",
-    title: "Make Your Call",
+    title: "Click on the Email",
     description:
       "Open the email below and answer the trust or suspicious question. Since this is practice, there's no wrong answer, just try it out.",
     targetSelector: `[data-email-id="${GUIDED_EMAIL_1}"]`,
@@ -338,46 +352,51 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
   },
   "email1-action": {
     stepLabel: "Email 1 of 2",
-    title: "Take Your Action",
-    description: "The toolbar is unlocked. For this email, try opening the attachment to see how it works.",
+    title: "Open the Attachment",
+    description: "For this email, try opening the attachment to see how it works.",
     targetSelector: '[data-tour="open_attachment"]',
   },
   "email1-followup": {
     stepLabel: "Email 1 of 2",
-    title: "Tell Us More",
+    title: "Tell Us More About Your Action",
     description:
       "Answer these last few questions about the action you just took. You'll see this same set after every email in the real task.",
     targetSelector: ".confidence-box",
   },
   "email2-open": {
     stepLabel: "Email 2 of 2",
-    title: "Make Your Call",
-    description: "Let's try one more. Open this email and make your call.",
-    targetSelector: `[data-email-id="${GUIDED_EMAIL_2}"]`,
+    title: "Click on the Email",
+    description: `Open the "${GUIDED_EMAIL_2_SUBJECT}" email and make your call.`,
+    targetSelector: null,
+    noSpotlight: true,
   },
   "email2-judge-trust": {
     stepLabel: "Email 2 of 2",
     title: "Make Your Call",
     description: "Same as before, do you trust this email, or does it look suspicious?",
-    targetSelector: ".judgment-panel",
+    targetSelector: null,
+    noSpotlight: true,
   },
   "email2-judge-confidence": {
     stepLabel: "Email 2 of 2",
     title: "Rate Your Confidence",
     description: "Rate your confidence in that call.",
-    targetSelector: ".judgment-panel",
+    targetSelector: null,
+    noSpotlight: true,
   },
   "email2-action": {
     stepLabel: "Email 2 of 2",
-    title: "Take Your Action",
+    title: "Delete it",
     description: "This time, try deleting the email instead.",
-    targetSelector: '[data-tour="delete"]',
+    targetSelector: null,
+    noSpotlight: true,
   },
   "email2-followup": {
     stepLabel: "Email 2 of 2",
-    title: "Tell Us More",
+    title: "Tell Us More About Your Action",
     description: "Same three questions as before: confidence, difficulty, and why you chose that action.",
-    targetSelector: ".confidence-box",
+    targetSelector: null,
+    noSpotlight: true,
   },
 };
 
@@ -397,9 +416,12 @@ const TOOLBAR_ACTIONS: ActionType[] = [
 
 export function TutorialScreen({ onFinish }: Props) {
   const [tourActive, setTourActive] = useState(true);
-  const [tourStepKey, setTourStepKey] = useState<string>(TOUR_STEPS[0].key);
+  const [tourIndex, setTourIndex] = useState(0);
   const [guidedActive, setGuidedActive] = useState(false);
+  const [guidedTransitionAcknowledged, setGuidedTransitionAcknowledged] = useState(false);
   const [closingTourActive, setClosingTourActive] = useState(false);
+  const [closingTourIndex, setClosingTourIndex] = useState(0);
+  const tourStepKey = TOUR_STEPS[tourIndex].key;
 
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(PRACTICE_EMAILS[0]);
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
@@ -430,20 +452,32 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
+  // Pauses guided practice between the two emails on a manual "Continue"
+  // (rather than auto-advancing straight into email 2) so there's a clear
+  // breather between them instead of email 2 popping up immediately.
+  const atGuidedTransition =
+    guidedActive &&
+    processed.has(GUIDED_EMAIL_1) &&
+    !processed.has(GUIDED_EMAIL_2) &&
+    !guidedTransitionAcknowledged;
+
   // Which practice email guided practice currently wants the participant to
-  // work on - null once both are done (or when guided practice isn't
-  // active at all). Selecting or acting on anything else is blocked below
-  // while this is set, which is what actually enforces the guided steps
-  // (the highlight is just a visual pointer, not the restriction itself).
-  const guidedTargetEmailId = guidedActive
-    ? !processed.has(GUIDED_EMAIL_1)
-      ? GUIDED_EMAIL_1
-      : !processed.has(GUIDED_EMAIL_2)
-        ? GUIDED_EMAIL_2
-        : null
-    : null;
+  // work on - null once both are done, guided practice isn't active, or
+  // it's paused at the transition above. Selecting or acting on anything
+  // else is blocked below while this is set, which is what actually
+  // enforces the guided steps (the highlight is just a visual pointer, not
+  // the restriction itself).
+  const guidedTargetEmailId =
+    guidedActive && !atGuidedTransition
+      ? !processed.has(GUIDED_EMAIL_1)
+        ? GUIDED_EMAIL_1
+        : !processed.has(GUIDED_EMAIL_2)
+          ? GUIDED_EMAIL_2
+          : null
+      : null;
 
   const currentGuidedStep: GuidedStepKey | null = (() => {
+    if (atGuidedTransition) return "email-transition";
     if (!guidedTargetEmailId) return null;
     const n = guidedTargetEmailId === GUIDED_EMAIL_1 ? 1 : 2;
     if (selectedEmail?.id !== guidedTargetEmailId) return `email${n}-open` as GuidedStepKey;
@@ -480,6 +514,10 @@ export function TutorialScreen({ onFinish }: Props) {
     setClosingTourActive(true);
   };
 
+  const handleGuidedTransitionContinue = () => {
+    setGuidedTransitionAcknowledged(true);
+  };
+
   const handleRestartTutorial = () => {
     setSelectedEmail(PRACTICE_EMAILS[0]);
     setPendingAction(null);
@@ -504,8 +542,10 @@ export function TutorialScreen({ onFinish }: Props) {
     setSelectedReasons([]);
     setOtherReasonText("");
     setGuidedActive(false);
+    setGuidedTransitionAcknowledged(false);
     setClosingTourActive(false);
-    // Remounts TutorialSpotlight fresh, so its own step index resets to 0.
+    setClosingTourIndex(0);
+    setTourIndex(0);
     setTourActive(true);
   };
 
@@ -522,7 +562,7 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const handleSelectEmail = (email: DummyEmail) => {
     if (tourActive || isMidFlow || composeOpen) return;
-    if (guidedTargetEmailId && email.id !== guidedTargetEmailId) return;
+    if (guidedActive && email.id !== guidedTargetEmailId) return;
 
     if (processed.has(email.id)) {
       setSelectedEmail(email);
@@ -936,7 +976,8 @@ export function TutorialScreen({ onFinish }: Props) {
       {tourActive && (
         <TutorialSpotlight
           steps={TOUR_STEPS}
-          onStepKeyChange={setTourStepKey}
+          index={tourIndex}
+          onIndexChange={setTourIndex}
           onFinish={() => {
             setTourActive(false);
             setGuidedActive(true);
@@ -958,13 +999,18 @@ export function TutorialScreen({ onFinish }: Props) {
           title={GUIDED_STEP_CONTENT[currentGuidedStep].title}
           description={GUIDED_STEP_CONTENT[currentGuidedStep].description}
           targetSelector={GUIDED_STEP_CONTENT[currentGuidedStep].targetSelector}
+          noSpotlight={GUIDED_STEP_CONTENT[currentGuidedStep].noSpotlight}
           onSkip={handleSkipGuidedPractice}
+          onContinue={currentGuidedStep === "email-transition" ? handleGuidedTransitionContinue : undefined}
+          continueLabel="Continue"
         />
       )}
 
       {closingTourActive && (
         <TutorialSpotlight
           steps={CLOSING_TOUR_STEPS}
+          index={closingTourIndex}
+          onIndexChange={setClosingTourIndex}
           onFinish={() => setClosingTourActive(false)}
         />
       )}

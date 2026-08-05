@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import "./tutorial.css";
 
 export interface TutorialStep {
@@ -14,11 +14,15 @@ export interface TutorialStep {
 
 interface Props {
   steps: TutorialStep[];
+  // Controlled from the parent (rather than kept as internal state) so
+  // that anything the parent conditionally renders based on the active
+  // step (e.g. a demo popup behind a specific step) mounts in the very
+  // same commit as the step change, instead of one render behind it -
+  // otherwise the highlight briefly measures nothing, falls back to a
+  // centered position, then jumps once the target actually appears.
+  index: number;
+  onIndexChange: (index: number) => void;
   onFinish: () => void;
-  // Reports the active step's key on every change (including mount) - used
-  // by the parent to react to specific steps, e.g. showing a demo popup
-  // behind the "after you act" step.
-  onStepKeyChange?: (key: string) => void;
 }
 
 export function useTargetRects(selectors: string[], key: string): DOMRect[] {
@@ -56,14 +60,8 @@ const CAPTION_WIDTH = 320;
 const CAPTION_MARGIN = 12;
 const HIGHLIGHT_PAD = 8;
 
-export function TutorialSpotlight({ steps, onFinish, onStepKeyChange }: Props) {
-  const [index, setIndex] = useState(0);
+export function TutorialSpotlight({ steps, index, onIndexChange, onFinish }: Props) {
   const step = steps[index];
-
-  useEffect(() => {
-    onStepKeyChange?.(step.key);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step.key]);
 
   const selectors = !step.targetSelector
     ? []
@@ -75,8 +73,8 @@ export function TutorialSpotlight({ steps, onFinish, onStepKeyChange }: Props) {
   const isFirst = index === 0;
   const isLast = index === steps.length - 1;
 
-  const goNext = () => (isLast ? onFinish() : setIndex((i) => i + 1));
-  const goBack = () => setIndex((i) => Math.max(0, i - 1));
+  const goNext = () => (isLast ? onFinish() : onIndexChange(index + 1));
+  const goBack = () => onIndexChange(Math.max(0, index - 1));
 
   const highlights = rects.map((r) => ({
     top: r.top - HIGHLIGHT_PAD,
