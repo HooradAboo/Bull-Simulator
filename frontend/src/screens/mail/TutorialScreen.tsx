@@ -79,30 +79,48 @@ const PRACTICE_CONTACTS: Contact[] = [
 const PRACTICE_EMAILS: DummyEmail[] = [
   {
     id: "practice-1",
-    sender: "Jordan Lee <jordan.lee@usf.edu>",
-    subject: "Welcome to your practice inbox",
-    body: "Hi there,\n\nThis is a practice email so you can get comfortable with the toolbar above before the real task begins. Nothing you do here counts, and there's nothing to answer afterward.\n\nThere's a link and an attachment below so you can try those actions too, whenever you're ready.",
+    sender: "CIBeR Lab <ciberlab@usf.edu>",
+    subject: "Welcome to Your Practice Inbox",
+    body: "Hi there,\n\nWelcome to the practice round! This is a simulated email from the CIBeR Lab so you can get comfortable with the toolbar above before the real task begins. Nothing you do here counts, and there's nothing to answer afterward.\n\nThere's a link and an attachment below so you can try those actions too, whenever you're ready.",
     link: "https://intranet.example.edu/practice-page",
     attachment: "practice-notes.pdf",
     receivedAt: Date.now(),
   },
   {
     id: "practice-2",
-    sender: "Jordan Lee <jordan.lee@usf.edu>",
-    subject: "Lunch on Thursday?",
-    body: "Hey,\n\nA few of us are grabbing lunch Thursday around noon, want to join? Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nLet me know!",
+    sender: "Jane Doe <jane.doe@example.com>",
+    subject: "Board game night?",
+    body: "Hi,\n\nA few of us are getting together for board game night this weekend. Want to come? Snacks provided.\n\nLet me know!",
     link: null,
     attachment: null,
     receivedAt: Date.now() - 1000 * 60 * 60,
   },
   {
     id: "practice-3",
-    sender: "Jordan Lee <jordan.lee@usf.edu>",
-    subject: "Reminder: timesheet due Friday",
-    body: "Hi,\n\nJust a reminder to submit your timesheet by end of day Friday. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.\n\nThanks!",
+    sender: "John Doe <john.doe@example.com>",
+    subject: "Recipe you asked for",
+    body: "Hey,\n\nHere's that pasta recipe I mentioned. Let me know how it turns out!\n\nTalk soon.",
     link: null,
     attachment: null,
     receivedAt: Date.now() - 1000 * 60 * 60 * 2,
+  },
+  {
+    id: "practice-4",
+    sender: "Jane Doe <jane.doe@example.com>",
+    subject: "Weekend hike?",
+    body: "Hi,\n\nThinking about doing the trail out by the lake this weekend if the weather holds. Interested in joining?\n\nCheers.",
+    link: null,
+    attachment: null,
+    receivedAt: Date.now() - 1000 * 60 * 60 * 3,
+  },
+  {
+    id: "practice-5",
+    sender: "John Doe <john.doe@example.com>",
+    subject: "Book club pick",
+    body: "Hey,\n\nWe landed on the next book club pick. Copies should be at the library by Friday.\n\nSee you there.",
+    link: null,
+    attachment: null,
+    receivedAt: Date.now() - 1000 * 60 * 60 * 4,
   },
 ];
 
@@ -295,7 +313,7 @@ const CLOSING_TOUR_STEPS: TutorialStep[] = [
 
 const GUIDED_EMAIL_1 = "practice-1";
 const GUIDED_EMAIL_2 = "practice-2";
-const GUIDED_EMAIL_2_SUBJECT = "Lunch on Thursday?";
+const GUIDED_EMAIL_2_SUBJECT = "Board game night?";
 
 type GuidedStepKey =
   | "email-transition"
