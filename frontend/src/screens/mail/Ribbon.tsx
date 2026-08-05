@@ -47,9 +47,17 @@ interface TooltipState {
   y: number;
 }
 
-function DecorativeButton({ icon, label }: { icon: ReactNode; label: string }) {
+function DecorativeButton({
+  icon,
+  label,
+  dataTour,
+}: {
+  icon: ReactNode;
+  label: string;
+  dataTour: string;
+}) {
   return (
-    <button className="ribbon-btn" disabled title="Not used in this study">
+    <button className="ribbon-btn" disabled title="Not used in this study" data-tour={dataTour}>
       <span className="ribbon-icon" aria-hidden="true">
         {icon}
       </span>
@@ -113,24 +121,32 @@ export function Ribbon({
       <div className="ribbon-divider" />
 
       {actionButton("delete", <Delete20Regular />, "Delete")}
-      <DecorativeButton icon={<Archive20Regular />} label="Archive" />
+      <DecorativeButton icon={<Archive20Regular />} label="Archive" dataTour="decorative-archive" />
       {actionButton("report_phishing", <ShieldError20Regular />, "Report")}
-      <DecorativeButton icon={<Broom20Regular />} label="Sweep" />
-      <DecorativeButton icon={<Folder20Regular />} label="Move to" />
+      <DecorativeButton icon={<Broom20Regular />} label="Sweep" dataTour="decorative-sweep" />
+      <DecorativeButton icon={<Folder20Regular />} label="Move to" dataTour="decorative-move-to" />
 
       <div className="ribbon-divider" />
 
       {actionButton("reply", <ArrowReply20Regular />, "Reply")}
-      <DecorativeButton icon={<ArrowReplyAll20Regular />} label="Reply all" />
+      <DecorativeButton
+        icon={<ArrowReplyAll20Regular />}
+        label="Reply all"
+        dataTour="decorative-reply-all"
+      />
       {actionButton("forward", <ArrowForward20Regular />, "Forward")}
 
       <div className="ribbon-divider" />
 
-      <DecorativeButton icon={<PeopleTeam20Regular />} label="Share to Teams" />
+      <DecorativeButton
+        icon={<PeopleTeam20Regular />}
+        label="Share to Teams"
+        dataTour="decorative-share-to-teams"
+      />
 
       <div className="ribbon-divider" />
 
-      <DecorativeButton icon={<Flash20Regular />} label="Quick steps" />
+      <DecorativeButton icon={<Flash20Regular />} label="Quick steps" dataTour="decorative-quick-steps" />
       {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
 
       <div className="ribbon-divider" />

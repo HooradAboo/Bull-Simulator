@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import "./tutorial.css";
 
 export interface TutorialStep {
@@ -15,9 +15,13 @@ export interface TutorialStep {
 interface Props {
   steps: TutorialStep[];
   onFinish: () => void;
+  // Reports the active step's key on every change (including mount) - used
+  // by the parent to react to specific steps, e.g. showing a demo popup
+  // behind the "after you act" step.
+  onStepKeyChange?: (key: string) => void;
 }
 
-function useTargetRects(selectors: string[], key: string): DOMRect[] {
+export function useTargetRects(selectors: string[], key: string): DOMRect[] {
   const [rects, setRects] = useState<DOMRect[]>([]);
 
   useLayoutEffect(() => {
@@ -52,9 +56,15 @@ const CAPTION_WIDTH = 320;
 const CAPTION_MARGIN = 12;
 const HIGHLIGHT_PAD = 8;
 
-export function TutorialSpotlight({ steps, onFinish }: Props) {
+export function TutorialSpotlight({ steps, onFinish, onStepKeyChange }: Props) {
   const [index, setIndex] = useState(0);
   const step = steps[index];
+
+  useEffect(() => {
+    onStepKeyChange?.(step.key);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step.key]);
+
   const selectors = !step.targetSelector
     ? []
     : Array.isArray(step.targetSelector)
@@ -97,9 +107,11 @@ export function TutorialSpotlight({ steps, onFinish }: Props) {
 
   return (
     <div className="tutorial-overlay">
-      {/* Invisible full-screen layer that absorbs every click during the
-          tour - the real handlers are already gated on tourActive, this is
-          just a belt-and-suspenders visual/interaction lock. */}
+      {/* Not actually blocking anything (see tutorial.css) - real actions
+          are prevented by the tourActive checks in TutorialScreen's
+          handlers, not by intercepting clicks here. Leaving this passive
+          keeps the ribbon underneath hoverable (tooltips) and clickable
+          (harmlessly no-ops) during the narration. */}
       <div className="tutorial-click-blocker" />
 
       <svg className="tutorial-mask-svg">

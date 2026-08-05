@@ -67,6 +67,7 @@ export function EmailListPane({
         return (
           <div
             key={email.id}
+            data-email-id={email.id}
             className={`mail-row ${!isProcessed ? "unread" : ""} ${
               selectedId === email.id ? "selected" : ""
             }`}

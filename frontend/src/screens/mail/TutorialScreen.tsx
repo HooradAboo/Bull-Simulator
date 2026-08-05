@@ -16,6 +16,7 @@ import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
 import type { JudgmentStep } from "./JudgmentPanel";
 import { TutorialSpotlight, type TutorialStep } from "./TutorialSpotlight";
+import { GuidedCaption } from "./GuidedCaption";
 import { extractEmail } from "./avatar";
 import {
   getActionReasons,
@@ -110,41 +111,41 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "intro",
     title: "Welcome to the Practice Round",
     description:
-      "Below is a simulated inbox, styled just like the one you'll use for the real task. Before you try anything yourself, we'll walk you through each of the actions available in the toolbar above - nothing you do in this practice round counts, and there's nothing to answer afterward.",
+      "Here's a simulated inbox, styled just like the one you'll use for the real task. Before you try anything, we'll walk through everything so nothing catches you off guard later. Nothing you do here counts.",
     targetSelector: null,
   },
   {
     key: "task-explainer",
     title: "What You'll Be Doing",
     description:
-      "In the real task, you'll go through your inbox one email at a time - read each one, decide how you'd respond to it, and then take the action that fits, using the toolbar above.",
+      "In the real task, you'll work through your inbox one email at a time: read it, decide whether you trust it, take the action that fits, then tell us a bit more about your call.",
+    targetSelector: null,
+  },
+  {
+    key: "inbox-transition",
+    title: "Let's Take a Look Around",
+    description:
+      "Before we get into how you'll respond to emails, here's a quick look at the inbox itself.",
     targetSelector: null,
   },
   {
     key: "email-list",
     title: "Your Inbox",
     description:
-      "Each row here is an email waiting for a response. Click one to read it, then use the toolbar above to act on it.",
+      "Every row here is an email waiting on you. Click one to open it, then use the toolbar above to act on it.",
     targetSelector: ".mail-list-pane",
   },
   {
     key: "unread-count",
     title: "Finishing the Task",
     description:
-      "This number shows how many emails still need a response. The task isn't finished until you've taken an action on every email in your inbox.",
+      "This number tracks how many emails still need a response. You're done when every email in your inbox has been acted on.",
     targetSelector: ".mail-list-header .count",
-  },
-  {
-    key: "judgment",
-    title: "Before You Act, Judge It",
-    description:
-      "Before you can take any action on an email, you'll be asked whether you trust it or find it suspicious, and how confident you are in that call. The toolbar stays locked until you've answered both.",
-    targetSelector: ".judgment-panel",
   },
   {
     key: "all-actions",
     title: "Your Actions",
-    description: "These are your 8 actions - we'll go through each one next.",
+    description: "Here are your 6 tools for handling an email. We'll walk through what each one does.",
     targetSelector: [
       '[data-tour="delete"]',
       '[data-tour="report_phishing"]',
@@ -158,71 +159,247 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "email-actions",
     title: "Two More, Inside the Email",
     description:
-      "Not every action lives in the toolbar - clicking a link or opening an attachment happens right inside the email itself, like the two highlighted below.",
+      "Not everything lives in the toolbar though. Clicking a link or opening an attachment happens right inside the email itself, and both count as an action.",
     targetSelector: ['[data-tour="click_link"]', '[data-tour="open_attachment"]'],
+  },
+  {
+    key: "action-breakdown-intro",
+    title: "Let's Break Them Down",
+    description: "Now let's go through each one so you know exactly what it does.",
+    targetSelector: null,
   },
   {
     key: "delete",
     title: "Delete",
-    description: "Moves the email to Deleted Items.",
+    description: "Moves the email straight to Deleted Items.",
     targetSelector: '[data-tour="delete"]',
   },
   {
     key: "report_phishing",
     title: "Report as Phishing",
-    description: "Flags the email as phishing and moves it to Junk Email.",
+    description: "Flags the email as phishing and sends it to Junk Email.",
     targetSelector: '[data-tour="report_phishing"]',
   },
   {
     key: "reply",
     title: "Reply",
-    description: "Sends a response straight back to whoever sent the email.",
+    description: "Sends your response straight back to whoever sent the email.",
     targetSelector: '[data-tour="reply"]',
   },
   {
     key: "forward",
     title: "Forward",
-    description: "Sends the email on to someone else, like a colleague or IT.",
+    description: "Passes the email along to someone else, like a colleague or IT.",
     targetSelector: '[data-tour="forward"]',
   },
   {
     key: "ignore",
     title: "Mark as Read",
-    description: "Dismisses the email without taking any other action on it.",
+    description: "Dismisses the email without taking any other action.",
     targetSelector: '[data-tour="ignore"]',
   },
   {
     key: "verify_independently",
     title: "Verify Independently",
     description:
-      "Use this when you'd want to double-check something outside of email - for example, calling the sender directly instead of replying.",
+      "Use this when you'd rather check things out yourself first, like searching up the sender before replying.",
     targetSelector: '[data-tour="verify_independently"]',
-  },
-  {
-    key: "open_attachment",
-    title: "Opening an Attachment",
-    description:
-      "Attachments work the same way - opening one is recorded, but nothing actually downloads.",
-    targetSelector: '[data-tour="open_attachment"]',
   },
   {
     key: "click_link",
     title: "Clicking a Link",
     description:
-      "Links in this study are simulated - clicking one just records that you clicked it. It never opens a real page.",
+      "Links in this study are simulated. Clicking one just records that you clicked it, it never opens a real page.",
     targetSelector: '[data-tour="click_link"]',
+  },
+  {
+    key: "open_attachment",
+    title: "Opening an Attachment",
+    description:
+      "Attachments work the same way. Opening one counts as an action, but nothing actually downloads.",
+    targetSelector: '[data-tour="open_attachment"]',
   },
   {
     key: "one-action-only",
     title: "One Action, No Going Back",
     description:
-      "In the real task, you can only take one action per email - once you pick one, it's final. There's no undo and no second choice, so take your time and be sure before you click.",
+      "Heads up, you only get one action per email. Once you pick one, it's final. There's no undo and no second chance, so take your time and be sure before you click.",
+    targetSelector: null,
+  },
+  {
+    key: "disabled-actions",
+    title: "One More Thing",
+    description:
+      "You'll also notice a few buttons that stay greyed out no matter what. Those aren't part of this study, so they're switched off. Stick to the ones we just covered.",
+    targetSelector: ".mail-ribbon"
+    // [
+    //   '[data-tour="decorative-archive"]',
+    //   '[data-tour="decorative-sweep"]',
+    //   '[data-tour="decorative-move-to"]',
+    //   '[data-tour="decorative-reply-all"]',
+    //   '[data-tour="decorative-share-to-teams"]',
+    //   '[data-tour="decorative-quick-steps"]',
+    // ],
+  },
+  {
+    key: "help-hover",
+    title: "Forget What Something Does?",
+    description: "Hover over any button and it'll tell you exactly what it does.",
+    targetSelector: ".mail-ribbon",
+  },
+  {
+    key: "help-button",
+    title: "Need the Full List?",
+    description: "Click the help button anytime to see every action laid out in one place.",
+    targetSelector: ".help-fab",
+  },
+  {
+    key: "before-after-intro",
+    title: "One More Thing Before You Practice",
+    description:
+      "Here's what happens right before, and right after, you take action on an email.",
+    targetSelector: null,
+  },
+  {
+    key: "judgment",
+    title: "Before You Act, Judge It",
+    description:
+      "Before you can take any action, you'll be asked two quick questions: do you trust this email or find it suspicious, and how confident are you in that call? The toolbar stays locked until you've answered both.",
+    targetSelector: ".judgment-panel",
+  },
+  {
+    key: "after-act",
+    title: "After You Act",
+    description:
+      "Once you act, we'll ask a few quick follow-up questions: how confident you were, how difficult the decision felt, what caught your attention, and why you chose that response. It's the same three questions after every email, and it only takes a few seconds.",
+    targetSelector: ".confidence-box",
+  },
+  {
+    key: "practice-intro",
+    title: "Let's Practice Together",
+    description:
+      "Time to try it yourself. We'll walk through two emails together before you're on your own.",
     targetSelector: null,
   },
 ];
 
+const CLOSING_TOUR_STEPS: TutorialStep[] = [
+  {
+    key: "free-practice",
+    title: "Free Practice",
+    description:
+      "The rest of the practice inbox is yours. Try out anything you just learned, nothing here counts. When you're ready, move on to the real task. You can click Restart Tutorial anytime to run through the tour again.",
+    targetSelector: null,
+  },
+];
+
+const GUIDED_EMAIL_1 = "practice-1";
+const GUIDED_EMAIL_2 = "practice-2";
+
+type GuidedStepKey =
+  | "email1-open"
+  | "email1-judge-trust"
+  | "email1-judge-confidence"
+  | "email1-action"
+  | "email1-followup"
+  | "email2-open"
+  | "email2-judge-trust"
+  | "email2-judge-confidence"
+  | "email2-action"
+  | "email2-followup";
+
+interface GuidedStepContent {
+  stepLabel: string;
+  title: string;
+  description: string;
+  targetSelector: string | string[] | null;
+}
+
+const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
+  "email1-open": {
+    stepLabel: "Email 1 of 2",
+    title: "Make Your Call",
+    description:
+      "Open the email below and answer the trust or suspicious question. Since this is practice, there's no wrong answer, just try it out.",
+    targetSelector: `[data-email-id="${GUIDED_EMAIL_1}"]`,
+  },
+  "email1-judge-trust": {
+    stepLabel: "Email 1 of 2",
+    title: "Make Your Call",
+    description:
+      "Answer the trust or suspicious question below. Since this is practice, there's no wrong answer, just try it out.",
+    targetSelector: ".judgment-panel",
+  },
+  "email1-judge-confidence": {
+    stepLabel: "Email 1 of 2",
+    title: "Rate Your Confidence",
+    description: "Now rate how confident you are in that call.",
+    targetSelector: ".judgment-panel",
+  },
+  "email1-action": {
+    stepLabel: "Email 1 of 2",
+    title: "Take Your Action",
+    description: "The toolbar is unlocked. For this email, try opening the attachment to see how it works.",
+    targetSelector: '[data-tour="open_attachment"]',
+  },
+  "email1-followup": {
+    stepLabel: "Email 1 of 2",
+    title: "Tell Us More",
+    description:
+      "Answer these last few questions about the action you just took. You'll see this same set after every email in the real task.",
+    targetSelector: ".confidence-box",
+  },
+  "email2-open": {
+    stepLabel: "Email 2 of 2",
+    title: "Make Your Call",
+    description: "Let's try one more. Open this email and make your call.",
+    targetSelector: `[data-email-id="${GUIDED_EMAIL_2}"]`,
+  },
+  "email2-judge-trust": {
+    stepLabel: "Email 2 of 2",
+    title: "Make Your Call",
+    description: "Same as before, do you trust this email, or does it look suspicious?",
+    targetSelector: ".judgment-panel",
+  },
+  "email2-judge-confidence": {
+    stepLabel: "Email 2 of 2",
+    title: "Rate Your Confidence",
+    description: "Rate your confidence in that call.",
+    targetSelector: ".judgment-panel",
+  },
+  "email2-action": {
+    stepLabel: "Email 2 of 2",
+    title: "Take Your Action",
+    description: "This time, try deleting the email instead.",
+    targetSelector: '[data-tour="delete"]',
+  },
+  "email2-followup": {
+    stepLabel: "Email 2 of 2",
+    title: "Tell Us More",
+    description: "Same three questions as before: confidence, difficulty, and why you chose that action.",
+    targetSelector: ".confidence-box",
+  },
+};
+
+const GUIDED_REQUIRED_ACTION: Partial<Record<GuidedStepKey, ActionType>> = {
+  "email1-action": "open_attachment",
+  "email2-action": "delete",
+};
+
+const TOOLBAR_ACTIONS: ActionType[] = [
+  "delete",
+  "report_phishing",
+  "reply",
+  "forward",
+  "ignore",
+  "verify_independently",
+];
+
 export function TutorialScreen({ onFinish }: Props) {
   const [tourActive, setTourActive] = useState(true);
+  const [tourStepKey, setTourStepKey] = useState<string>(TOUR_STEPS[0].key);
+  const [guidedActive, setGuidedActive] = useState(false);
+  const [closingTourActive, setClosingTourActive] = useState(false);
 
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(PRACTICE_EMAILS[0]);
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
@@ -253,10 +430,55 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
+  // Which practice email guided practice currently wants the participant to
+  // work on - null once both are done (or when guided practice isn't
+  // active at all). Selecting or acting on anything else is blocked below
+  // while this is set, which is what actually enforces the guided steps
+  // (the highlight is just a visual pointer, not the restriction itself).
+  const guidedTargetEmailId = guidedActive
+    ? !processed.has(GUIDED_EMAIL_1)
+      ? GUIDED_EMAIL_1
+      : !processed.has(GUIDED_EMAIL_2)
+        ? GUIDED_EMAIL_2
+        : null
+    : null;
+
+  const currentGuidedStep: GuidedStepKey | null = (() => {
+    if (!guidedTargetEmailId) return null;
+    const n = guidedTargetEmailId === GUIDED_EMAIL_1 ? 1 : 2;
+    if (selectedEmail?.id !== guidedTargetEmailId) return `email${n}-open` as GuidedStepKey;
+    if (judgmentStep === "trust") return `email${n}-judge-trust` as GuidedStepKey;
+    if (judgmentStep === "confidence") return `email${n}-judge-confidence` as GuidedStepKey;
+    if (phase === "confidence") return `email${n}-followup` as GuidedStepKey;
+    if (judgmentStep === "done" && phase === "idle") return `email${n}-action` as GuidedStepKey;
+    // Transient phases (confirming / action-recorded) already have their
+    // own self-explanatory modal on screen, so no caption is needed.
+    return null;
+  })();
+
+  const guidedRequiredAction = currentGuidedStep ? GUIDED_REQUIRED_ACTION[currentGuidedStep] : undefined;
+  const guidedDisabledActions = guidedRequiredAction
+    ? TOOLBAR_ACTIONS.filter((a) => a !== guidedRequiredAction)
+    : [];
+
   useEffect(() => {
     getActionReasons().then(setActionReasonOptions);
     getCueOptions().then(setCueOptions);
   }, []);
+
+  // Guided practice hands off to the short closing tour the moment both
+  // practice emails have been processed.
+  useEffect(() => {
+    if (guidedActive && processed.has(GUIDED_EMAIL_1) && processed.has(GUIDED_EMAIL_2)) {
+      setGuidedActive(false);
+      setClosingTourActive(true);
+    }
+  }, [guidedActive, processed]);
+
+  const handleSkipGuidedPractice = () => {
+    setGuidedActive(false);
+    setClosingTourActive(true);
+  };
 
   const handleRestartTutorial = () => {
     setSelectedEmail(PRACTICE_EMAILS[0]);
@@ -281,6 +503,8 @@ export function TutorialScreen({ onFinish }: Props) {
     setOtherCueText("");
     setSelectedReasons([]);
     setOtherReasonText("");
+    setGuidedActive(false);
+    setClosingTourActive(false);
     // Remounts TutorialSpotlight fresh, so its own step index resets to 0.
     setTourActive(true);
   };
@@ -288,7 +512,7 @@ export function TutorialScreen({ onFinish }: Props) {
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
 
   const handleSelectFolder = (folder: FolderName) => {
-    if (tourActive || isMidFlow) return;
+    if (tourActive || guidedActive || isMidFlow) return;
     setCurrentFolder(folder);
     setSelectedEmail(null);
     setSelectedSentItem(null);
@@ -298,6 +522,7 @@ export function TutorialScreen({ onFinish }: Props) {
 
   const handleSelectEmail = (email: DummyEmail) => {
     if (tourActive || isMidFlow || composeOpen) return;
+    if (guidedTargetEmailId && email.id !== guidedTargetEmailId) return;
 
     if (processed.has(email.id)) {
       setSelectedEmail(email);
@@ -317,11 +542,13 @@ export function TutorialScreen({ onFinish }: Props) {
   };
 
   const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
+    if (tourActive) return;
     setPerceivedLegitimacy(value);
     setJudgmentStep("confidence");
   };
 
   const handleSelectJudgmentConfidence = (value: number) => {
+    if (tourActive) return;
     setJudgmentConfidenceValue(value);
     setJudgmentStep("done");
   };
@@ -419,6 +646,7 @@ export function TutorialScreen({ onFinish }: Props) {
       judgmentStep !== "done"
     )
       return;
+    if (guidedRequiredAction && action !== guidedRequiredAction) return;
 
     if (action === "click_link" || action === "open_attachment" || action === "verify_independently") {
       setPendingAction(action);
@@ -494,12 +722,17 @@ export function TutorialScreen({ onFinish }: Props) {
   const handleReplyCancel = () => setPhase("idle");
 
   const processedInfo = selectedEmail ? processed.get(selectedEmail.id) ?? null : null;
-  const ribbonDisabled =
-    tourActive ||
-    !selectedEmail ||
-    processed.has(selectedEmail.id) ||
-    phase !== "idle" ||
-    judgmentStep !== "done";
+  // During the informational tour, the ribbon stays visually active and
+  // hoverable (so its tooltips work while it's being explained) - real
+  // clicks are no-ops via the tourActive check in handleSelectAction, not
+  // by disabling the buttons. Outside the tour, the normal locking rules
+  // apply as usual.
+  const ribbonDisabled = tourActive
+    ? false
+    : !selectedEmail ||
+      processed.has(selectedEmail.id) ||
+      phase !== "idle" ||
+      judgmentStep !== "done";
   const visibleEmails = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === currentFolder);
   const deletedCount = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === "deleted").length;
   const junkCount = PRACTICE_EMAILS.filter((e) => folderOf(e.id) === "junk").length;
@@ -516,6 +749,7 @@ export function TutorialScreen({ onFinish }: Props) {
         pendingAction={pendingAction}
         disabled={ribbonDisabled}
         composeDisabled
+        disabledActions={guidedDisabledActions}
         onSelectAction={handleSelectAction}
         onCompose={handleStartCompose}
       />
@@ -656,7 +890,7 @@ export function TutorialScreen({ onFinish }: Props) {
         />
       )}
 
-      {!tourActive && (
+      {!tourActive && !guidedActive && !closingTourActive && (
         <div className="tutorial-actions">
           <button
             type="button"
@@ -671,8 +905,68 @@ export function TutorialScreen({ onFinish }: Props) {
         </div>
       )}
 
+      {/* Demo popup for the "After You Act" tour step - a stand-in
+          confidence modal with no real state behind it, just so there's
+          something for that step to spotlight. Inert (pointer-events: none)
+          since it's a preview only - the tour's own Next button is what
+          advances, not this modal's, and the two shouldn't be confusable. */}
+      {tourActive && tourStepKey === "after-act" && (
+        <div className="tutorial-demo-popup">
+          <ConfidenceModal
+            actionLabel={ACTION_LABELS.delete}
+            cueOptions={cueOptions}
+            reasonOptions={actionReasonOptions["delete"] ?? []}
+            confidenceValue={null}
+            onConfidenceChange={() => {}}
+            difficultyValue={null}
+            onDifficultyChange={() => {}}
+            selectedCues={[]}
+            onToggleCue={() => {}}
+            otherCueText=""
+            onOtherCueTextChange={() => {}}
+            selectedReasons={[]}
+            onToggleReason={() => {}}
+            otherReasonText=""
+            onOtherReasonTextChange={() => {}}
+            onSubmit={() => {}}
+          />
+        </div>
+      )}
+
       {tourActive && (
-        <TutorialSpotlight steps={TOUR_STEPS} onFinish={() => setTourActive(false)} />
+        <TutorialSpotlight
+          steps={TOUR_STEPS}
+          onStepKeyChange={setTourStepKey}
+          onFinish={() => {
+            setTourActive(false);
+            setGuidedActive(true);
+            // Reset the reading pane to empty so guided practice genuinely
+            // starts with "click this email" rather than picking up
+            // whatever was pre-selected for the informational tour.
+            setSelectedEmail(null);
+            setPhase("idle");
+            setJudgmentStep("trust");
+            setPerceivedLegitimacy(null);
+            setJudgmentConfidenceValue(null);
+          }}
+        />
+      )}
+
+      {guidedActive && currentGuidedStep && (
+        <GuidedCaption
+          stepLabel={GUIDED_STEP_CONTENT[currentGuidedStep].stepLabel}
+          title={GUIDED_STEP_CONTENT[currentGuidedStep].title}
+          description={GUIDED_STEP_CONTENT[currentGuidedStep].description}
+          targetSelector={GUIDED_STEP_CONTENT[currentGuidedStep].targetSelector}
+          onSkip={handleSkipGuidedPractice}
+        />
+      )}
+
+      {closingTourActive && (
+        <TutorialSpotlight
+          steps={CLOSING_TOUR_STEPS}
+          onFinish={() => setClosingTourActive(false)}
+        />
       )}
     </div>
   );
