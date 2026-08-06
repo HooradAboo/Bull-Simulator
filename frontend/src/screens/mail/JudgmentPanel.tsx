@@ -41,6 +41,9 @@ export function JudgmentPanel({
     const confidenceLabel = CONFIDENCE_OPTIONS.find(
       (option) => option.value === judgmentConfidenceValue
     )?.label;
+    const actionConfidenceLabel = CONFIDENCE_OPTIONS.find(
+      (option) => option.value === processedInfo?.confidence
+    )?.label;
     return (
       <div className="judgment-panel judgment-panel-done">
         {perceivedLegitimacy && (
@@ -55,7 +58,7 @@ export function JudgmentPanel({
             <CheckmarkCircle20Filled />
             You responded: <strong>{actionLabel}</strong>
             {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}
-            {processedInfo.confidence != null && <> (confidence {processedInfo.confidence})</>}
+            {actionConfidenceLabel ? <> ({actionConfidenceLabel})</> : null}
           </div>
         )}
       </div>
