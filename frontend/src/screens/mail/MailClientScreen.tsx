@@ -213,13 +213,15 @@ export function MailClientScreen({
     if (isMidFlow || composeOpen) return;
 
     if (processed.has(email.id)) {
+      const info = processed.get(email.id)!;
       setSelectedEmail(email);
       setInteractionId(null);
       setOpenedAt(null);
       setPendingAction(null);
       setPhase("idle");
       setJudgmentStep("done");
-      setPerceivedLegitimacy(null);
+      setPerceivedLegitimacy(info.perceivedLegitimacy ?? null);
+      setJudgmentConfidenceValue(info.judgmentConfidenceRating ?? null);
       return;
     }
 
@@ -493,6 +495,8 @@ export function MailClientScreen({
       action: pendingAction,
       confidence: confidenceValue,
       recipient: pendingRecipient,
+      perceivedLegitimacy,
+      judgmentConfidenceRating: judgmentConfidenceValue,
     });
     setProcessed(updated);
     setPhase("idle");
@@ -543,10 +547,12 @@ export function MailClientScreen({
         .filter((key) => key !== "other");
       const numReasons = 1 + Math.floor(Math.random() * 2);
       const actionReasons = [...reasonPool].sort(() => Math.random() - 0.5).slice(0, numReasons);
+      const perceivedLegitimacy: PerceivedLegitimacy = Math.random() < 0.5 ? "trust" : "suspicious";
+      const judgmentConfidenceRating = 1 + Math.floor(Math.random() * 5);
 
       await submitInteractionRatings(id, {
-        perceivedLegitimacy: Math.random() < 0.5 ? "trust" : "suspicious",
-        judgmentConfidenceRating: 1 + Math.floor(Math.random() * 5),
+        perceivedLegitimacy,
+        judgmentConfidenceRating,
         confidenceRating: confidence,
         difficultyRating: 1 + Math.floor(Math.random() * 5),
         cuesNoticed,
@@ -555,7 +561,7 @@ export function MailClientScreen({
         actionReasonsOtherText: null,
       });
 
-      updated.set(email.id, { action, confidence, recipient });
+      updated.set(email.id, { action, confidence, recipient, perceivedLegitimacy, judgmentConfidenceRating });
     }
     setProcessed(updated);
     onAllProcessed();

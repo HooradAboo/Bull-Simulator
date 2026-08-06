@@ -583,11 +583,13 @@ export function TutorialScreen({ onFinish }: Props) {
     if (guidedActive && email.id !== guidedTargetEmailId) return;
 
     if (processed.has(email.id)) {
+      const info = processed.get(email.id)!;
       setSelectedEmail(email);
       setPendingAction(null);
       setPhase("idle");
       setJudgmentStep("done");
-      setPerceivedLegitimacy(null);
+      setPerceivedLegitimacy(info.perceivedLegitimacy ?? null);
+      setJudgmentConfidenceValue(info.judgmentConfidenceRating ?? null);
       return;
     }
 
@@ -686,6 +688,8 @@ export function TutorialScreen({ onFinish }: Props) {
       action: pendingAction,
       confidence: confidenceValue,
       recipient: pendingRecipient,
+      perceivedLegitimacy,
+      judgmentConfidenceRating: judgmentConfidenceValue,
     });
     setProcessed(updated);
     setPhase("idle");

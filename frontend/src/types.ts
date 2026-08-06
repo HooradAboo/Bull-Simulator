@@ -23,6 +23,12 @@ export interface ProcessedInfo {
   // null in practice mode, where no confidence rating is ever collected.
   confidence: number | null;
   recipient?: string | null;
+  // Carries the trust/suspicious judgment forward so the judgment panel can
+  // still show it after reselecting an already-processed email, not just
+  // the action taken. Optional/nullable since resumed sessions (hydrated
+  // from the backend after a crash) don't currently carry this back.
+  perceivedLegitimacy?: "trust" | "suspicious" | null;
+  judgmentConfidenceRating?: number | null;
 }
 
 export type FolderName = "inbox" | "deleted" | "junk" | "sent" | "drafts";
