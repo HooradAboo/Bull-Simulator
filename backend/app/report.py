@@ -110,6 +110,20 @@ class LegitBreakdown(BaseModel):
 
 CALIBRATION_SYNC_THRESHOLD = 10
 
+# Confidence ratings are collected on a 1-5 Likert scale, but accuracy is a
+# 0-100 percentage - comparing the two raw would make the diff meaningless
+# (a perfectly-calibrated participant would still show as wildly
+# "undersold" since accuracy dominates a 1-5 number). Min-max normalizing
+# the rating onto 0-100 (1 -> 0%, 5 -> 100%) puts both sides of the
+# comparison on the same scale before anything touches CALIBRATION_SYNC_THRESHOLD.
+CONFIDENCE_RATING_MIN = 1
+CONFIDENCE_RATING_MAX = 5
+
+
+def _confidence_to_percent(raw_average: float) -> float:
+    span = CONFIDENCE_RATING_MAX - CONFIDENCE_RATING_MIN
+    return round((raw_average - CONFIDENCE_RATING_MIN) / span * 100, 1)
+
 
 def _calibration_state(confidence: float | None, accuracy: float | None, n: int) -> str:
     """"in_sync" (within CALIBRATION_SYNC_THRESHOLD points), "undersold"
@@ -216,7 +230,7 @@ class _CalibrationAccumulator:
     def confidence_average(self) -> float | None:
         if self.confidence_n == 0:
             return None
-        return round(self.confidence_sum / self.confidence_n, 1)
+        return _confidence_to_percent(self.confidence_sum / self.confidence_n)
 
     def accuracy(self) -> float | None:
         if self.n == 0:
