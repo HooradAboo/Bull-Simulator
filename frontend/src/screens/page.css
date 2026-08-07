@@ -1044,6 +1044,14 @@
    prints whichever "Email by Email" slide is currently showing, since the
    slideshow only ever renders one review at a time. */
 @media print {
+  /* Browsers strip background colors/images by default when printing
+     unless a page opts in explicitly - without this, the confusion matrix
+     cells, action-chart bars, and calibration state tags would all print
+     as plain white/black instead of their actual colors. */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
   .plain-titlebar,
   .page-header-actions,
   .email-review-nav {
