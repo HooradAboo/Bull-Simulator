@@ -273,14 +273,24 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
     matrix_max = max(score for row in matrix.values() for score in row.values())
     protective_categories = {cat for cat, row in matrix.items() if row["phishing"] > 0}
 
-    interactions = (
+    interactions_raw = (
         db.query(models.EmailInteraction)
         .filter(
             models.EmailInteraction.participant_id == participant.id,
             models.EmailInteraction.action_taken.isnot(None),
         )
+        .order_by(models.EmailInteraction.id)
         .all()
     )
+    # There's no DB constraint stopping more than one completed interaction
+    # row from existing for the same email (e.g. a double-submission race),
+    # which would otherwise double-count that email everywhere below - keep
+    # only the latest (highest id) completed row per email_id, same
+    # de-duplication already used for the by-netid resume lookup.
+    interactions_by_email: dict[str, models.EmailInteraction] = {}
+    for interaction in interactions_raw:
+        interactions_by_email[interaction.email_id] = interaction
+    interactions = list(interactions_by_email.values())
 
     total_score = 0
     correct_count = 0

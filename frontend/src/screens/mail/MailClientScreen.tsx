@@ -177,6 +177,14 @@ export function MailClientScreen({
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
   const hoverStart = useRef<number | null>(null);
+  // Guards handleDevSkipAllEmails against re-entry - it's a long-running
+  // async loop, and `processed` only updates once at the very end, so a
+  // second click before the first run finishes would compute `remaining`
+  // from the same stale (still-empty) snapshot and create a full duplicate
+  // set of interactions for every email, doubling every number in the
+  // report.
+  const devSkipInFlight = useRef(false);
+  const [devSkipRunning, setDevSkipRunning] = useState(false);
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
@@ -519,52 +527,60 @@ export function MailClientScreen({
   // at least once, so the debrief report has varied, realistic-looking
   // data to check without manually clicking through the whole inbox.
   const handleDevSkipAllEmails = async () => {
-    const remaining = emails.filter((e) => !processed.has(e.id));
-    const alreadyUsed = new Set(Array.from(processed.values()).map((p) => p.action));
-    const assignments = assignRandomActions(remaining, alreadyUsed);
+    if (devSkipInFlight.current) return;
+    devSkipInFlight.current = true;
+    setDevSkipRunning(true);
+    try {
+      const remaining = emails.filter((e) => !processed.has(e.id));
+      const alreadyUsed = new Set(Array.from(processed.values()).map((p) => p.action));
+      const assignments = assignRandomActions(remaining, alreadyUsed);
 
-    const updated = new Map(processed);
-    for (const email of remaining) {
-      const action = assignments.get(email.id)!;
-      const recipient =
-        action === "reply" || action === "forward"
-          ? contacts.length > 0
-            ? randomOf(contacts).email
-            : "someone@example.com"
-          : null;
+      const updated = new Map(processed);
+      for (const email of remaining) {
+        const action = assignments.get(email.id)!;
+        const recipient =
+          action === "reply" || action === "forward"
+            ? contacts.length > 0
+              ? randomOf(contacts).email
+              : "someone@example.com"
+            : null;
 
-      const openedAt = Date.now();
-      const id = await openInteraction(participantId, email.id, openedAt);
-      const confirmedAt = Date.now();
-      await confirmInteraction(id, action, false, confirmedAt, confirmedAt - openedAt, recipient);
+        const openedAt = Date.now();
+        const id = await openInteraction(participantId, email.id, openedAt);
+        const confirmedAt = Date.now();
+        await confirmInteraction(id, action, false, confirmedAt, confirmedAt - openedAt, recipient);
 
-      const cueKeys = cueOptions.map((option) => option.key).filter((key) => key !== "other");
-      const numCues = Math.floor(Math.random() * 3);
-      const cuesNoticed = [...cueKeys].sort(() => Math.random() - 0.5).slice(0, numCues);
-      const confidence = 1 + Math.floor(Math.random() * 5);
-      const reasonPool = (actionReasonOptions[action] ?? [])
-        .map((option) => option.key)
-        .filter((key) => key !== "other");
-      const numReasons = 1 + Math.floor(Math.random() * 2);
-      const actionReasons = [...reasonPool].sort(() => Math.random() - 0.5).slice(0, numReasons);
-      const perceivedLegitimacy: PerceivedLegitimacy = Math.random() < 0.5 ? "trust" : "suspicious";
-      const judgmentConfidenceRating = 1 + Math.floor(Math.random() * 5);
+        const cueKeys = cueOptions.map((option) => option.key).filter((key) => key !== "other");
+        const numCues = Math.floor(Math.random() * 3);
+        const cuesNoticed = [...cueKeys].sort(() => Math.random() - 0.5).slice(0, numCues);
+        const confidence = 1 + Math.floor(Math.random() * 5);
+        const reasonPool = (actionReasonOptions[action] ?? [])
+          .map((option) => option.key)
+          .filter((key) => key !== "other");
+        const numReasons = 1 + Math.floor(Math.random() * 2);
+        const actionReasons = [...reasonPool].sort(() => Math.random() - 0.5).slice(0, numReasons);
+        const perceivedLegitimacy: PerceivedLegitimacy = Math.random() < 0.5 ? "trust" : "suspicious";
+        const judgmentConfidenceRating = 1 + Math.floor(Math.random() * 5);
 
-      await submitInteractionRatings(id, {
-        perceivedLegitimacy,
-        judgmentConfidenceRating,
-        confidenceRating: confidence,
-        difficultyRating: 1 + Math.floor(Math.random() * 5),
-        cuesNoticed,
-        cuesOtherText: null,
-        actionReasons,
-        actionReasonsOtherText: null,
-      });
+        await submitInteractionRatings(id, {
+          perceivedLegitimacy,
+          judgmentConfidenceRating,
+          confidenceRating: confidence,
+          difficultyRating: 1 + Math.floor(Math.random() * 5),
+          cuesNoticed,
+          cuesOtherText: null,
+          actionReasons,
+          actionReasonsOtherText: null,
+        });
 
-      updated.set(email.id, { action, confidence, recipient, perceivedLegitimacy, judgmentConfidenceRating });
+        updated.set(email.id, { action, confidence, recipient, perceivedLegitimacy, judgmentConfidenceRating });
+      }
+      setProcessed(updated);
+      onAllProcessed();
+    } finally {
+      devSkipInFlight.current = false;
+      setDevSkipRunning(false);
     }
-    setProcessed(updated);
-    onAllProcessed();
   };
 
   const handleLinkHoverStart = () => {
@@ -598,8 +614,12 @@ export function MailClientScreen({
   return (
     <div className="mail-shell">
       {import.meta.env.DEV && (
-        <button className="dev-skip-button" onClick={handleDevSkipAllEmails}>
-          DEV: Skip Remaining Emails (random)
+        <button
+          className="dev-skip-button"
+          onClick={handleDevSkipAllEmails}
+          disabled={devSkipRunning}
+        >
+          {devSkipRunning ? "DEV: Working..." : "DEV: Skip Remaining Emails (random)"}
         </button>
       )}
       <HelpButton />
