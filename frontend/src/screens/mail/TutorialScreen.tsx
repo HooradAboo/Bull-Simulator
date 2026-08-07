@@ -9,6 +9,7 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
+import { ConfirmModal } from "./ConfirmModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
 import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
@@ -440,6 +441,7 @@ export function TutorialScreen({ onFinish }: Props) {
   const [closingTourActive, setClosingTourActive] = useState(false);
   const [closingTourIndex, setClosingTourIndex] = useState(0);
   const tourStepKey = TOUR_STEPS[tourIndex].key;
+  const [pendingConfirm, setPendingConfirm] = useState<"restart" | "start-real" | null>(null);
 
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(PRACTICE_EMAILS[0]);
   const [pendingAction, setPendingAction] = useState<ActionType | null>(null);
@@ -957,14 +959,44 @@ export function TutorialScreen({ onFinish }: Props) {
           <button
             type="button"
             className="tutorial-restart-button"
-            onClick={handleRestartTutorial}
+            onClick={() => setPendingConfirm("restart")}
           >
             Restart Tutorial
           </button>
-          <button type="button" className="tutorial-start-button" onClick={onFinish}>
+          <button
+            type="button"
+            className="tutorial-start-button"
+            onClick={() => setPendingConfirm("start-real")}
+          >
             Start the Real Task
           </button>
         </div>
+      )}
+
+      {pendingConfirm === "restart" && (
+        <ConfirmModal
+          title="Restart the tutorial?"
+          body="This will reset the practice inbox and take you back through the tour from the beginning."
+          confirmLabel="Restart"
+          onConfirm={() => {
+            setPendingConfirm(null);
+            handleRestartTutorial();
+          }}
+          onCancel={() => setPendingConfirm(null)}
+        />
+      )}
+
+      {pendingConfirm === "start-real" && (
+        <ConfirmModal
+          title="Start the real task?"
+          body="Practice is over once you continue - nothing from here on is practice, and there's no going back to try again."
+          confirmLabel="Start the Real Task"
+          onConfirm={() => {
+            setPendingConfirm(null);
+            onFinish();
+          }}
+          onCancel={() => setPendingConfirm(null)}
+        />
       )}
 
       {/* Demo popup for the "After You Act" tour step - a stand-in
