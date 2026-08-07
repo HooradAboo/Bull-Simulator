@@ -929,6 +929,27 @@
   overflow-y: auto;
   max-height: 560px;
 }
+
+/* Only ever shown for PDF export / native print (see the .pdf-measuring
+   and @media print overrides below) - on screen the one-at-a-time
+   slideshow above is what's actually used, so this stays hidden and out
+   of normal layout entirely. */
+.email-review-print-all {
+  display: none;
+}
+.email-review-print-item {
+  margin-bottom: 32px;
+  break-inside: avoid;
+}
+.email-review-print-item:last-child {
+  margin-bottom: 0;
+}
+.email-review-print-item-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
 /* Reuses the real mail client's .reading-* markup/classes (see mail.css) so
    this is an actual reconstruction of the email, not a bespoke summary card -
    zoom shrinks it down to fit alongside the report column. */
@@ -1067,13 +1088,13 @@
   margin-bottom: 0;
 }
 
-/* Mirrors the unclipping rules in the @media print block below, but as a
-   toggleable class instead of a media query - applied for one synchronous
-   instant before exporting the report to PDF, purely so JS can read the
-   card's true full-content height (scrollHeight stays capped to the
-   visible/clipped box otherwise) to size the PDF page to fit in one page.
-   Removed again immediately after that measurement; never left applied
-   during normal on-screen viewing. */
+/* Mirrors the unclipping/swap rules in the @media print block below, but
+   as a toggleable class instead of a media query - applied for one
+   synchronous instant before exporting the report to PDF, purely so JS can
+   read the card's true full-content height (scrollHeight stays capped to
+   the visible/clipped box, and would only reflect one slide, otherwise) to
+   size the PDF page to fit in one page. Removed again immediately after
+   that measurement; never left applied during normal on-screen viewing. */
 .pdf-measuring.page-shell-flush,
 .pdf-measuring.page-shell-flush .page-card {
   height: auto !important;
@@ -1085,12 +1106,19 @@
   max-height: none !important;
   overflow: visible !important;
 }
+.pdf-measuring .email-review-single {
+  display: none !important;
+}
+.pdf-measuring .email-review-print-all {
+  display: block !important;
+}
 
-/* Printing/exporting the report: hide interactive-only chrome and let the
+/* Printing/exporting the report: hide interactive-only chrome, let the
    content that's normally clipped to a scrollable panel (report-scroll,
-   the email review picture) flow across pages instead. Note this only
-   prints whichever "Email by Email" slide is currently showing, since the
-   slideshow only ever renders one review at a time. */
+   the email review picture) flow instead of scrolling, and swap the
+   one-at-a-time "Email by Email" slideshow for the hidden stacked version
+   that includes every email - otherwise a print/export would only ever
+   capture whichever single slide happened to be showing on screen. */
 @media print {
   /* Browsers strip background colors/images by default when printing
      unless a page opts in explicitly - without this, the confusion matrix
@@ -1102,8 +1130,11 @@
   }
   .plain-titlebar,
   .page-header-actions,
-  .email-review-nav {
+  .email-review-single {
     display: none !important;
+  }
+  .email-review-print-all {
+    display: block !important;
   }
   .page-shell {
     overflow: visible;

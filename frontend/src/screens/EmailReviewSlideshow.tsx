@@ -102,6 +102,153 @@ function optionLabels(keys: string[], options: { key: string; label: string }[])
     .map((key) => options.find((o) => o.key === key)?.label ?? key);
 }
 
+interface ReviewColumnsProps {
+  review: EmailReview;
+  cueOptions: CueOption[];
+  actionReasonOptions: Record<string, ActionReasonOption[]>;
+}
+
+// The actual per-email content (answers card + reconstructed email) -
+// pulled out so it can be reused both for the one-at-a-time on-screen
+// slideshow and for the hidden "every email, stacked" version that only
+// ever gets shown for PDF export / native print (see EmailReviewSlideshow
+// below).
+function ReviewColumns({ review, cueOptions, actionReasonOptions }: ReviewColumnsProps) {
+  const signals = optionLabels(review.cuesNoticed, cueOptions);
+  if (review.cuesNoticed.includes("other") && review.cuesOtherText) {
+    signals.push(review.cuesOtherText);
+  }
+  const reasons = optionLabels(review.actionReasons, actionReasonOptions[review.actionTaken] ?? []);
+  if (review.actionReasons.includes("other") && review.actionReasonsOtherText) {
+    reasons.push(review.actionReasonsOtherText);
+  }
+
+  return (
+    <div className="email-review-columns">
+      <div className="email-review-card">
+        <div className="email-review-outcome">
+          <span className={`email-review-outcome-tag ${outcomeTagClass(review)}`}>
+            {outcomeLabel(review)}
+          </span>
+        </div>
+
+        <div className="email-review-grid">
+          <div className="email-review-field">
+            <div className="email-review-field-label">Your judgment</div>
+            <div className="email-review-field-value email-review-field-value-icon">
+              {review.perceivedLegitimacy && (
+                <span className="email-review-field-icon">
+                  {JUDGMENT_ICONS[review.perceivedLegitimacy]}
+                </span>
+              )}
+              {review.perceivedLegitimacy ? JUDGMENT_LABELS[review.perceivedLegitimacy] : "—"}
+              {review.judgmentConfidenceRating != null && (
+                <span className="email-review-sub">
+                  {" "}
+                  ({ratingLabel(CONFIDENCE_LABELS, review.judgmentConfidenceRating)})
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="email-review-field">
+            <div className="email-review-field-label">Your action</div>
+            <div className="email-review-field-value email-review-field-value-icon">
+              <span className="email-review-field-icon">{ACTION_ICONS[review.actionTaken]}</span>
+              {ACTION_LABELS[review.actionTaken] ?? review.actionTaken}
+              {review.confidenceRating != null && (
+                <span className="email-review-sub">
+                  {" "}
+                  ({ratingLabel(CONFIDENCE_LABELS, review.confidenceRating)})
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="email-review-field">
+          <div className="email-review-field-label">Signals you noticed</div>
+          {signals.length > 0 ? (
+            <ul className="email-review-reason-list email-review-reason-list-2col">
+              {signals.map((signal) => (
+                <li key={signal}>{signal}</li>
+              ))}
+            </ul>
+          ) : (
+            <div className="email-review-field-value">None selected</div>
+          )}
+        </div>
+
+        <div className="email-review-field">
+          <div className="email-review-field-label">Why you chose that response</div>
+          {reasons.length > 0 ? (
+            <ul className="email-review-reason-list">
+              {reasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+          ) : (
+            <div className="email-review-field-value">None selected</div>
+          )}
+        </div>
+      </div>
+
+      <div className="email-review-picture">
+        <div className="email-review-mailview">
+          <div className="reading-content">
+            <div className="reading-subject">{review.subject}</div>
+            <div className="reading-sender-row">
+              <div className="reading-sender-left">
+                <div
+                  className="reading-sender-avatar"
+                  style={{ background: avatarColor(review.sender) }}
+                >
+                  {initials(review.sender)}
+                </div>
+                <div>
+                  <div className="reading-sender-name">{senderName(review.sender)}</div>
+                  <div className="reading-sender-meta">{review.sender}</div>
+                </div>
+              </div>
+              <div className="reading-received-col">
+                <div className={`email-stamp ${review.isPhishing ? "phishing" : "legit"}`}>
+                  {review.isPhishing ? "Phishing" : "Legitimate"}
+                </div>
+                {review.receivedAt != null && (
+                  <div className="reading-received-time">
+                    {formatReceivedTime(review.receivedAt)}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {review.attachment && (
+              <div className="reading-attachment-top">
+                <span className="reading-attachment">
+                  <span
+                    className="reading-attachment-icon"
+                    style={{ background: attachmentVisual(review.attachment).color }}
+                  >
+                    {attachmentVisual(review.attachment).icon}
+                  </span>
+                  <span className="reading-attachment-name">{review.attachment}</span>
+                </span>
+              </div>
+            )}
+
+            <div className="reading-body" dangerouslySetInnerHTML={{ __html: review.body }} />
+
+            {review.link && !review.body.includes("data-tracked-link") && (
+              <p>
+                <span className="reading-link">{review.link}</span>
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   emailReviews: EmailReview[];
 }
@@ -123,160 +270,49 @@ export function EmailReviewSlideshow({ emailReviews }: Props) {
   }
 
   const review = emailReviews[index];
-  const signals = optionLabels(review.cuesNoticed, cueOptions);
-  if (review.cuesNoticed.includes("other") && review.cuesOtherText) {
-    signals.push(review.cuesOtherText);
-  }
-  const reasons = optionLabels(review.actionReasons, actionReasonOptions[review.actionTaken] ?? []);
-  if (review.actionReasons.includes("other") && review.actionReasonsOtherText) {
-    reasons.push(review.actionReasonsOtherText);
-  }
 
   return (
     <div className="email-review-slideshow">
-      <div className="email-review-nav">
-        <button
-          type="button"
-          className="page-button-secondary email-review-nav-btn"
-          onClick={() => setIndex((i) => Math.max(0, i - 1))}
-          disabled={index === 0}
-        >
-          ← Previous
-        </button>
-        <div className="email-review-counter">
-          Email {index + 1} of {emailReviews.length}
+      <div className="email-review-single">
+        <div className="email-review-nav">
+          <button
+            type="button"
+            className="page-button-secondary email-review-nav-btn"
+            onClick={() => setIndex((i) => Math.max(0, i - 1))}
+            disabled={index === 0}
+          >
+            ← Previous
+          </button>
+          <div className="email-review-counter">
+            Email {index + 1} of {emailReviews.length}
+          </div>
+          <button
+            type="button"
+            className="page-button-secondary email-review-nav-btn"
+            onClick={() => setIndex((i) => Math.min(emailReviews.length - 1, i + 1))}
+            disabled={index === emailReviews.length - 1}
+          >
+            Next →
+          </button>
         </div>
-        <button
-          type="button"
-          className="page-button-secondary email-review-nav-btn"
-          onClick={() => setIndex((i) => Math.min(emailReviews.length - 1, i + 1))}
-          disabled={index === emailReviews.length - 1}
-        >
-          Next →
-        </button>
+
+        <ReviewColumns review={review} cueOptions={cueOptions} actionReasonOptions={actionReasonOptions} />
       </div>
 
-      <div className="email-review-columns">
-        <div className="email-review-card">
-          <div className="email-review-outcome">
-            <span className={`email-review-outcome-tag ${outcomeTagClass(review)}`}>
-              {outcomeLabel(review)}
-            </span>
-          </div>
-
-          <div className="email-review-grid">
-            <div className="email-review-field">
-              <div className="email-review-field-label">Your judgment</div>
-              <div className="email-review-field-value email-review-field-value-icon">
-                {review.perceivedLegitimacy && (
-                  <span className="email-review-field-icon">
-                    {JUDGMENT_ICONS[review.perceivedLegitimacy]}
-                  </span>
-                )}
-                {review.perceivedLegitimacy ? JUDGMENT_LABELS[review.perceivedLegitimacy] : "—"}
-                {review.judgmentConfidenceRating != null && (
-                  <span className="email-review-sub">
-                    {" "}
-                    ({ratingLabel(CONFIDENCE_LABELS, review.judgmentConfidenceRating)})
-                  </span>
-                )}
-              </div>
+      {/* Hidden on screen (see .email-review-print-all in page.css) - only
+          shown for PDF export / native print, which capture whatever's in
+          the DOM at that moment. The slideshow above only ever mounts one
+          review at a time, so without this every export would only ever
+          contain whichever single email happened to be on screen. */}
+      <div className="email-review-print-all">
+        {emailReviews.map((r, i) => (
+          <div className="email-review-print-item" key={r.emailId}>
+            <div className="email-review-print-item-label">
+              Email {i + 1} of {emailReviews.length}
             </div>
-            <div className="email-review-field">
-              <div className="email-review-field-label">Your action</div>
-              <div className="email-review-field-value email-review-field-value-icon">
-                <span className="email-review-field-icon">{ACTION_ICONS[review.actionTaken]}</span>
-                {ACTION_LABELS[review.actionTaken] ?? review.actionTaken}
-                {review.confidenceRating != null && (
-                  <span className="email-review-sub">
-                    {" "}
-                    ({ratingLabel(CONFIDENCE_LABELS, review.confidenceRating)})
-                  </span>
-                )}
-              </div>
-            </div>
+            <ReviewColumns review={r} cueOptions={cueOptions} actionReasonOptions={actionReasonOptions} />
           </div>
-
-          <div className="email-review-field">
-            <div className="email-review-field-label">Signals you noticed</div>
-            {signals.length > 0 ? (
-              <ul className="email-review-reason-list email-review-reason-list-2col">
-                {signals.map((signal) => (
-                  <li key={signal}>{signal}</li>
-                ))}
-              </ul>
-            ) : (
-              <div className="email-review-field-value">None selected</div>
-            )}
-          </div>
-
-          <div className="email-review-field">
-            <div className="email-review-field-label">Why you chose that response</div>
-            {reasons.length > 0 ? (
-              <ul className="email-review-reason-list">
-                {reasons.map((reason) => (
-                  <li key={reason}>{reason}</li>
-                ))}
-              </ul>
-            ) : (
-              <div className="email-review-field-value">None selected</div>
-            )}
-          </div>
-        </div>
-
-        <div className="email-review-picture">
-          <div className="email-review-mailview">
-            <div className="reading-content">
-              <div className="reading-subject">{review.subject}</div>
-              <div className="reading-sender-row">
-                <div className="reading-sender-left">
-                  <div
-                    className="reading-sender-avatar"
-                    style={{ background: avatarColor(review.sender) }}
-                  >
-                    {initials(review.sender)}
-                  </div>
-                  <div>
-                    <div className="reading-sender-name">{senderName(review.sender)}</div>
-                    <div className="reading-sender-meta">{review.sender}</div>
-                  </div>
-                </div>
-                <div className="reading-received-col">
-                  <div className={`email-stamp ${review.isPhishing ? "phishing" : "legit"}`}>
-                    {review.isPhishing ? "Phishing" : "Legitimate"}
-                  </div>
-                  {review.receivedAt != null && (
-                    <div className="reading-received-time">
-                      {formatReceivedTime(review.receivedAt)}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {review.attachment && (
-                <div className="reading-attachment-top">
-                  <span className="reading-attachment">
-                    <span
-                      className="reading-attachment-icon"
-                      style={{ background: attachmentVisual(review.attachment).color }}
-                    >
-                      {attachmentVisual(review.attachment).icon}
-                    </span>
-                    <span className="reading-attachment-name">{review.attachment}</span>
-                  </span>
-                </div>
-              )}
-
-              <div className="reading-body" dangerouslySetInnerHTML={{ __html: review.body }} />
-
-              {review.link && !review.body.includes("data-tracked-link") && (
-                <p>
-                  <span className="reading-link">{review.link}</span>
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
