@@ -193,6 +193,14 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+.report-print-button:disabled,
+.report-print-button:disabled:hover {
+  cursor: default;
+  opacity: 0.5;
+  background: #fff;
+  border-color: var(--card-border);
+  color: var(--text-primary);
+}
 
 /* self-efficacy sliders */
 .self-efficacy-item {
@@ -1036,6 +1044,25 @@
 }
 .email-review-reason-list-2col li {
   margin-bottom: 0;
+}
+
+/* Mirrors the unclipping rules in the @media print block below, but as a
+   toggleable class instead of a media query - applied for one synchronous
+   instant before exporting the report to PDF, purely so JS can read the
+   card's true full-content height (scrollHeight stays capped to the
+   visible/clipped box otherwise) to size the PDF page to fit in one page.
+   Removed again immediately after that measurement; never left applied
+   during normal on-screen viewing. */
+.pdf-measuring.page-shell-flush,
+.pdf-measuring.page-shell-flush .page-card {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+.pdf-measuring .report-scroll,
+.pdf-measuring .email-review-picture {
+  max-height: none !important;
+  overflow: visible !important;
 }
 
 /* Printing/exporting the report: hide interactive-only chrome and let the

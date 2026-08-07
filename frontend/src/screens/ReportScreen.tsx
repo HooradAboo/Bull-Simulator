@@ -406,12 +406,45 @@ function scoreLabel(totalScore: number, maxPossibleScore: number): string {
   return "Needs improvement";
 }
 
+const PX_PER_INCH = 96;
+// Padding for anything the height measurement doesn't perfectly account for
+// (font metrics, the small amount trimmed by hiding the print button/
+// titlebar) - a little unused space at the bottom of the PDF is harmless,
+// unlike being a little short and clipping content.
+const PDF_HEIGHT_SAFETY_MARGIN_INCHES = 0.5;
+
 export function ReportScreen({ participantId }: Props) {
   const [report, setReport] = useState<PerformanceReport | null>(null);
+  const [exportingPdf, setExportingPdf] = useState(false);
 
   useEffect(() => {
     getPerformanceReport(participantId).then(setReport);
   }, [participantId]);
+
+  const handleExportPdf = async () => {
+    // Only one PageTemplate is ever mounted at a time (App.tsx renders
+    // exactly one screen conditionally), so this is safe without needing
+    // PageTemplate to forward a ref just for this one caller.
+    const shell = document.querySelector(".page-shell");
+    const card = document.querySelector(".page-card");
+    if (!shell || !card) return;
+
+    setExportingPdf(true);
+    // Add + measure + remove all happen synchronously (before the browser
+    // gets a chance to paint), so the temporarily-unclipped layout is never
+    // actually visible on screen.
+    shell.classList.add("pdf-measuring");
+    const heightPx = card.scrollHeight;
+    shell.classList.remove("pdf-measuring");
+
+    const heightInches = heightPx / PX_PER_INCH + PDF_HEIGHT_SAFETY_MARGIN_INCHES;
+    const result = await window.electronAPI.exportReportPdf(heightInches);
+    setExportingPdf(false);
+
+    if (!result.success && !result.canceled) {
+      alert(`Couldn't save the PDF${result.error ? `: ${result.error}` : "."}`);
+    }
+  };
 
   return (
     <PageTemplate
@@ -423,9 +456,10 @@ export function ReportScreen({ participantId }: Props) {
           <button
             type="button"
             className="report-print-button"
-            onClick={() => window.print()}
-            title="Print / Save as PDF"
-            aria-label="Print / Save as PDF"
+            onClick={handleExportPdf}
+            disabled={exportingPdf}
+            title={exportingPdf ? "Saving PDF..." : "Save as PDF"}
+            aria-label={exportingPdf ? "Saving PDF" : "Save as PDF"}
           >
             <Print20Regular />
           </button>

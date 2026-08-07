@@ -12,4 +12,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("window:maximized-changed", listener);
     return () => ipcRenderer.removeListener("window:maximized-changed", listener);
   },
+  exportReportPdf: (heightInches) => ipcRenderer.invoke("report:export-pdf", { heightInches }),
 });
