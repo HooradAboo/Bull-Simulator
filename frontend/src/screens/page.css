@@ -418,12 +418,30 @@
 .action-chart-swatch.phishing {
   background: var(--oversold);
 }
+/* --action-chart-height is the fixed bar area (from the border-bottom
+   "x-axis" line up) shared by the row and each bar-pair below - keeping it
+   in one place so both stay in sync. */
 .action-chart-bars-row {
+  --action-chart-height: 150px;
   display: flex;
-  align-items: flex-end;
+  /* Top-align each group instead of bottom-aligning it: bar-pair is a
+     fixed, protected height (see below) that always starts flush with the
+     row's top, so its bottom edge always lands exactly at the
+     border-bottom "x-axis" line regardless of how tall the label under it
+     is. Bottom-aligning here would instead align each group's overall
+     box - bars *and* label together - which is what let a two-line label
+     push the bars themselves upward. */
+  align-items: flex-start;
   gap: 1.25rem;
-  height: 150px;
+  height: var(--action-chart-height);
   border-bottom: 1px solid var(--card-border);
+  /* Labels aren't clipped, so a two-line one visually extends past this
+     row's own (fixed, bar-only) height - reserve real flow space below it
+     so the surrounding .report-section actually grows to contain that
+     overflow instead of the text poking out past the card's padding/
+     border. Sized for the worst case (two lines + the label's own
+     margin-top), not the common one-line case. */
+  margin-bottom: 40px;
 }
 .action-chart-group {
   display: flex;
@@ -431,14 +449,17 @@
   align-items: center;
   flex: 1;
   min-width: 0;
-  height: 100%;
-  justify-content: flex-end;
 }
 .action-chart-bar-pair {
   display: flex;
   align-items: flex-end;
   gap: 4px;
-  height: 100%;
+  /* Fixed and unshrinkable - without flex-shrink: 0, a height:100% flex
+     item competes for space with its flex column sibling (the label) once
+     their combined height exceeds the group's box, so a two-line label
+     would compress this instead of just extending past it. */
+  height: var(--action-chart-height);
+  flex-shrink: 0;
   width: 100%;
   justify-content: center;
 }
