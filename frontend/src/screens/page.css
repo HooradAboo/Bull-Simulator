@@ -166,8 +166,16 @@
   cursor: not-allowed;
 }
 .page-button-secondary {
+  appearance: none;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 11px 22px;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease;
   background: transparent;
-  color: var(--text-primary);
+  color: var(--text-muted);
   border: 1px solid var(--card-border);
 }
 .page-button-secondary:hover:not(:disabled) {
