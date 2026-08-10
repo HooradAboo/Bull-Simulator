@@ -2,9 +2,10 @@ import { PageTemplate } from "./PageTemplate";
 
 interface Props {
   onBegin: () => void;
+  onSkipPractice: () => void;
 }
 
-export function InstructionsScreen({ onBegin }: Props) {
+export function InstructionsScreen({ onBegin, onSkipPractice }: Props) {
   return (
     <PageTemplate title="Instructions">
       <p className="body">
@@ -16,6 +17,9 @@ export function InstructionsScreen({ onBegin }: Props) {
       <div className="page-actions">
         <button className="page-button" onClick={onBegin}>
           Start Practice Round
+        </button>
+        <button className="page-button-secondary" onClick={onSkipPractice}>
+          Skip Practice
         </button>
       </div>
     </PageTemplate>

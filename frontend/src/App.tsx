@@ -194,7 +194,10 @@ function App() {
         />
       )}
       {screen === "instructions" && (
-        <InstructionsScreen onBegin={() => setScreen("tutorial")} />
+        <InstructionsScreen
+          onBegin={() => setScreen("tutorial")}
+          onSkipPractice={() => setScreen("task-start")}
+        />
       )}
       {screen === "task-start" && <TaskStartScreen onBegin={handleBegin} />}
       {screen === "self-efficacy-post" && (
