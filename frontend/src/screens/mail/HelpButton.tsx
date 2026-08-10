@@ -13,12 +13,12 @@ import {
   ShieldError20Regular,
 } from "@fluentui/react-icons";
 
-const TOPICS = [
-  { key: "tasks", label: "Task Definitions" },
-  { key: "howto", label: "What You'll Do" },
-] as const;
-
-type TopicKey = (typeof TOPICS)[number]["key"];
+const SUMMARY_STEPS: { term: string; description: string }[] = [
+  { term: "Read", description: "the email." },
+  { term: "Decide", description: "whether you trust it or find it suspicious." },
+  { term: "Act", description: "with whichever response fits, from the actions below." },
+  { term: "Answer", description: "a few short questions about your call." },
+];
 
 const ACTION_DEFINITIONS: { term: string; icon: ReactNode; definition: string }[] = [
   { term: "Reply", icon: <ArrowReply20Regular />, definition: "Send a response back to the sender." },
@@ -54,7 +54,6 @@ const ACTION_DEFINITIONS: { term: string; icon: ReactNode; definition: string }[
 
 export function HelpButton() {
   const [open, setOpen] = useState(false);
-  const [topic, setTopic] = useState<TopicKey>("tasks");
 
   return (
     <>
@@ -68,50 +67,32 @@ export function HelpButton() {
 
       {open && (
         <div className="help-popup">
-          <div className="help-popup-tabs">
-            {TOPICS.map((t) => (
-              <button
-                key={t.key}
-                className={`help-tab${topic === t.key ? " active" : ""}`}
-                onClick={() => setTopic(t.key)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-
           <div className="help-popup-body">
-            {topic === "tasks" && (
-              <dl className="help-definitions">
-                {ACTION_DEFINITIONS.map((item) => (
-                  <div key={item.term} className="help-definition-row">
-                    <dt>
-                      <span className="help-definition-icon" aria-hidden="true">
-                        {item.icon}
-                      </span>
-                      {item.term}
-                    </dt>
-                    <dd>{item.definition}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
+            <div className="help-section-heading">What You'll Do</div>
+            <div className="help-summary">
+              {SUMMARY_STEPS.map((step) => (
+                <div key={step.term} className="help-summary-step">
+                  <strong>{step.term}</strong> {step.description}
+                </div>
+              ))}
+            </div>
 
-            {topic === "howto" && (
-              <ol className="help-steps">
-                <li>
-                  <strong>Read</strong> the email.
-                </li>
-                <li>
-                  <strong>Choose an action</strong> for it from the ribbon above.
-                </li>
-                <li>
-                  <strong>Answer a few short questions</strong> about your decision - whether you
-                  trust the email, how confident you are, what stood out to you, and how difficult
-                  it was.
-                </li>
-              </ol>
-            )}
+            <div className="help-divider" />
+            <div className="help-section-heading">Actions</div>
+
+            <dl className="help-definitions">
+              {ACTION_DEFINITIONS.map((item) => (
+                <div key={item.term} className="help-definition-row">
+                  <dt>
+                    <span className="help-definition-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                    {item.term}
+                  </dt>
+                  <dd>{item.definition}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       )}

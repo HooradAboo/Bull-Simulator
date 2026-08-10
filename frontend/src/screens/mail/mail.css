@@ -1204,7 +1204,7 @@
   box-sizing: border-box;
   width: 340px;
   max-width: calc(100vw - 40px);
-  height: 400px;
+  height: 460px;
   max-height: 70vh;
   background: #fff;
   border: 1px solid var(--border);
@@ -1214,30 +1214,6 @@
   flex-direction: column;
   overflow: hidden;
 }
-.help-popup-tabs {
-  display: flex;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border);
-  background: #fff;
-}
-.help-tab {
-  flex: 1;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 10px 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-.help-tab:hover {
-  background: var(--hover);
-}
-.help-tab.active {
-  color: var(--usf-green);
-  border-bottom-color: var(--usf-green);
-}
 .help-popup-body {
   flex: 1;
   min-height: 0;
@@ -1245,6 +1221,30 @@
   padding: 14px 16px;
   font-size: 12.5px;
   color: var(--text);
+}
+.help-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.help-summary-step {
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.help-summary-step strong {
+  color: var(--text);
+}
+.help-divider {
+  border-top: 1px solid var(--border);
+  margin: 14px 0 12px;
+}
+.help-section-heading {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
 }
 .help-definitions {
   margin: 0;

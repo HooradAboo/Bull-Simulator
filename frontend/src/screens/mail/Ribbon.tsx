@@ -11,7 +11,7 @@ import {
   MailAdd20Regular,
   MailRead20Regular,
   PeopleTeam20Regular,
-  ShieldCheckmark20Regular,
+  SearchShield20Regular,
   ShieldError20Regular,
 } from "@fluentui/react-icons";
 import type { ActionType } from "../../types";
@@ -151,7 +151,7 @@ export function Ribbon({
 
       <div className="ribbon-divider" />
 
-      {actionButton("verify_independently", <ShieldCheckmark20Regular />, "Verify")}
+      {actionButton("verify_independently", <SearchShield20Regular />, "Verify")}
 
       {tooltip && (
         <div className="ribbon-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
