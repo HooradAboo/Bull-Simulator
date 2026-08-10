@@ -1032,6 +1032,8 @@ export function TutorialScreen({ onFinish }: Props) {
           steps={TOUR_STEPS}
           index={tourIndex}
           onIndexChange={setTourIndex}
+          stepLabelPrefix="Introduction"
+          skipLabel="Skip to Practice"
           onFinish={() => {
             setTourActive(false);
             setGuidedActive(true);
@@ -1066,6 +1068,9 @@ export function TutorialScreen({ onFinish }: Props) {
           index={closingTourIndex}
           onIndexChange={setClosingTourIndex}
           onFinish={() => setClosingTourActive(false)}
+          hideSkip
+          hideStepCounter
+          finishLabel="OK"
         />
       )}
     </div>

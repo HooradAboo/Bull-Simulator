@@ -23,6 +23,22 @@ interface Props {
   index: number;
   onIndexChange: (index: number) => void;
   onFinish: () => void;
+  // Omits the "Skip" button - used for the closing tour, whose one step
+  // *is* free practice, so a button to skip to it there would be
+  // redundant/confusing.
+  hideSkip?: boolean;
+  // Text for the skip button/link, shown instead of "Skip" - name it after
+  // wherever skipping actually lands the participant.
+  skipLabel?: string;
+  // Omits the "Step X of Y" counter - meaningless (and was showing "Step 1
+  // of 1") for a single-step tour like the closing one.
+  hideStepCounter?: boolean;
+  // Prefixes the step counter, e.g. "Introduction: Step 1 of 22" - lets a
+  // multi-phase flow (tour -> guided practice -> free practice) make clear
+  // which phase this particular step counter belongs to.
+  stepLabelPrefix?: string;
+  // Label for the final step's primary button, shown instead of "Done".
+  finishLabel?: string;
 }
 
 export function useTargetRects(selectors: string[], key: string): DOMRect[] {
@@ -60,7 +76,17 @@ const CAPTION_WIDTH = 320;
 const CAPTION_MARGIN = 12;
 const HIGHLIGHT_PAD = 8;
 
-export function TutorialSpotlight({ steps, index, onIndexChange, onFinish }: Props) {
+export function TutorialSpotlight({
+  steps,
+  index,
+  onIndexChange,
+  onFinish,
+  hideSkip,
+  skipLabel = "Skip",
+  hideStepCounter,
+  stepLabelPrefix,
+  finishLabel = "Done",
+}: Props) {
   const step = steps[index];
 
   const selectors = !step.targetSelector
@@ -147,15 +173,19 @@ export function TutorialSpotlight({ steps, index, onIndexChange, onFinish }: Pro
             : { top: "40%" }),
         }}
       >
-        <div className="tutorial-caption-step">
-          Step {index + 1} of {steps.length}
-        </div>
+        {!hideStepCounter && (
+          <div className="tutorial-caption-step">
+            {stepLabelPrefix ? `${stepLabelPrefix}: ` : ""}Step {index + 1} of {steps.length}
+          </div>
+        )}
         <div className="tutorial-caption-title">{step.title}</div>
         <div className="tutorial-caption-desc">{step.description}</div>
-        <div className="tutorial-caption-actions">
-          <button type="button" className="tutorial-btn-secondary" onClick={onFinish}>
-            Skip
-          </button>
+        <div className={`tutorial-caption-actions${hideSkip ? " no-skip" : ""}`}>
+          {!hideSkip && (
+            <button type="button" className="guided-skip-link" onClick={onFinish}>
+              {skipLabel}
+            </button>
+          )}
           <div className="tutorial-caption-nav">
             {!isFirst && (
               <button type="button" className="tutorial-btn-secondary" onClick={goBack}>
@@ -163,7 +193,7 @@ export function TutorialSpotlight({ steps, index, onIndexChange, onFinish }: Pro
               </button>
             )}
             <button type="button" className="tutorial-btn-primary" onClick={goNext}>
-              {isLast ? "Done" : "Next"}
+              {isLast ? finishLabel : "Next"}
             </button>
           </div>
         </div>

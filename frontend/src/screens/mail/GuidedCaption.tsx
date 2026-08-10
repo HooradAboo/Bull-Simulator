@@ -48,7 +48,7 @@ export function GuidedCaption({
         <div className="tutorial-caption-desc">{description}</div>
         <div className="tutorial-caption-actions">
           <button type="button" className="guided-skip-link" onClick={onSkip}>
-            Skip
+            Skip to Free Practice
           </button>
           {onContinue && (
             <button type="button" className="tutorial-btn-primary" onClick={onContinue}>
@@ -132,7 +132,7 @@ export function GuidedCaption({
         <div className="tutorial-caption-desc">{description}</div>
         <div className="tutorial-caption-actions">
           <button type="button" className="guided-skip-link" onClick={onSkip}>
-            Skip
+            Skip to Free Practice
           </button>
         </div>
       </div>
