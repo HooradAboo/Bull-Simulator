@@ -1,60 +1,50 @@
 {
+  "ignore": [
+    { "key": "no_other_action_needed", "label": "No other action was needed" },
+    { "key": "deal_later", "label": "I wanted to deal with it later" },
+    { "key": "keep_for_reference", "label": "Keep it for reference but no need to act" },
+    { "key": "reduce_unread_count", "label": "Reduce the unread count" },
+    { "key": "unsure_what_to_do", "label": "Wasn't sure what to do with it" },
+    { "key": "other", "label": "Something else" }
+  ],
   "delete": [
-    { "key": "unfamiliar_sender", "label": "The sender looked unfamiliar or suspicious" },
-    { "key": "seemed_spam", "label": "It seemed like spam or irrelevant" },
-    { "key": "didnt_want_to_risk_it", "label": "I didn't want to risk interacting with it" },
-    { "key": "urgent_pressure", "label": "It used urgent or pressuring language" },
-    { "key": "wording_off", "label": "Something about the wording/formatting felt off" },
+    { "key": "no_longer_needed", "label": "No longer needed" },
+    { "key": "declutter_after_reading", "label": "To declutter after reading" },
+    { "key": "seemed_junk", "label": "It seemed junk or irrelevant" },
+    { "key": "unfamiliar_sender", "label": "The sender looked unfamiliar" },
     { "key": "other", "label": "Something else" }
   ],
   "report_phishing": [
-    { "key": "confident_phishing", "label": "I was confident it was a phishing attempt" },
-    { "key": "asked_for_info", "label": "It asked for personal or account information" },
-    { "key": "urgent_pressure", "label": "It used urgent or pressuring language" },
-    { "key": "protect_others", "label": "I wanted to alert IT/security to protect others" },
-    { "key": "spoofed_address", "label": "The sender or link address looked spoofed" },
+    { "key": "seemed_suspicious", "label": "It seemed suspicious" },
     { "key": "other", "label": "Something else" }
   ],
   "reply": [
-    { "key": "trusted_sender", "label": "I recognized and trusted the sender" },
-    { "key": "reasonable_request", "label": "The request seemed reasonable and routine" },
-    { "key": "needed_to_respond", "label": "I needed to respond to their question/request" },
-    { "key": "urgent_address_quickly", "label": "It seemed urgent and I wanted to address it quickly" },
+    { "key": "to_respond", "label": "To respond" },
+    { "key": "to_follow_up", "label": "To follow up" },
     { "key": "other", "label": "Something else" }
   ],
   "forward": [
-    { "key": "wanted_review", "label": "I wanted a colleague or IT to review it" },
-    { "key": "relevant_to_someone_else", "label": "It seemed relevant to someone else" },
-    { "key": "wanted_second_opinion", "label": "I wanted a second opinion before acting" },
-    { "key": "legit_worth_sharing", "label": "It seemed legitimate and worth sharing" },
+    { "key": "share_information", "label": "To share information" },
+    { "key": "ask_a_question", "label": "To ask a question" },
+    { "key": "relevant_to_recipient", "label": "It seemed relevant to the recipient" },
+    { "key": "worth_sharing", "label": "It's worth sharing" },
     { "key": "other", "label": "Something else" }
   ],
   "click_link": [
-    { "key": "trusted_sender", "label": "I recognized and trusted the sender" },
-    { "key": "curious_where_it_led", "label": "I wanted to see where the link led" },
-    { "key": "relevant_link", "label": "The link seemed relevant to my work/life" },
-    { "key": "needed_access", "label": "I needed to access whatever it linked to" },
+    { "key": "see_where_it_led", "label": "I wanted to see where the link led" },
+    { "key": "need_to_access_it", "label": "I need to access whatever it linked to" },
+    { "key": "it_was_requested", "label": "It was requested" },
     { "key": "other", "label": "Something else" }
   ],
   "open_attachment": [
-    { "key": "trusted_sender", "label": "I recognized and trusted the sender" },
-    { "key": "expecting_attachment", "label": "I was expecting this attachment" },
+    { "key": "see_what_it_contained", "label": "I wanted to see what it contained" },
     { "key": "needed_file_info", "label": "I needed the information in the file" },
-    { "key": "curious_contents", "label": "I wanted to see what it contained" },
-    { "key": "other", "label": "Something else" }
-  ],
-  "ignore": [
-    { "key": "unsure", "label": "I wasn't sure what to do about it" },
-    { "key": "not_urgent", "label": "It didn't seem urgent" },
-    { "key": "deal_later", "label": "I wanted to deal with it later" },
-    { "key": "legit_no_response", "label": "It seemed legitimate but didn't require a response" },
+    { "key": "it_was_requested", "label": "It was requested" },
     { "key": "other", "label": "Something else" }
   ],
   "verify_independently": [
-    { "key": "not_sure_legit", "label": "I wasn't sure if it was legitimate" },
-    { "key": "confirm_first", "label": "I wanted to confirm before taking any action" },
-    { "key": "somewhat_suspicious", "label": "Something about it seemed suspicious but not definitively" },
-    { "key": "habit_check", "label": "It's my habit to check before responding to this kind of request" },
+    { "key": "verify_sender_identity", "label": "To verify the sender's identity" },
+    { "key": "check_before_acting", "label": "To check before taking action" },
     { "key": "other", "label": "Something else" }
   ]
 }
