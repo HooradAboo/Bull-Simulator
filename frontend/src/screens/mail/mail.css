@@ -885,11 +885,15 @@
 
 .cue-options {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  /* minmax(0, 1fr) rather than plain 1fr - otherwise a column's minimum
+     width follows its content's natural size, and the "Something else"
+     text input's default intrinsic width would stop that column (and the
+     whole grid) from staying evenly split once it appears. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 8px 8px;
 }
 .cue-options.cue-options-single-column {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 .cue-option {
   display: flex;
@@ -906,8 +910,9 @@
   flex: 1;
   min-width: 0;
   box-sizing: border-box;
-  padding: 2px 4px;
-  font-size: 13px;
+  padding: 1px 2px;
+  font-size: 12px;
+  line-height: 1.2;
   font-family: inherit;
   color: var(--text);
   border: none;
