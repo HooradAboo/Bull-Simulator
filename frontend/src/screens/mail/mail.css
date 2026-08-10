@@ -713,9 +713,9 @@
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 22px;
-  width: 580px;
+  width: 520px;
   max-width: 90vw;
-  height: 362px;
+  height: 330px;
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
@@ -886,7 +886,7 @@
 .cue-options {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px 12px;
+  gap: 8px 8px;
 }
 .cue-options.cue-options-single-column {
   grid-template-columns: 1fr;
