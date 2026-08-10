@@ -1,3 +1,8 @@
+// Self-contained so this can be reused from screens outside the mail
+// feature (e.g. Instructions' "Skip Practice") without them needing to
+// know it depends on mail.css for .modal-backdrop/.confirm-action-box.
+import "./mail.css";
+
 interface Props {
   title: string;
   body: string;
