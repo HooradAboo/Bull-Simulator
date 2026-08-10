@@ -134,7 +134,7 @@ function ReviewColumns({ review, cueOptions, actionReasonOptions }: ReviewColumn
 
         <div className="email-review-grid">
           <div className="email-review-field">
-            <div className="email-review-field-label">Your judgment</div>
+            <div className="email-review-field-label">Your decision</div>
             <div className="email-review-field-value email-review-field-value-icon">
               {review.perceivedLegitimacy && (
                 <span className="email-review-field-icon">

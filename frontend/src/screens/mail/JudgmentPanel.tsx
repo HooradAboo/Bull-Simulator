@@ -49,14 +49,14 @@ export function JudgmentPanel({
         {perceivedLegitimacy && (
           <div className="judgment-panel-done-row">
             <CheckmarkCircle20Filled />
-            You said: <strong>{LEGITIMACY_LABELS[perceivedLegitimacy]}</strong>
+            Your decision: <strong>{LEGITIMACY_LABELS[perceivedLegitimacy]}</strong>
             {confidenceLabel ? <> ({confidenceLabel})</> : null}
           </div>
         )}
         {processedInfo && actionLabel && (
           <div className="judgment-panel-done-row">
             <CheckmarkCircle20Filled />
-            You responded: <strong>{actionLabel}</strong>
+            Your action: <strong>{actionLabel}</strong>
             {processedInfo.recipient ? <> to {processedInfo.recipient}</> : null}
             {actionConfidenceLabel ? <> ({actionConfidenceLabel})</> : null}
           </div>
