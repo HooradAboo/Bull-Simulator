@@ -1275,16 +1275,11 @@
   color: var(--text-muted);
   line-height: 1.45;
 }
-.help-steps {
+.help-note {
   margin: 0;
-  padding-left: 18px;
-  line-height: 1.6;
-}
-.help-steps li {
-  margin-bottom: 10px;
-}
-.help-steps li:last-child {
-  margin-bottom: 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
 }
 
 /* Mimics a real browser's link-preview status bar, shown while hovering a

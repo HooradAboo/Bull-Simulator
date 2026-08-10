@@ -21,34 +21,34 @@ const SUMMARY_STEPS: { term: string; description: string }[] = [
 ];
 
 const ACTION_DEFINITIONS: { term: string; icon: ReactNode; definition: string }[] = [
-  { term: "Reply", icon: <ArrowReply20Regular />, definition: "Send a response back to the sender." },
   {
-    term: "Forward",
-    icon: <ArrowForward20Regular />,
-    definition: "Send the email on to someone else, such as IT.",
+    term: "Open an attachment",
+    icon: <Attach20Regular />,
+    definition: "Download or open a file attached to the email.",
+  },
+  { term: "Click a link", icon: <Link20Regular />, definition: "Open a link included in the email." },
+  {
+    term: "Verify Independently",
+    icon: <SearchShield20Regular />,
+    definition:
+      "Confirm you'd check the sender or claim through a separate, trusted channel (e.g. calling the company or visiting their official site) rather than relying on anything in the email.",
   },
   {
     term: "Report as Phishing",
     icon: <ShieldError20Regular />,
     definition: "Flag the email as a phishing attempt. It moves to Junk Email.",
   },
-  { term: "Delete", icon: <Delete20Regular />, definition: "Remove the email from your inbox." },
   {
     term: "Mark as read",
     icon: <MailRead20Regular />,
     definition: "Leave the email as-is without taking any other action.",
   },
-  { term: "Click a link", icon: <Link20Regular />, definition: "Open a link included in the email." },
+  { term: "Delete", icon: <Delete20Regular />, definition: "Remove the email from your inbox." },
+  { term: "Reply", icon: <ArrowReply20Regular />, definition: "Send a response back to the sender." },
   {
-    term: "Open an attachment",
-    icon: <Attach20Regular />,
-    definition: "Download or open a file attached to the email.",
-  },
-  {
-    term: "Verify Independently",
-    icon: <SearchShield20Regular />,
-    definition:
-      "Confirm you'd check the sender or claim through a separate, trusted channel (e.g. calling the company or visiting their official site) rather than relying on anything in the email.",
+    term: "Forward",
+    icon: <ArrowForward20Regular />,
+    definition: "Send the email on to someone else, such as IT.",
   },
 ];
 
@@ -61,6 +61,7 @@ export function HelpButton() {
         className="help-fab"
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close help" : "Open help"}
+        title={open ? "Close help" : "Help"}
       >
         {open ? <Dismiss20Regular /> : <QuestionCircle24Filled />}
       </button>
@@ -93,6 +94,13 @@ export function HelpButton() {
                 </div>
               ))}
             </dl>
+
+            <div className="help-divider" />
+            <p className="help-note">
+              A few other toolbar buttons (Archive, Reply All, Move To, Sweep, Share to Teams,
+              Quick Steps) stay greyed out no matter what. They aren't part of this study, so
+              they're switched off. Stick to the actions above.
+            </p>
           </div>
         </div>
       )}
