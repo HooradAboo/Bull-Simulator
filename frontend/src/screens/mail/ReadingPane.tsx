@@ -330,6 +330,14 @@ export function ReadingPane({
             const target = (e.target as HTMLElement).closest("[data-tracked-link]");
             if (target) {
               e.preventDefault();
+              // A click is itself a clear enough signal to stop showing the
+              // hover preview - the modal that pops up next covers the link
+              // without the cursor actually moving, so the browser never
+              // fires a real mouseout and onMouseOut below would otherwise
+              // never run, leaving the tooltip stuck on screen forever.
+              onLinkHoverEnd();
+              setHoveredLinkUrl(null);
+              setLinkHoverPos(null);
               if (!processedInfo) onLinkClick();
             }
           }}
@@ -359,6 +367,9 @@ export function ReadingPane({
               data-tour="click_link"
               onClick={(e) => {
                 e.preventDefault();
+                onLinkHoverEnd();
+                setHoveredLinkUrl(null);
+                setLinkHoverPos(null);
                 if (!processedInfo) onLinkClick();
               }}
               onMouseEnter={(e) => {

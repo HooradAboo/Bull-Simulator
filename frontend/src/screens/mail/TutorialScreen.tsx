@@ -353,7 +353,7 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
     stepLabel: "Email 1 of 2",
     title: "Click on the Email",
     description:
-      "Open the email below and answer the trust or suspicious question. Since this is practice, there's no wrong answer, just try it out.",
+      "Open the email below.",
     targetSelector: `[data-email-id="${GUIDED_EMAIL_1}"]`,
   },
   "email1-judge-trust": {
