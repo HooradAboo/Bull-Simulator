@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { ResearcherSetupScreen } from "./screens/ResearcherSetupScreen";
-import { ConsentScreen } from "./screens/ConsentScreen";
+import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { SelfEfficacyScreen } from "./screens/SelfEfficacyScreen";
 import { InstructionsScreen } from "./screens/InstructionsScreen";
 import { TaskStartScreen } from "./screens/TaskStartScreen";
@@ -30,7 +30,7 @@ function sortByReceivedDesc(emails: DummyEmail[]): DummyEmail[] {
 
 type Screen =
   | "researcher-setup"
-  | "consent"
+  | "welcome"
   | "self-efficacy"
   | "instructions"
   | "tutorial"
@@ -177,13 +177,13 @@ function App() {
             setParticipantFirstName(firstName);
             setParticipantLastName(lastName);
             setParticipantNetid(netid);
-            setScreen("consent");
+            setScreen("welcome");
           }}
           onResume={handleResume}
         />
       )}
-      {screen === "consent" && (
-        <ConsentScreen onAccept={() => setScreen("self-efficacy")} />
+      {screen === "welcome" && (
+        <WelcomeScreen onContinue={() => setScreen("self-efficacy")} />
       )}
       {screen === "self-efficacy" && (
         <SelfEfficacyScreen

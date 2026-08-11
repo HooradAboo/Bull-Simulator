@@ -619,7 +619,7 @@ export function MailClientScreen({
           onClick={handleDevSkipAllEmails}
           disabled={devSkipRunning}
         >
-          {devSkipRunning ? "DEV: Working..." : "DEV: Skip Remaining Emails (random)"}
+          {devSkipRunning ? "DEV: Working..." : "DEV: Skip Remaining Emails"}
         </button>
       )}
       <HelpButton />
