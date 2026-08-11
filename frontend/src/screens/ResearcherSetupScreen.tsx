@@ -66,7 +66,9 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
     return (
       <PageTemplate
         title="In-Progress Session Found"
-        subtitle={`${profile.firstName} ${profile.lastName} (${profile.netid}) already has an unfinished session, with ${lookup.completedInteractions.length} email${lookup.completedInteractions.length === 1 ? "" : "s"} already processed. Resume where they left off, or start over from the beginning.`}
+        subtitle={`A session for ${profile.firstName} ${profile.lastName} (${profile.netid}) didn't complete properly. 
+        ${lookup.completedInteractions.length} email${lookup.completedInteractions.length === 1 ? "" : "s"} already 
+        processed. Resume where they left off, or start over from the beginning.`}
       >
         <div className="page-actions">
           <button className="page-button" onClick={() => onResume(lookup, profile)}>

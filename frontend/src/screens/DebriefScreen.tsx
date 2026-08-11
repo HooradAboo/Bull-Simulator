@@ -10,12 +10,12 @@ export function DebriefScreen({ onViewReport }: Props) {
   const [declined, setDeclined] = useState(false);
 
   return (
-    <PageTemplate
-      title="Debrief"
-      subtitle="[Placeholder debrief text.] Thank you for participating. The emails
-        you saw were part of a research study on phishing susceptibility."
-    >
-      <hr className="page-divider" />
+    <PageTemplate title="Thank You">
+      <p className="body">
+        Thanks for taking part. You worked through a simulated inbox, making decisions about
+        which emails to trust and how to act on them, while we recorded your responses and
+        confidence ratings along the way.
+      </p>
       {declined ? (
         <p className="body">Thanks again for participating. You're all done.</p>
       ) : (

@@ -8,8 +8,8 @@ export function TaskStartScreen({ onBegin }: Props) {
   return (
     <PageTemplate title="Ready to Begin">
       <p className="body">
-        Practice is over - the real task starts now. Nothing from here on is practice, so take
-        your time and treat each email as if it arrived in your own inbox.
+        From this point forward, everything you do is part of the study, there's no more practice.
+        Take your time. There's no timer pushing you.
       </p>
       <div className="page-actions">
         <button className="page-button" onClick={onBegin}>

@@ -11,12 +11,15 @@ export function InstructionsScreen({ onBegin, onSkipPractice }: Props) {
   const [confirmingSkip, setConfirmingSkip] = useState(false);
 
   return (
-    <PageTemplate title="Instructions">
+    <PageTemplate title="Quick Walkthrough">
       <p className="body">
-        [Placeholder instructions text.] You will see a simulated inbox.
-        Open each email, decide how you would respond, and rate how
-        confident you are in that response. Treat each email as if it
-        arrived in your own inbox.
+        Before you start, we'll walk you through everything: how the inbox is laid out, 
+        what actions you can take on an email, and how the decision and confidence steps 
+        work. By the end, you'll know exactly what to do once the real task begins.
+      </p>
+      <p className="body">
+        After the walkthrough, you'll have a chance to practice on a few emails. You can 
+        skip the practice if you feel confident, but we recommend going through it first.
       </p>
       <div className="page-actions">
         <button className="page-button" onClick={onBegin}>
