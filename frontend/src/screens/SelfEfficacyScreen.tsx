@@ -44,7 +44,7 @@ export function SelfEfficacyScreen({
   const handleDevRandomContinue = () => {
     const complete: Record<string, number> = {};
     for (const s of statements) {
-      complete[s.key] = Math.floor(Math.random() * 101);
+      complete[s.key] = Math.floor(Math.random() * 11) * 10;
     }
     onContinue(complete as unknown as SelfEfficacyRatings);
   };
@@ -71,6 +71,7 @@ export function SelfEfficacyScreen({
                 type="range"
                 min={0}
                 max={100}
+                step={10}
                 value={ratings[statement.key] ?? DEFAULT_RATING}
                 onChange={(e) =>
                   setRatings((prev) => ({

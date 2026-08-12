@@ -99,7 +99,9 @@
       "Bash(python -c ' *)",
       "Bash(kill 1140160)",
       "Bash(nohup .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000)",
-      "Bash(kill 1184643)"
+      "Bash(kill 1184643)",
+      "Bash(nohup google-chrome --headless=new --remote-debugging-port=9335 --user-data-dir=/tmp/claude-1001/-home-ciber-Desktop-Simulation/d728bb98-cd21-4d80-9d0e-fa49a3181c4c/scratchpad/chrome-selfeff --window-size=1400,1000 --no-sandbox about:blank)",
+      "Bash(nohup google-chrome --headless=new --remote-debugging-port=9336 --user-data-dir=/tmp/claude-1001/-home-ciber-Desktop-Simulation/d728bb98-cd21-4d80-9d0e-fa49a3181c4c/scratchpad/chrome-selfeff2 --window-size=1400,1000 --no-sandbox about:blank)"
     ]
   }
 }
