@@ -203,7 +203,7 @@ function App() {
       {screen === "self-efficacy-post" && (
         <SelfEfficacyScreen
           heading="Rate Your Confidence, Revisited"
-          description="Now that you've completed the task, rate your confidence again in your ability to complete the following cybersecurity tasks."
+          description="Now that you've completed the task, rate your confidence again using the same scale. 0 means you cannot do it at all, 50 means you are moderately certain you can do it, and 100 means you are highly certain you can do it. As before, there are no right or wrong answers."
           continueLabel="Finish"
           onContinue={async (ratings) => {
             await submitPostSelfEfficacy(participantId, ratings);

@@ -42,6 +42,9 @@
 .page-shell-wide .page-card {
   max-width: 980px;
 }
+.page-shell-wide .page-subtitle {
+  max-width: 100%;
+}
 
 .page-title {
   font-size: 26px;

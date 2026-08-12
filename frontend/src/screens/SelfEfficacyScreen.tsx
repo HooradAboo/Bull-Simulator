@@ -15,7 +15,7 @@ const DEFAULT_RATING = 50;
 export function SelfEfficacyScreen({
   onContinue,
   heading = "Rate Your Confidence",
-  description = "For each statement below, rate your confidence in your ability to complete the following cybersecurity tasks.",
+  description = "The statements below describe things people sometimes do when handling email. For each one, rate how certain you are that you could do it right now, using the scale from 0 to 100. 0 means you cannot do it at all, 50 means you are moderately certain you can do it, and 100 means you are highly certain you can do it. There are no right or wrong answers. Respond based on what you believe you can do now, not on what you think you should be able to do.",
   continueLabel = "Continue",
 }: Props) {
   const [statements, setStatements] = useState<{ key: string; text: string }[]>([]);
