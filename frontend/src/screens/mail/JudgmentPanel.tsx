@@ -1,17 +1,7 @@
 import { CheckmarkCircle20Filled } from "@fluentui/react-icons";
 import type { PerceivedLegitimacy } from "../../api";
 import type { ProcessedInfo } from "../../types";
-
-// Shared by both the decision-sureness rating here and the action-sureness
-// rating collected in ConfidenceModal.tsx (see its own copy of this list) -
-// same 1-5 scale and wording for both.
-const SURENESS_OPTIONS: { value: number; label: string }[] = [
-  { value: 1, label: "Not at all sure" },
-  { value: 2, label: "Slightly sure" },
-  { value: 3, label: "Somewhat sure" },
-  { value: 4, label: "Sure" },
-  { value: 5, label: "Extremely sure" },
-];
+import { SURENESS_OPTIONS } from "./confidenceOptions";
 
 // Exported so MailClientScreen/TutorialScreen can phrase the decision-
 // sureness question ("...is legitimate/phishing?") now asked later, in

@@ -1,12 +1,5 @@
 import { useState } from "react";
-
-const SURENESS_OPTIONS: { value: number; label: string }[] = [
-  { value: 1, label: "Not at all sure" },
-  { value: 2, label: "Slightly sure" },
-  { value: 3, label: "Somewhat sure" },
-  { value: 4, label: "Sure" },
-  { value: 5, label: "Extremely sure" },
-];
+import { SURENESS_OPTIONS } from "./confidenceOptions";
 
 const TOTAL_STEPS = 2;
 
