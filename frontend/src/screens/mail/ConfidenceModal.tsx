@@ -13,6 +13,9 @@ const TOTAL_STEPS = 2;
 interface Props {
   actionLabel: string;
   cueOptions: { key: string; label: string }[];
+  legitimacyLabel: string | null;
+  judgmentConfidenceValue: number | null;
+  onJudgmentConfidenceChange: (value: number) => void;
   confidenceValue: number | null;
   onConfidenceChange: (value: number) => void;
   selectedCues: string[];
@@ -25,6 +28,9 @@ interface Props {
 export function ConfidenceModal({
   actionLabel,
   cueOptions,
+  legitimacyLabel,
+  judgmentConfidenceValue,
+  onJudgmentConfidenceChange,
   confidenceValue,
   onConfidenceChange,
   selectedCues,
@@ -39,7 +45,7 @@ export function ConfidenceModal({
   // questions have a default, so Next/Submit stays disabled until at least
   // one option is picked, and picking "Something else" also requires
   // actually writing it down.
-  const canLeaveStep1 = confidenceValue !== null;
+  const canLeaveStep1 = judgmentConfidenceValue !== null && confidenceValue !== null;
   const canLeaveStep2 =
     selectedCues.length > 0 && (!isOtherCueSelected || otherCueText.trim().length > 0);
   const canLeaveCurrentStep = step === 1 ? canLeaveStep1 : canLeaveStep2;
@@ -53,7 +59,26 @@ export function ConfidenceModal({
 
         {step === 1 && (
           <>
-            <h3>How sure are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
+            <h3>
+              How sure are you that this email is{" "}
+              {legitimacyLabel ? legitimacyLabel.toLowerCase() : "what you said"}?
+            </h3>
+            <div className="likert-options">
+              {SURENESS_OPTIONS.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`likert-option${judgmentConfidenceValue === option.value ? " selected" : ""}`}
+                  onClick={() => onJudgmentConfidenceChange(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+
+            <h3 className="confidence-second-h3">
+              How sure are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?
+            </h3>
             <div className="likert-options">
               {SURENESS_OPTIONS.map((option) => (
                 <button

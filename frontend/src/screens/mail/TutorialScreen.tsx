@@ -15,7 +15,7 @@ import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
-import type { JudgmentStep } from "./JudgmentPanel";
+import { LEGITIMACY_LABELS, type JudgmentStep } from "./JudgmentPanel";
 import { TutorialSpotlight, type TutorialStep } from "./TutorialSpotlight";
 import { GuidedCaption } from "./GuidedCaption";
 import { extractEmail } from "./avatar";
@@ -277,14 +277,14 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "judgment",
     title: "Before You Act, Judge It",
     description:
-      "Before you can take any action, you'll be asked two quick questions: how would you classify this email, legitimate or phishing, and how sure are you about that call? The toolbar stays locked until you've answered both.",
+      "Before you can take any action, you'll be asked to classify this email as legitimate or phishing. The toolbar stays locked until you've answered.",
     targetSelector: ".judgment-panel",
   },
   {
     key: "after-act",
     title: "After You Act",
     description:
-      "Once you act, we'll ask a couple of quick follow-up questions: how sure you were, and what caught your attention. It's the same two questions after every email, and it only takes a few seconds.",
+      "Once you act, we'll ask a few quick follow-up questions: how sure you are about your call and about the action you just took, and what caught your attention. It's the same questions after every email, and it only takes a few seconds.",
     targetSelector: ".confidence-box",
   },
   {
@@ -314,12 +314,10 @@ type GuidedStepKey =
   | "email-transition"
   | "email1-open"
   | "email1-judge-trust"
-  | "email1-judge-confidence"
   | "email1-action"
   | "email1-followup"
   | "email2-open"
   | "email2-judge-trust"
-  | "email2-judge-confidence"
   | "email2-action"
   | "email2-followup";
 
@@ -357,12 +355,6 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
       "Answer the legitimate or phishing question below. Since this is practice, there's no wrong answer, just try it out.",
     targetSelector: ".judgment-panel",
   },
-  "email1-judge-confidence": {
-    stepLabel: "Email 1 of 2",
-    title: "Rate How Sure You Are",
-    description: "Now rate how sure you are about that call.",
-    targetSelector: ".judgment-panel",
-  },
   "email1-action": {
     stepLabel: "Email 1 of 2",
     title: "Open the Attachment",
@@ -371,9 +363,9 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
   },
   "email1-followup": {
     stepLabel: "Email 1 of 2",
-    title: "Tell Us More About Your Action",
+    title: "Tell Us More",
     description:
-      "Answer these last few questions about the action you just took. You'll see this same set after every email in the real task.",
+      "Rate how sure you are about your call and the action you just took, then answer a couple last questions. You'll see this same set after every email in the real task.",
     targetSelector: ".confidence-box",
   },
   "email2-open": {
@@ -390,13 +382,6 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
     targetSelector: null,
     noSpotlight: true,
   },
-  "email2-judge-confidence": {
-    stepLabel: "Email 2 of 2",
-    title: "Rate How Sure You Are",
-    description: "Rate how sure you are about that call.",
-    targetSelector: null,
-    noSpotlight: true,
-  },
   "email2-action": {
     stepLabel: "Email 2 of 2",
     title: "Delete it",
@@ -406,8 +391,9 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
   },
   "email2-followup": {
     stepLabel: "Email 2 of 2",
-    title: "Tell Us More About Your Action",
-    description: "Same two questions as before: how sure you were, and what caught your attention.",
+    title: "Tell Us More",
+    description:
+      "Same questions as before: how sure you are about your call and the action, and what caught your attention.",
     targetSelector: null,
     noSpotlight: true,
   },
@@ -490,7 +476,6 @@ export function TutorialScreen({ onFinish }: Props) {
     const n = guidedTargetEmailId === GUIDED_EMAIL_1 ? 1 : 2;
     if (selectedEmail?.id !== guidedTargetEmailId) return `email${n}-open` as GuidedStepKey;
     if (judgmentStep === "trust") return `email${n}-judge-trust` as GuidedStepKey;
-    if (judgmentStep === "confidence") return `email${n}-judge-confidence` as GuidedStepKey;
     if (phase === "confidence") return `email${n}-followup` as GuidedStepKey;
     if (judgmentStep === "done" && phase === "idle") return `email${n}-action` as GuidedStepKey;
     // Transient phases (confirming / action-recorded) already have their
@@ -590,12 +575,6 @@ export function TutorialScreen({ onFinish }: Props) {
   const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
     if (tourActive) return;
     setPerceivedLegitimacy(value);
-    setJudgmentStep("confidence");
-  };
-
-  const handleSelectJudgmentConfidence = (value: number) => {
-    if (tourActive) return;
-    setJudgmentConfidenceValue(value);
     setJudgmentStep("done");
   };
 
@@ -831,7 +810,6 @@ export function TutorialScreen({ onFinish }: Props) {
               perceivedLegitimacy={null}
               judgmentConfidenceValue={null}
               onSelectLegitimacy={() => {}}
-              onSelectJudgmentConfidence={() => {}}
               onLinkClick={() => {}}
               onLinkHoverStart={() => {}}
               onLinkHoverEnd={() => {}}
@@ -873,7 +851,6 @@ export function TutorialScreen({ onFinish }: Props) {
               perceivedLegitimacy={perceivedLegitimacy}
               judgmentConfidenceValue={judgmentConfidenceValue}
               onSelectLegitimacy={handleSelectLegitimacy}
-              onSelectJudgmentConfidence={handleSelectJudgmentConfidence}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={() => {}}
               onLinkHoverEnd={() => {}}
@@ -911,6 +888,9 @@ export function TutorialScreen({ onFinish }: Props) {
         <ConfidenceModal
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
           cueOptions={cueOptions}
+          legitimacyLabel={perceivedLegitimacy ? LEGITIMACY_LABELS[perceivedLegitimacy] : null}
+          judgmentConfidenceValue={judgmentConfidenceValue}
+          onJudgmentConfidenceChange={setJudgmentConfidenceValue}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
           selectedCues={selectedCues}
@@ -976,6 +956,9 @@ export function TutorialScreen({ onFinish }: Props) {
           <ConfidenceModal
             actionLabel={ACTION_LABELS.delete}
             cueOptions={cueOptions}
+            legitimacyLabel={null}
+            judgmentConfidenceValue={null}
+            onJudgmentConfidenceChange={() => {}}
             confidenceValue={null}
             onConfidenceChange={() => {}}
             selectedCues={[]}

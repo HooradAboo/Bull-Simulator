@@ -6,7 +6,7 @@ import { Ribbon } from "./Ribbon";
 import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
-import type { JudgmentStep } from "./JudgmentPanel";
+import { LEGITIMACY_LABELS, type JudgmentStep } from "./JudgmentPanel";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ComposeFollowupModal } from "./ComposeFollowupModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
@@ -253,11 +253,6 @@ export function MailClientScreen({
   // and commit once the participant dismisses it.
   const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
     setPerceivedLegitimacy(value);
-    setJudgmentStep("confidence");
-  };
-
-  const handleSelectJudgmentConfidence = (value: number) => {
-    setJudgmentConfidenceValue(value);
     setJudgmentStep("done");
   };
 
@@ -652,7 +647,6 @@ export function MailClientScreen({
               perceivedLegitimacy={null}
               judgmentConfidenceValue={null}
               onSelectLegitimacy={() => {}}
-              onSelectJudgmentConfidence={() => {}}
               onLinkClick={() => {}}
               onLinkHoverStart={() => {}}
               onLinkHoverEnd={() => {}}
@@ -694,7 +688,6 @@ export function MailClientScreen({
               perceivedLegitimacy={perceivedLegitimacy}
               judgmentConfidenceValue={judgmentConfidenceValue}
               onSelectLegitimacy={handleSelectLegitimacy}
-              onSelectJudgmentConfidence={handleSelectJudgmentConfidence}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}
@@ -732,6 +725,9 @@ export function MailClientScreen({
         <ConfidenceModal
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
           cueOptions={cueOptions}
+          legitimacyLabel={perceivedLegitimacy ? LEGITIMACY_LABELS[perceivedLegitimacy] : null}
+          judgmentConfidenceValue={judgmentConfidenceValue}
+          onJudgmentConfidenceChange={setJudgmentConfidenceValue}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
           selectedCues={selectedCues}

@@ -51,7 +51,6 @@ interface Props {
   perceivedLegitimacy: PerceivedLegitimacy | null;
   judgmentConfidenceValue: number | null;
   onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
-  onSelectJudgmentConfidence: (value: number) => void;
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
@@ -106,7 +105,6 @@ export function ReadingPane({
   perceivedLegitimacy,
   judgmentConfidenceValue,
   onSelectLegitimacy,
-  onSelectJudgmentConfidence,
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
@@ -436,7 +434,6 @@ export function ReadingPane({
         processedInfo={processedInfo}
         actionLabel={processedInfo ? ACTION_LABELS[processedInfo.action] : null}
         onSelectLegitimacy={onSelectLegitimacy}
-        onSelectConfidence={onSelectJudgmentConfidence}
       />
 
       {hoveredLinkUrl && linkHoverPos && (
