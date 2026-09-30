@@ -779,7 +779,6 @@
   gap: 10px;
   margin-bottom: 32px;
 }
-.confidence-box .judgment-button,
 .judgment-panel .judgment-button {
   flex: 1;
   height: 76px;
@@ -811,25 +810,9 @@
   color: var(--text-muted);
   opacity: 0.85;
 }
-.judgment-panel .judgment-button.selected .judgment-button-desc {
-  color: inherit;
-  opacity: 0.9;
-}
-.confidence-box .judgment-button:hover:not(.selected),
-.judgment-panel .judgment-button:hover:not(.selected) {
+.judgment-panel .judgment-button:hover {
   background: var(--hover);
   border-color: var(--usf-green);
-}
-.confidence-box .judgment-button.selected,
-.judgment-panel .judgment-button.selected {
-  background: var(--usf-green);
-  color: #fff;
-  border-color: var(--usf-green);
-}
-.confidence-box .judgment-button.selected:hover,
-.judgment-panel .judgment-button.selected:hover {
-  background: var(--usf-green-hover);
-  border-color: var(--usf-green-hover);
 }
 
 .confidence-box h3.confidence-second-h3 {
