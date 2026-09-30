@@ -283,7 +283,7 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "judgment",
     title: "Before You Act, Judge It",
     description:
-      "Before you can take any action, you'll be asked two quick questions: do you trust this email or find it suspicious, and how confident are you in that call? The toolbar stays locked until you've answered both.",
+      "Before you can take any action, you'll be asked two quick questions: how would you classify this email, legitimate or phishing, and how confident are you in that call? The toolbar stays locked until you've answered both.",
     targetSelector: ".judgment-panel",
   },
   {
@@ -392,7 +392,7 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
   "email2-judge-trust": {
     stepLabel: "Email 2 of 2",
     title: "Make Your Call",
-    description: "Same as before, do you trust this email, or does it look suspicious?",
+    description: "Same as before, how would you classify this email, legitimate or phishing?",
     targetSelector: null,
     noSpotlight: true,
   },

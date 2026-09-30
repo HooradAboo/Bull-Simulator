@@ -11,9 +11,18 @@ const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
 ];
 
 const LEGITIMACY_LABELS: Record<PerceivedLegitimacy, string> = {
-  trust: "I'd trust this email",
-  suspicious: "This looks suspicious",
+  trust: "Legitimate",
+  suspicious: "Phishing",
 };
+
+const LEGITIMACY_OPTIONS: { value: PerceivedLegitimacy; title: string; desc: string }[] = [
+  { value: "trust", title: "Legitimate", desc: "Appears to be a genuine, non-phishing email" },
+  {
+    value: "suspicious",
+    title: "Phishing",
+    desc: "Appears to be a deceptive email intended to trick the recipient",
+  },
+];
 
 export type JudgmentStep = "trust" | "confidence" | "done";
 
@@ -69,24 +78,19 @@ export function JudgmentPanel({
     <div className="judgment-panel">
       {step === "trust" ? (
         <>
-          <div className="judgment-panel-question">
-            Do you trust this email, or does it look suspicious?
-          </div>
+          <div className="judgment-panel-question">How would you classify this email?</div>
           <div className="judgment-buttons">
-            <button
-              type="button"
-              className="judgment-button"
-              onClick={() => onSelectLegitimacy("trust")}
-            >
-              I'd trust this email
-            </button>
-            <button
-              type="button"
-              className="judgment-button"
-              onClick={() => onSelectLegitimacy("suspicious")}
-            >
-              This looks suspicious
-            </button>
+            {LEGITIMACY_OPTIONS.map((option) => (
+              <button
+                type="button"
+                key={option.value}
+                className="judgment-button"
+                onClick={() => onSelectLegitimacy(option.value)}
+              >
+                <span className="judgment-button-title">{option.title}</span>
+                <span className="judgment-button-desc">{option.desc}</span>
+              </button>
+            ))}
           </div>
         </>
       ) : (
