@@ -218,11 +218,8 @@ export interface InteractionRatings {
   perceivedLegitimacy: PerceivedLegitimacy;
   judgmentConfidenceRating: number;
   confidenceRating: number;
-  difficultyRating: number;
   cuesNoticed: string[];
   cuesOtherText: string | null;
-  actionReasons: string[];
-  actionReasonsOtherText: string | null;
 }
 
 export function submitInteractionRatings(interactionId: number, ratings: InteractionRatings) {
@@ -230,11 +227,8 @@ export function submitInteractionRatings(interactionId: number, ratings: Interac
     perceived_legitimacy: ratings.perceivedLegitimacy,
     judgment_confidence_rating: ratings.judgmentConfidenceRating,
     confidence_rating: ratings.confidenceRating,
-    difficulty_rating: ratings.difficultyRating,
     cues_noticed: ratings.cuesNoticed,
     cues_other_text: ratings.cuesOtherText,
-    action_reasons: ratings.actionReasons,
-    action_reasons_other_text: ratings.actionReasonsOtherText,
   });
 }
 

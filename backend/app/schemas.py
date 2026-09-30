@@ -62,10 +62,10 @@ class InteractionRatings(BaseModel):
     perceived_legitimacy: str
     judgment_confidence_rating: int
     confidence_rating: int
-    difficulty_rating: int
+    difficulty_rating: int | None = None
     cues_noticed: list[str]
     cues_other_text: str | None = None
-    action_reasons: list[str]
+    action_reasons: list[str] = []
     action_reasons_other_text: str | None = None
 
 

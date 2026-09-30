@@ -19,13 +19,7 @@ import type { JudgmentStep } from "./JudgmentPanel";
 import { TutorialSpotlight, type TutorialStep } from "./TutorialSpotlight";
 import { GuidedCaption } from "./GuidedCaption";
 import { extractEmail } from "./avatar";
-import {
-  getActionReasons,
-  getCueOptions,
-  type ActionReasonOption,
-  type CueOption,
-  type PerceivedLegitimacy,
-} from "../../api";
+import { getCueOptions, type CueOption, type PerceivedLegitimacy } from "../../api";
 import type {
   ActionType,
   Contact,
@@ -290,7 +284,7 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "after-act",
     title: "After You Act",
     description:
-      "Once you act, we'll ask a few quick follow-up questions: how sure you were, how difficult the decision felt, what caught your attention, and why you chose that response. It's the same three questions after every email, and it only takes a few seconds.",
+      "Once you act, we'll ask a couple of quick follow-up questions: how sure you were, and what caught your attention. It's the same two questions after every email, and it only takes a few seconds.",
     targetSelector: ".confidence-box",
   },
   {
@@ -413,7 +407,7 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
   "email2-followup": {
     stepLabel: "Email 2 of 2",
     title: "Tell Us More About Your Action",
-    description: "Same three questions as before: how sure you were, difficulty, and why you chose that action.",
+    description: "Same two questions as before: how sure you were, and what caught your attention.",
     targetSelector: null,
     noSpotlight: true,
   },
@@ -452,14 +446,8 @@ export function TutorialScreen({ onFinish }: Props) {
   const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
   const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState<number | null>(null);
   const [confidenceValue, setConfidenceValueState] = useState<number | null>(null);
-  const [difficultyValue, setDifficultyValue] = useState<number | null>(null);
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
-  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
-  const [otherReasonText, setOtherReasonText] = useState("");
-  const [actionReasonOptions, setActionReasonOptions] = useState<
-    Record<string, ActionReasonOption[]>
-  >({});
   const [cueOptions, setCueOptions] = useState<CueOption[]>([]);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
@@ -516,7 +504,6 @@ export function TutorialScreen({ onFinish }: Props) {
     : [];
 
   useEffect(() => {
-    getActionReasons().then(setActionReasonOptions);
     getCueOptions().then(setCueOptions);
   }, []);
 
@@ -556,11 +543,8 @@ export function TutorialScreen({ onFinish }: Props) {
     setPerceivedLegitimacy(null);
     setJudgmentConfidenceValue(null);
     setConfidenceValueState(null);
-    setDifficultyValue(null);
     setSelectedCues([]);
     setOtherCueText("");
-    setSelectedReasons([]);
-    setOtherReasonText("");
     setGuidedActive(false);
     setGuidedTransitionAcknowledged(false);
     setClosingTourActive(false);
@@ -623,11 +607,8 @@ export function TutorialScreen({ onFinish }: Props) {
     setPendingRecipient(recipient);
     setPhase("confidence");
     setConfidenceValueState(null);
-    setDifficultyValue(null);
     setSelectedCues([]);
     setOtherCueText("");
-    setSelectedReasons([]);
-    setOtherReasonText("");
 
     if (action === "forward" && recipient) {
       const note = composedBody ? `${composedBody}\n\n` : "";
@@ -675,15 +656,8 @@ export function TutorialScreen({ onFinish }: Props) {
     );
   };
 
-  const handleToggleReason = (reasonKey: string) => {
-    setSelectedReasons((prev) =>
-      prev.includes(reasonKey) ? prev.filter((r) => r !== reasonKey) : [...prev, reasonKey]
-    );
-  };
-
   const handleSubmitConfidence = () => {
-    if (!selectedEmail || !pendingAction || confidenceValue === null || difficultyValue === null)
-      return;
+    if (!selectedEmail || !pendingAction || confidenceValue === null) return;
 
     const updated = new Map(processed);
     updated.set(selectedEmail.id, {
@@ -937,19 +911,12 @@ export function TutorialScreen({ onFinish }: Props) {
         <ConfidenceModal
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
           cueOptions={cueOptions}
-          reasonOptions={pendingAction ? actionReasonOptions[pendingAction] ?? [] : []}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
-          difficultyValue={difficultyValue}
-          onDifficultyChange={setDifficultyValue}
           selectedCues={selectedCues}
           onToggleCue={handleToggleCue}
           otherCueText={otherCueText}
           onOtherCueTextChange={setOtherCueText}
-          selectedReasons={selectedReasons}
-          onToggleReason={handleToggleReason}
-          otherReasonText={otherReasonText}
-          onOtherReasonTextChange={setOtherReasonText}
           onSubmit={handleSubmitConfidence}
         />
       )}
@@ -1009,19 +976,12 @@ export function TutorialScreen({ onFinish }: Props) {
           <ConfidenceModal
             actionLabel={ACTION_LABELS.delete}
             cueOptions={cueOptions}
-            reasonOptions={actionReasonOptions["delete"] ?? []}
             confidenceValue={null}
             onConfidenceChange={() => {}}
-            difficultyValue={null}
-            onDifficultyChange={() => {}}
             selectedCues={[]}
             onToggleCue={() => {}}
             otherCueText=""
             onOtherCueTextChange={() => {}}
-            selectedReasons={[]}
-            onToggleReason={() => {}}
-            otherReasonText=""
-            onOtherReasonTextChange={() => {}}
             onSubmit={() => {}}
           />
         </div>
