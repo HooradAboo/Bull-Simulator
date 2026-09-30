@@ -283,14 +283,14 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "judgment",
     title: "Before You Act, Judge It",
     description:
-      "Before you can take any action, you'll be asked two quick questions: how would you classify this email, legitimate or phishing, and how confident are you in that call? The toolbar stays locked until you've answered both.",
+      "Before you can take any action, you'll be asked two quick questions: how would you classify this email, legitimate or phishing, and how sure are you about that call? The toolbar stays locked until you've answered both.",
     targetSelector: ".judgment-panel",
   },
   {
     key: "after-act",
     title: "After You Act",
     description:
-      "Once you act, we'll ask a few quick follow-up questions: how confident you were, how difficult the decision felt, what caught your attention, and why you chose that response. It's the same three questions after every email, and it only takes a few seconds.",
+      "Once you act, we'll ask a few quick follow-up questions: how sure you were, how difficult the decision felt, what caught your attention, and why you chose that response. It's the same three questions after every email, and it only takes a few seconds.",
     targetSelector: ".confidence-box",
   },
   {
@@ -360,13 +360,13 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
     stepLabel: "Email 1 of 2",
     title: "Make Your Call",
     description:
-      "Answer the trust or suspicious question below. Since this is practice, there's no wrong answer, just try it out.",
+      "Answer the legitimate or phishing question below. Since this is practice, there's no wrong answer, just try it out.",
     targetSelector: ".judgment-panel",
   },
   "email1-judge-confidence": {
     stepLabel: "Email 1 of 2",
-    title: "Rate Your Confidence",
-    description: "Now rate how confident you are in that call.",
+    title: "Rate How Sure You Are",
+    description: "Now rate how sure you are about that call.",
     targetSelector: ".judgment-panel",
   },
   "email1-action": {
@@ -398,8 +398,8 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
   },
   "email2-judge-confidence": {
     stepLabel: "Email 2 of 2",
-    title: "Rate Your Confidence",
-    description: "Rate your confidence in that call.",
+    title: "Rate How Sure You Are",
+    description: "Rate how sure you are about that call.",
     targetSelector: null,
     noSpotlight: true,
   },
@@ -413,7 +413,7 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
   "email2-followup": {
     stepLabel: "Email 2 of 2",
     title: "Tell Us More About Your Action",
-    description: "Same three questions as before: confidence, difficulty, and why you chose that action.",
+    description: "Same three questions as before: how sure you were, difficulty, and why you chose that action.",
     targetSelector: null,
     noSpotlight: true,
   },

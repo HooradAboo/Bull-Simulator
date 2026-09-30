@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
-  { value: 1, label: "Not at all confident" },
-  { value: 2, label: "Slightly confident" },
-  { value: 3, label: "Somewhat confident" },
-  { value: 4, label: "Confident" },
-  { value: 5, label: "Extremely confident" },
+const SURENESS_OPTIONS: { value: number; label: string }[] = [
+  { value: 1, label: "Not at all sure" },
+  { value: 2, label: "Slightly sure" },
+  { value: 3, label: "Somewhat sure" },
+  { value: 4, label: "Sure" },
+  { value: 5, label: "Extremely sure" },
 ];
 
 const DIFFICULTY_OPTIONS: { value: number; label: string }[] = [
@@ -79,9 +79,9 @@ export function ConfidenceModal({
 
         {step === 1 && (
           <>
-            <h3>How confident are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
+            <h3>How sure are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?</h3>
             <div className="likert-options">
-              {CONFIDENCE_OPTIONS.map((option) => (
+              {SURENESS_OPTIONS.map((option) => (
                 <button
                   type="button"
                   key={option.value}

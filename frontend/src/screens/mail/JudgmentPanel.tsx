@@ -2,18 +2,9 @@ import { CheckmarkCircle20Filled } from "@fluentui/react-icons";
 import type { PerceivedLegitimacy } from "../../api";
 import type { ProcessedInfo } from "../../types";
 
-// Labels the action-confidence rating collected in ConfidenceModal.tsx after
-// an action is taken - kept separate from SURENESS_OPTIONS below since that
-// question asks about a different thing (confidence in the action, not
-// sureness about the email's legitimacy) even though both are 1-5 scales.
-const ACTION_CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
-  { value: 1, label: "Not at all confident" },
-  { value: 2, label: "Slightly confident" },
-  { value: 3, label: "Somewhat confident" },
-  { value: 4, label: "Confident" },
-  { value: 5, label: "Extremely confident" },
-];
-
+// Shared by both the decision-sureness rating here and the action-sureness
+// rating collected in ConfidenceModal.tsx (see its own copy of this list) -
+// same 1-5 scale and wording for both.
 const SURENESS_OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: "Not at all sure" },
   { value: 2, label: "Slightly sure" },
@@ -62,7 +53,7 @@ export function JudgmentPanel({
     const confidenceLabel = SURENESS_OPTIONS.find(
       (option) => option.value === judgmentConfidenceValue
     )?.label;
-    const actionConfidenceLabel = ACTION_CONFIDENCE_OPTIONS.find(
+    const actionConfidenceLabel = SURENESS_OPTIONS.find(
       (option) => option.value === processedInfo?.confidence
     )?.label;
     return (
