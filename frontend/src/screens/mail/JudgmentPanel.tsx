@@ -2,12 +2,24 @@ import { CheckmarkCircle20Filled } from "@fluentui/react-icons";
 import type { PerceivedLegitimacy } from "../../api";
 import type { ProcessedInfo } from "../../types";
 
-const CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
+// Labels the action-confidence rating collected in ConfidenceModal.tsx after
+// an action is taken - kept separate from SURENESS_OPTIONS below since that
+// question asks about a different thing (confidence in the action, not
+// sureness about the email's legitimacy) even though both are 1-5 scales.
+const ACTION_CONFIDENCE_OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: "Not at all confident" },
   { value: 2, label: "Slightly confident" },
   { value: 3, label: "Somewhat confident" },
   { value: 4, label: "Confident" },
   { value: 5, label: "Extremely confident" },
+];
+
+const SURENESS_OPTIONS: { value: number; label: string }[] = [
+  { value: 1, label: "Not at all sure" },
+  { value: 2, label: "Slightly sure" },
+  { value: 3, label: "Somewhat sure" },
+  { value: 4, label: "Sure" },
+  { value: 5, label: "Extremely sure" },
 ];
 
 const LEGITIMACY_LABELS: Record<PerceivedLegitimacy, string> = {
@@ -47,10 +59,10 @@ export function JudgmentPanel({
 }: Props) {
   if (step === "done") {
     if (!perceivedLegitimacy && !processedInfo) return null;
-    const confidenceLabel = CONFIDENCE_OPTIONS.find(
+    const confidenceLabel = SURENESS_OPTIONS.find(
       (option) => option.value === judgmentConfidenceValue
     )?.label;
-    const actionConfidenceLabel = CONFIDENCE_OPTIONS.find(
+    const actionConfidenceLabel = ACTION_CONFIDENCE_OPTIONS.find(
       (option) => option.value === processedInfo?.confidence
     )?.label;
     return (
@@ -95,9 +107,12 @@ export function JudgmentPanel({
         </>
       ) : (
         <>
-          <div className="judgment-panel-question">How confident are you in that decision?</div>
+          <div className="judgment-panel-question">
+            How sure are you that this email is{" "}
+            {perceivedLegitimacy ? LEGITIMACY_LABELS[perceivedLegitimacy].toLowerCase() : ""}?
+          </div>
           <div className="likert-options">
-            {CONFIDENCE_OPTIONS.map((option) => (
+            {SURENESS_OPTIONS.map((option) => (
               <button
                 type="button"
                 key={option.value}
