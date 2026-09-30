@@ -843,6 +843,14 @@
 .confidence-box .likert-option,
 .judgment-panel .likert-option {
   flex: 1;
+  /* Fixed (not just min-height) to match .judgment-button ("classify this
+     email"), whose own height is driven by its two-line text and would
+     otherwise drift with the panel's width - see mail/JudgmentPanel.tsx. */
+  height: 76px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #fff;
   color: var(--text);
   border: 1px solid var(--border);
@@ -908,19 +916,6 @@
 .judgment-panel .likert-options {
   margin-bottom: 0;
 }
-/* Fixed to the same height as .judgment-button ("classify this email") so
-   the sureness options that follow it don't look like a different, shorter
-   kind of control. Both are fixed (not just min-height) since
-   .judgment-button's two-line text would otherwise make its own height
-   drift with the panel's width, which a one-sided min-height can't track. */
-.judgment-panel .likert-option {
-  height: 76px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .cue-options {
   display: grid;
   /* minmax(0, 1fr) rather than plain 1fr - otherwise a column's minimum
