@@ -782,9 +782,12 @@
 .confidence-box .judgment-button,
 .judgment-panel .judgment-button {
   flex: 1;
+  height: 76px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: 3px;
   background: #fff;
   color: var(--text);
@@ -876,7 +879,10 @@
   padding: 14px 16px;
   margin: 12px 20px 20px;
   box-sizing: border-box;
-  min-height: 106px;
+  /* Floor for the done/no-options states - the trust and sureness steps
+     both now use a fixed 76px option row, so their panel heights already
+     match each other without needing this to do the work. */
+  min-height: 142px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -901,6 +907,18 @@
 .judgment-panel .judgment-buttons,
 .judgment-panel .likert-options {
   margin-bottom: 0;
+}
+/* Fixed to the same height as .judgment-button ("classify this email") so
+   the sureness options that follow it don't look like a different, shorter
+   kind of control. Both are fixed (not just min-height) since
+   .judgment-button's two-line text would otherwise make its own height
+   drift with the panel's width, which a one-sided min-height can't track. */
+.judgment-panel .likert-option {
+  height: 76px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cue-options {
