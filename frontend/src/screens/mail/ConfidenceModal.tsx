@@ -60,8 +60,7 @@ export function ConfidenceModal({
         {step === 1 && (
           <>
             <h3>
-              How sure are you that this email is{" "}
-              {legitimacyLabel ? legitimacyLabel.toLowerCase() : "what you said"}?
+              How sure are you that this email is "{legitimacyLabel ?? "what you said"}"?
             </h3>
             <div className="likert-options">
               {SURENESS_OPTIONS.map((option) => (
