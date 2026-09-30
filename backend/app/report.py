@@ -6,25 +6,9 @@ from sqlalchemy.orm import Session
 from app import models
 from app.config import settings
 from app.contacts import load_contacts
-from app.emails import build_template_context, load_emails, load_public_emails
-from app.participant_profile import load_participant_profile
-from app.self_efficacy import load_self_efficacy_questions
+from app.emails import load_emails
 
 IT_CONTACT_NAME = "USF IT Help Desk"
-
-# Maps each self-efficacy statement's config key to the pre/post column
-# names on Participant.
-SELF_EFFICACY_FIELD_MAP: dict[str, tuple[str, str]] = {
-    "recognizeLinks": ("self_efficacy_recognize_links", "self_efficacy_post_recognize_links"),
-    "verifyLegitimacy": ("self_efficacy_verify_legitimacy", "self_efficacy_post_verify_legitimacy"),
-    "avoidSuspicious": ("self_efficacy_avoid_suspicious", "self_efficacy_post_avoid_suspicious"),
-    "verifyTrustedSource": (
-        "self_efficacy_verify_trusted_source",
-        "self_efficacy_post_verify_trusted_source",
-    ),
-    "reportPhishing": ("self_efficacy_report_phishing", "self_efficacy_post_report_phishing"),
-    "recoverySteps": ("self_efficacy_recovery_steps", "self_efficacy_post_recovery_steps"),
-}
 
 REQUIRED_CATEGORIES = {
     "mark_as_read",
@@ -46,6 +30,10 @@ def load_safe_action_matrix() -> dict[str, dict[str, int]]:
     Positive = safe/correct, negative = a miss. "forward_to_it" is a
     "forward" action whose recipient matches the IT Help Desk contact; any
     other recipient is a plain "forward".
+
+    The scores themselves aren't consumed by the report anymore (the
+    scored-summary UI was removed), but this stays as the single validated
+    source of the category list used to key action_breakdown below.
     """
     path = settings.safe_action_matrix_config_path
     if not path.exists():
@@ -108,170 +96,17 @@ class LegitBreakdown(BaseModel):
     false_positive: int  # legitimate email the participant flagged as suspicious
 
 
-CALIBRATION_SYNC_THRESHOLD = 10
-
-# Confidence ratings are collected on a 1-5 Likert scale, but accuracy is a
-# 0-100 percentage - comparing the two raw would make the diff meaningless
-# (a perfectly-calibrated participant would still show as wildly
-# "undersold" since accuracy dominates a 1-5 number). Min-max normalizing
-# the rating onto 0-100 (1 -> 0%, 5 -> 100%) puts both sides of the
-# comparison on the same scale before anything touches CALIBRATION_SYNC_THRESHOLD.
-CONFIDENCE_RATING_MIN = 1
-CONFIDENCE_RATING_MAX = 5
-
-
-def _confidence_to_percent(raw_average: float) -> float:
-    span = CONFIDENCE_RATING_MAX - CONFIDENCE_RATING_MIN
-    return round((raw_average - CONFIDENCE_RATING_MIN) / span * 100, 1)
-
-
-def _calibration_state(confidence: float | None, accuracy: float | None, n: int) -> str:
-    """"in_sync" (within CALIBRATION_SYNC_THRESHOLD points), "undersold"
-    (accuracy higher than confidence - they were more often right than they
-    felt), "oversold" (confidence higher than accuracy - confidence ran
-    ahead of the outcome), or "no_data" (zero decisions in this bucket -
-    sample sizes here are small enough that even a single decision is
-    treated as meaningful, unlike "no data at all").
-    """
-    if n == 0 or confidence is None or accuracy is None:
-        return "no_data"
-    diff = confidence - accuracy
-    if abs(diff) <= CALIBRATION_SYNC_THRESHOLD:
-        return "in_sync"
-    return "oversold" if diff > 0 else "undersold"
-
-
-class CalibrationBucket(BaseModel):
-    confidence: float | None
-    accuracy: float | None  # % of decisions in this bucket that were correct
-    n: int
-    state: str  # "in_sync" | "undersold" | "oversold" | "no_data"
-
-
-class ActionCalibrationBucket(CalibrationBucket):
-    is_protective: bool  # report/forward_to_it/delete vs. engagement actions
-
-
-class ConfidenceAverages(BaseModel):
-    overall: CalibrationBucket
-    phishing: CalibrationBucket  # confidence/accuracy on emails that were actually phishing
-    legit: CalibrationBucket  # confidence/accuracy on emails that were actually legitimate
-    claimed_phishing: CalibrationBucket  # when they treated it as a threat
-    claimed_legit: CalibrationBucket  # when they treated it as safe
-    by_action: dict[str, ActionCalibrationBucket]
-
-
-class SelfEfficacyStatement(BaseModel):
-    key: str
-    text: str
-    pre: int
-    post: int | None
-
-
-class SelfEfficacyBreakdown(BaseModel):
-    statements: list[SelfEfficacyStatement]
-    pre_average: float
-    post_average: float | None
-
-
-class EmailReview(BaseModel):
-    email_id: str
-    subject: str
-    sender: str
-    body: str
-    link: str | None
-    attachment: str | None
-    received_at: int | None
-    is_phishing: bool
-    days_before: int
-    received_time: str | None
-    action_taken: str
-    category: str
-    recipient: str | None
-    was_correct: bool
-    perceived_legitimacy: str | None
-    judgment_confidence_rating: int | None
-    confidence_rating: int | None
-    difficulty_rating: int | None
-    cues_noticed: list[str]
-    cues_other_text: str | None
-    action_reasons: list[str]
-    action_reasons_other_text: str | None
-
-
 class PerformanceReport(BaseModel):
-    total_score: int
-    max_possible_score: int
-    correct_count: int
-    total_count: int
     phishing: GroundTruthBreakdown
     legit: LegitBreakdown
     action_breakdown: dict[str, ActionBreakdown]
-    confidence: ConfidenceAverages
-    self_efficacy: SelfEfficacyBreakdown
-    email_reviews: list[EmailReview]
-
-
-class _CalibrationAccumulator:
-    def __init__(self) -> None:
-        self.n = 0
-        self.correct = 0
-        self.confidence_sum = 0.0
-        self.confidence_n = 0
-
-    def add(self, score: int, confidence: int | None) -> None:
-        self.n += 1
-        if score > 0:
-            self.correct += 1
-        if confidence is not None:
-            self.confidence_sum += confidence
-            self.confidence_n += 1
-
-    def confidence_average(self) -> float | None:
-        if self.confidence_n == 0:
-            return None
-        return _confidence_to_percent(self.confidence_sum / self.confidence_n)
-
-    def accuracy(self) -> float | None:
-        if self.n == 0:
-            return None
-        return round(100 * self.correct / self.n, 1)
-
-    def to_bucket(self) -> CalibrationBucket:
-        confidence = self.confidence_average()
-        accuracy = self.accuracy()
-        return CalibrationBucket(
-            confidence=confidence,
-            accuracy=accuracy,
-            n=self.n,
-            state=_calibration_state(confidence, accuracy, self.n),
-        )
 
 
 def build_performance_report(db: Session, participant: models.Participant) -> PerformanceReport:
     emails_by_id = {e.id: e for e in load_emails()}
 
-    # Rendered (personalized) versions of the same emails, for showing "what
-    # the email actually looked like" in the review section - is_phishing is
-    # deliberately excluded from this public form, so ground truth still
-    # comes from emails_by_id above.
-    profile = load_participant_profile(participant.netid)
-    template_context = build_template_context(
-        participant.first_name,
-        participant.last_name,
-        participant.session_start_ts,
-        contacts=profile.contacts if profile else None,
-        variables=profile.variables if profile else None,
-        email=profile.email if profile else None,
-    )
-    public_emails_by_id = {
-        e.id: e for e in load_public_emails(template_context, participant.session_start_ts)
-    }
-
     it_email = _it_contact_email()
     matrix = load_safe_action_matrix()
-    matrix_max = max(score for row in matrix.values() for score in row.values())
-    protective_categories = {cat for cat, row in matrix.items() if row["phishing"] > 0}
 
     interactions_raw = (
         db.query(models.EmailInteraction)
@@ -292,34 +127,18 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
         interactions_by_email[interaction.email_id] = interaction
     interactions = list(interactions_by_email.values())
 
-    total_score = 0
-    correct_count = 0
-    total_count = 0
     phishing_total = phishing_caught = phishing_missed = 0
     legit_total = legit_handled_well = legit_false_positive = 0
     action_breakdown: dict[str, ActionBreakdown] = {
         category: ActionBreakdown(legit_count=0, phishing_count=0) for category in matrix
     }
 
-    conf_overall = _CalibrationAccumulator()
-    conf_phishing = _CalibrationAccumulator()
-    conf_legit = _CalibrationAccumulator()
-    conf_claimed_phishing = _CalibrationAccumulator()
-    conf_claimed_legit = _CalibrationAccumulator()
-    conf_by_action: dict[str, _CalibrationAccumulator] = {
-        category: _CalibrationAccumulator() for category in matrix
-    }
-    email_reviews: list[EmailReview] = []
-
     for interaction in interactions:
         email = emails_by_id.get(interaction.email_id)
         if email is None:
             continue
 
-        truth_key = "phishing" if email.is_phishing else "legit"
         category = _category_for(interaction.action_taken, interaction.recipient, it_email)
-
-        score = matrix[category][truth_key]
 
         # Caught/missed/false-alarm/handled-well are about whether the
         # participant's stated judgment matched reality - not the action
@@ -327,12 +146,6 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
         # a false alarm even if the action they then took (e.g. archiving)
         # happened to be harmless.
         flagged_suspicious = interaction.perceived_legitimacy == "suspicious"
-        judgment_correct = flagged_suspicious if email.is_phishing else not flagged_suspicious
-
-        total_score += score
-        total_count += 1
-        if score > 0:
-            correct_count += 1
 
         if email.is_phishing:
             phishing_total += 1
@@ -349,76 +162,7 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
                 legit_handled_well += 1
             action_breakdown[category].legit_count += 1
 
-        conf_overall.add(score, interaction.confidence_rating)
-        conf_by_action[category].add(score, interaction.confidence_rating)
-        if email.is_phishing:
-            conf_phishing.add(score, interaction.confidence_rating)
-        else:
-            conf_legit.add(score, interaction.confidence_rating)
-
-        # Claimed phishing/legit is keyed off the participant's explicit
-        # trust/suspicious call, not the action they ended up taking - a
-        # participant can flag an email as suspicious and still reply to it,
-        # and that inconsistency is exactly what this bucket should surface.
-        if interaction.perceived_legitimacy == "suspicious":
-            judgment_score = 1 if email.is_phishing else -1
-            conf_claimed_phishing.add(judgment_score, interaction.judgment_confidence_rating)
-        elif interaction.perceived_legitimacy == "trust":
-            judgment_score = -1 if email.is_phishing else 1
-            conf_claimed_legit.add(judgment_score, interaction.judgment_confidence_rating)
-
-        public_email = public_emails_by_id.get(email.id)
-        email_reviews.append(
-            EmailReview(
-                email_id=email.id,
-                subject=public_email.subject if public_email else email.subject,
-                sender=public_email.sender if public_email else email.sender,
-                body=public_email.body if public_email else email.body,
-                link=public_email.link if public_email else email.link,
-                attachment=public_email.attachment if public_email else email.attachment,
-                received_at=public_email.received_at if public_email else None,
-                is_phishing=email.is_phishing,
-                days_before=email.days_before,
-                received_time=email.received_time,
-                action_taken=interaction.action_taken,
-                category=category,
-                recipient=interaction.recipient,
-                was_correct=judgment_correct,
-                perceived_legitimacy=interaction.perceived_legitimacy,
-                judgment_confidence_rating=interaction.judgment_confidence_rating,
-                confidence_rating=interaction.confidence_rating,
-                difficulty_rating=interaction.difficulty_rating,
-                cues_noticed=interaction.cues_noticed or [],
-                cues_other_text=interaction.cues_other_text,
-                action_reasons=interaction.action_reasons or [],
-                action_reasons_other_text=interaction.action_reasons_other_text,
-            )
-        )
-
-    # Chronological (oldest to newest) - the order the emails would have
-    # actually arrived in, not the order the participant happened to act on
-    # them, so the review reads like a walkthrough of their inbox day.
-    email_reviews.sort(key=lambda r: (-r.days_before, r.received_time or ""))
-
-    statements = [
-        SelfEfficacyStatement(
-            key=question.key,
-            text=question.text,
-            pre=getattr(participant, SELF_EFFICACY_FIELD_MAP[question.key][0]),
-            post=getattr(participant, SELF_EFFICACY_FIELD_MAP[question.key][1]),
-        )
-        for question in load_self_efficacy_questions()
-        if question.key in SELF_EFFICACY_FIELD_MAP
-    ]
-    pre_average = round(sum(s.pre for s in statements) / len(statements), 1)
-    post_values = [s.post for s in statements if s.post is not None]
-    post_average = round(sum(post_values) / len(post_values), 1) if len(post_values) == len(statements) else None
-
     return PerformanceReport(
-        total_score=total_score,
-        max_possible_score=matrix_max * total_count,
-        correct_count=correct_count,
-        total_count=total_count,
         phishing=GroundTruthBreakdown(
             total=phishing_total, caught=phishing_caught, missed=phishing_missed
         ),
@@ -428,24 +172,4 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
             false_positive=legit_false_positive,
         ),
         action_breakdown=action_breakdown,
-        confidence=ConfidenceAverages(
-            overall=conf_overall.to_bucket(),
-            phishing=conf_phishing.to_bucket(),
-            legit=conf_legit.to_bucket(),
-            claimed_phishing=conf_claimed_phishing.to_bucket(),
-            claimed_legit=conf_claimed_legit.to_bucket(),
-            by_action={
-                category: ActionCalibrationBucket(
-                    **acc.to_bucket().model_dump(),
-                    is_protective=category in protective_categories,
-                )
-                for category, acc in conf_by_action.items()
-            },
-        ),
-        self_efficacy=SelfEfficacyBreakdown(
-            statements=statements,
-            pre_average=pre_average,
-            post_average=post_average,
-        ),
-        email_reviews=email_reviews,
     )

@@ -232,124 +232,16 @@ export function submitInteractionRatings(interactionId: number, ratings: Interac
   });
 }
 
-export type CalibrationState = "in_sync" | "undersold" | "oversold" | "no_data";
-
-export interface CalibrationBucket {
-  confidence: number | null;
-  accuracy: number | null;
-  n: number;
-  state: CalibrationState;
-}
-
-export interface ActionCalibrationBucket extends CalibrationBucket {
-  isProtective: boolean;
-}
-
-export interface ConfidenceAverages {
-  overall: CalibrationBucket;
-  phishing: CalibrationBucket;
-  legit: CalibrationBucket;
-  claimedPhishing: CalibrationBucket;
-  claimedLegit: CalibrationBucket;
-  byAction: Record<string, ActionCalibrationBucket>;
-}
-
-export interface SelfEfficacyStatement {
-  key: string;
-  text: string;
-  pre: number;
-  post: number | null;
-}
-
-export interface SelfEfficacyBreakdown {
-  statements: SelfEfficacyStatement[];
-  preAverage: number;
-  postAverage: number | null;
-}
-
-export interface EmailReview {
-  emailId: string;
-  subject: string;
-  sender: string;
-  body: string;
-  link: string | null;
-  attachment: string | null;
-  receivedAt: number | null;
-  isPhishing: boolean;
-  daysBefore: number;
-  receivedTime: string | null;
-  actionTaken: string;
-  category: string;
-  recipient: string | null;
-  wasCorrect: boolean;
-  perceivedLegitimacy: string | null;
-  judgmentConfidenceRating: number | null;
-  confidenceRating: number | null;
-  difficultyRating: number | null;
-  cuesNoticed: string[];
-  cuesOtherText: string | null;
-  actionReasons: string[];
-  actionReasonsOtherText: string | null;
-}
-
 export interface PerformanceReport {
-  totalScore: number;
-  maxPossibleScore: number;
-  correctCount: number;
-  totalCount: number;
   phishing: { total: number; caught: number; missed: number };
   legit: { total: number; handledWell: number; falsePositive: number };
   actionBreakdown: Record<string, { legitCount: number; phishingCount: number }>;
-  confidence: ConfidenceAverages;
-  selfEfficacy: SelfEfficacyBreakdown;
-  emailReviews: EmailReview[];
 }
 
 interface PerformanceReportResponse {
-  total_score: number;
-  max_possible_score: number;
-  correct_count: number;
-  total_count: number;
   phishing: { total: number; caught: number; missed: number };
   legit: { total: number; handled_well: number; false_positive: number };
   action_breakdown: Record<string, { legit_count: number; phishing_count: number }>;
-  confidence: {
-    overall: CalibrationBucket;
-    phishing: CalibrationBucket;
-    legit: CalibrationBucket;
-    claimed_phishing: CalibrationBucket;
-    claimed_legit: CalibrationBucket;
-    by_action: Record<string, { confidence: number | null; accuracy: number | null; n: number; state: CalibrationState; is_protective: boolean }>;
-  };
-  self_efficacy: {
-    statements: SelfEfficacyStatement[];
-    pre_average: number;
-    post_average: number | null;
-  };
-  email_reviews: {
-    email_id: string;
-    subject: string;
-    sender: string;
-    body: string;
-    link: string | null;
-    attachment: string | null;
-    received_at: number | null;
-    is_phishing: boolean;
-    days_before: number;
-    received_time: string | null;
-    action_taken: string;
-    category: string;
-    recipient: string | null;
-    was_correct: boolean;
-    perceived_legitimacy: string | null;
-    judgment_confidence_rating: number | null;
-    confidence_rating: number | null;
-    difficulty_rating: number | null;
-    cues_noticed: string[];
-    cues_other_text: string | null;
-    action_reasons: string[];
-    action_reasons_other_text: string | null;
-  }[];
 }
 
 export async function getPerformanceReport(participantId: string): Promise<PerformanceReport> {
@@ -357,10 +249,6 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
     `/participants/${encodeURIComponent(participantId)}/report`
   );
   return {
-    totalScore: data.total_score,
-    maxPossibleScore: data.max_possible_score,
-    correctCount: data.correct_count,
-    totalCount: data.total_count,
     phishing: data.phishing,
     legit: {
       total: data.legit.total,
@@ -373,54 +261,6 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
         { legitCount: value.legit_count, phishingCount: value.phishing_count },
       ])
     ),
-    confidence: {
-      overall: data.confidence.overall,
-      phishing: data.confidence.phishing,
-      legit: data.confidence.legit,
-      claimedPhishing: data.confidence.claimed_phishing,
-      claimedLegit: data.confidence.claimed_legit,
-      byAction: Object.fromEntries(
-        Object.entries(data.confidence.by_action).map(([key, value]) => [
-          key,
-          {
-            confidence: value.confidence,
-            accuracy: value.accuracy,
-            n: value.n,
-            state: value.state,
-            isProtective: value.is_protective,
-          },
-        ])
-      ),
-    },
-    selfEfficacy: {
-      statements: data.self_efficacy.statements,
-      preAverage: data.self_efficacy.pre_average,
-      postAverage: data.self_efficacy.post_average,
-    },
-    emailReviews: data.email_reviews.map((r) => ({
-      emailId: r.email_id,
-      subject: r.subject,
-      sender: r.sender,
-      body: r.body,
-      link: r.link,
-      attachment: r.attachment,
-      receivedAt: r.received_at,
-      isPhishing: r.is_phishing,
-      daysBefore: r.days_before,
-      receivedTime: r.received_time,
-      actionTaken: r.action_taken,
-      category: r.category,
-      recipient: r.recipient,
-      wasCorrect: r.was_correct,
-      perceivedLegitimacy: r.perceived_legitimacy,
-      judgmentConfidenceRating: r.judgment_confidence_rating,
-      confidenceRating: r.confidence_rating,
-      difficultyRating: r.difficulty_rating,
-      cuesNoticed: r.cues_noticed,
-      cuesOtherText: r.cues_other_text,
-      actionReasons: r.action_reasons,
-      actionReasonsOtherText: r.action_reasons_other_text,
-    })),
   };
 }
 
