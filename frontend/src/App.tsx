@@ -23,6 +23,7 @@ import {
 } from "./api";
 import { useMouseLogger } from "./hooks/useMouseLogger";
 import { useKeystrokeLogger } from "./hooks/useKeystrokeLogger";
+import { playSyncClap } from "./syncClap";
 import type { ActionType, Contact, DummyEmail, ProcessedInfo, SelfEfficacyRatings } from "./types";
 
 function sortByReceivedDesc(emails: DummyEmail[]): DummyEmail[] {
@@ -74,6 +75,12 @@ function App() {
       selfEfficacy!,
       startTs
     );
+    // startSession() only resolves once OBS confirms the recording started,
+    // but the audio pipeline for all 3 sources needs a moment longer to
+    // actually be capturing before the sync clap fires, or it can be
+    // dropped from one or more of the recordings.
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    playSyncClap();
     const [allEmails, allContacts, credential] = await Promise.all([
       getEmails(participantId),
       getContacts(participantId),
