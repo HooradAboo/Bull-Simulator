@@ -18,22 +18,33 @@ export function playSyncClap() {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
-    // Broad bandpass centered where a real clap's energy sits, rather than
-    // a narrow tone - makes it stand out against low-frequency room hum
-    // and keeps most of the webcam mics' usable frequency range loud.
+    // Highpass rather than a narrow bandpass - cuts the low-frequency room
+    // hum/fan noise a clap doesn't have, but otherwise passes almost all of
+    // the broadband noise energy through, which reads as much louder than
+    // a narrow band centered on one frequency.
     const filter = ctx.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = 2200;
-    filter.Q.value = 0.5;
+    filter.type = "highpass";
+    filter.frequency.value = 600;
 
     const gain = ctx.createGain();
     gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.98, now + 0.003); // fast attack, avoids a click
+    gain.gain.linearRampToValueAtTime(1.6, now + 0.003); // fast attack, avoids a click
     gain.gain.exponentialRampToValueAtTime(0.001, now + duration); // true decay, avoids a click on stop
+
+    // Limiter on the boosted signal - catches the overs from pushing gain
+    // past 1.0 so the clap reads louder without just hard-clipping into
+    // harsh distortion.
+    const compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.value = -24;
+    compressor.knee.value = 4;
+    compressor.ratio.value = 20;
+    compressor.attack.value = 0.001;
+    compressor.release.value = 0.1;
 
     noise.connect(filter);
     filter.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(compressor);
+    compressor.connect(ctx.destination);
 
     noise.start(now);
     noise.stop(now + duration + 0.02);
