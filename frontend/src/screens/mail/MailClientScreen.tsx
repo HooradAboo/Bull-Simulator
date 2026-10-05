@@ -8,7 +8,6 @@ import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { LEGITIMACY_LABELS, type JudgmentStep } from "./JudgmentPanel";
 import { ConfidenceModal } from "./ConfidenceModal";
-import { ComposeFollowupModal } from "./ComposeFollowupModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
 import { SentItemsPane } from "./SentItemsPane";
@@ -18,14 +17,10 @@ import { HelpButton } from "./HelpButton";
 import { extractEmail } from "./avatar";
 import {
   confirmInteraction,
-  getActionReasons,
-  getContactRoles,
   getCueOptions,
-  logComposedEmail,
   logHover,
   openInteraction,
   submitInteractionRatings,
-  type ActionReasonOption,
   type CueOption,
   type PerceivedLegitimacy,
 } from "../../api";
@@ -137,17 +132,6 @@ export function MailClientScreen({
   initialProcessed,
   onAllProcessed,
 }: Props) {
-  const [composeOpen, setComposeOpen] = useState(false);
-  const [composeRecipient, setComposeRecipient] = useState("");
-  const [composeSubject, setComposeSubject] = useState("");
-  const [composeBody, setComposeBody] = useState("");
-  const [composeFollowupOpen, setComposeFollowupOpen] = useState(false);
-  const [pendingComposeSentAt, setPendingComposeSentAt] = useState<number | null>(null);
-  const [composeRecipientRole, setComposeRecipientRole] = useState<string | null>(null);
-  const [composeOtherRoleText, setComposeOtherRoleText] = useState("");
-  const [composeReasons, setComposeReasons] = useState<string[]>([]);
-  const [composeOtherReasonText, setComposeOtherReasonText] = useState("");
-  const [contactRoles, setContactRoles] = useState<CueOption[]>([]);
   const [selectedEmail, setSelectedEmail] = useState<DummyEmail | null>(null);
   const [interactionId, setInteractionId] = useState<number | null>(null);
   const [openedAt, setOpenedAt] = useState<number | null>(null);
@@ -161,9 +145,6 @@ export function MailClientScreen({
   const [confidenceValue, setConfidenceValueState] = useState<number | null>(null);
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
-  const [actionReasonOptions, setActionReasonOptions] = useState<
-    Record<string, ActionReasonOption[]>
-  >({});
   const [cueOptions, setCueOptions] = useState<CueOption[]>([]);
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(
     () => new Map(initialProcessed)
@@ -186,9 +167,7 @@ export function MailClientScreen({
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
   useEffect(() => {
-    getActionReasons().then(setActionReasonOptions);
     getCueOptions().then(setCueOptions);
-    getContactRoles().then(setContactRoles);
   }, []);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
@@ -215,7 +194,7 @@ export function MailClientScreen({
   };
 
   const handleSelectEmail = async (email: DummyEmail) => {
-    if (isMidFlow || composeOpen) return;
+    if (isMidFlow) return;
 
     if (processed.has(email.id)) {
       const info = processed.get(email.id)!;
@@ -297,76 +276,6 @@ export function MailClientScreen({
     }
 
     commitAction(action, null);
-  };
-
-  const handleStartCompose = () => {
-    setComposeRecipient("");
-    setComposeSubject("");
-    setComposeBody("");
-    setComposeOpen(true);
-  };
-
-  // Composing a fresh message isn't a graded action on any particular
-  // email - it's just an outlet participants can use if they want to reach
-  // out (e.g. to IT or the sender), so it's only logged, not scored (no
-  // confidence/difficulty rating, not part of the performance report). It
-  // does still ask who they sent it to (their role, not just a name/address)
-  // and why, then lands in Sent Items so the inbox stays internally
-  // consistent.
-  const handleComposeSend = () => {
-    if (composeRecipient.trim().length === 0) return;
-    setPendingComposeSentAt(Date.now());
-    setComposeRecipientRole(null);
-    setComposeOtherRoleText("");
-    setComposeReasons([]);
-    setComposeOtherReasonText("");
-    setComposeFollowupOpen(true);
-  };
-
-  const handleComposeDiscard = () => {
-    setComposeOpen(false);
-  };
-
-  const handleSelectComposeRole = (roleKey: string) => {
-    setComposeRecipientRole(roleKey);
-  };
-
-  const handleToggleComposeReason = (reasonKey: string) => {
-    setComposeReasons((prev) =>
-      prev.includes(reasonKey) ? prev.filter((r) => r !== reasonKey) : [...prev, reasonKey]
-    );
-  };
-
-  const handleSubmitComposeFollowup = async () => {
-    if (!composeRecipientRole || pendingComposeSentAt === null) return;
-    const recipient = composeRecipient.trim();
-    const subject = composeSubject.trim();
-    const body = composeBody.trim();
-    const sentAt = pendingComposeSentAt;
-    await logComposedEmail(participantId, recipient, subject, body, sentAt, {
-      recipientRole: composeRecipientRole,
-      recipientRoleOtherText: composeRecipientRole === "other" ? composeOtherRoleText : null,
-      reasons: composeReasons,
-      reasonsOtherText: composeReasons.includes("other") ? composeOtherReasonText : null,
-    });
-    setSentItems((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        originalEmailId: "",
-        kind: "compose",
-        subject,
-        body,
-        originalSender: "",
-        link: null,
-        attachment: null,
-        recipient,
-        sentAt,
-      },
-    ]);
-    setComposeFollowupOpen(false);
-    setComposeOpen(false);
-    setPendingComposeSentAt(null);
   };
 
   const handleConfirmDestructiveAction = () => {
@@ -599,13 +508,7 @@ export function MailClientScreen({
       <Ribbon
         pendingAction={pendingAction}
         disabled={ribbonDisabled}
-        // Composing is turned off for now - swap this back to
-        // `phase !== "idle"` to bring it back. Everything else (the
-        // followup modal, backend logging, Drafts/Sent wiring) is left
-        // intact, just unreachable while this stays true.
-        composeDisabled={true}
         onSelectAction={handleSelectAction}
-        onCompose={handleStartCompose}
       />
       <div className="mail-body">
         <FolderSidebar
@@ -614,7 +517,7 @@ export function MailClientScreen({
           deletedCount={deletedCount}
           junkCount={junkCount}
           sentCount={sentItems.length}
-          draftsCount={composeOpen ? 1 : 0}
+          draftsCount={0}
           participantEmail={participantEmail}
           onSelectFolder={handleSelectFolder}
         />
@@ -629,18 +532,12 @@ export function MailClientScreen({
           </>
         ) : currentFolder === "drafts" ? (
           <>
-            <DraftsPane
-              hasDraft={composeOpen}
-              recipient={composeRecipient}
-              subject={composeSubject}
-              onSelect={() => setComposeOpen(true)}
-            />
+            <DraftsPane />
             <ReadingPane
               email={null}
               processedInfo={null}
               replyMode={false}
               forwardMode={false}
-              composeMode={composeOpen}
               contacts={contacts}
               participantEmail={participantEmail}
               judgmentStep="done"
@@ -655,14 +552,6 @@ export function MailClientScreen({
               onReplyDiscard={() => {}}
               onForwardSubmit={() => {}}
               onForwardDiscard={() => {}}
-              composeRecipient={composeRecipient}
-              onComposeRecipientChange={setComposeRecipient}
-              composeSubject={composeSubject}
-              onComposeSubjectChange={setComposeSubject}
-              composeBody={composeBody}
-              onComposeBodyChange={setComposeBody}
-              onComposeSend={handleComposeSend}
-              onComposeDiscard={handleComposeDiscard}
             />
           </>
         ) : (
@@ -681,7 +570,6 @@ export function MailClientScreen({
               processedInfo={processedInfo}
               replyMode={phase === "replying"}
               forwardMode={phase === "forwarding"}
-              composeMode={composeOpen}
               contacts={contacts}
               participantEmail={participantEmail}
               judgmentStep={judgmentStep}
@@ -696,14 +584,6 @@ export function MailClientScreen({
               onReplyDiscard={handleReplyCancel}
               onForwardSubmit={handleForwardSubmit}
               onForwardDiscard={handleForwardCancel}
-              composeRecipient={composeRecipient}
-              onComposeRecipientChange={setComposeRecipient}
-              composeSubject={composeSubject}
-              onComposeSubjectChange={setComposeSubject}
-              composeBody={composeBody}
-              onComposeBodyChange={setComposeBody}
-              onComposeSend={handleComposeSend}
-              onComposeDiscard={handleComposeDiscard}
             />
           </>
         )}
@@ -735,22 +615,6 @@ export function MailClientScreen({
           otherCueText={otherCueText}
           onOtherCueTextChange={setOtherCueText}
           onSubmit={handleSubmitConfidence}
-        />
-      )}
-
-      {composeFollowupOpen && (
-        <ComposeFollowupModal
-          roleOptions={contactRoles}
-          selectedRole={composeRecipientRole}
-          onSelectRole={handleSelectComposeRole}
-          otherRoleText={composeOtherRoleText}
-          onOtherRoleTextChange={setComposeOtherRoleText}
-          reasonOptions={actionReasonOptions["compose"] ?? []}
-          selectedReasons={composeReasons}
-          onToggleReason={handleToggleComposeReason}
-          otherReasonText={composeOtherReasonText}
-          onOtherReasonTextChange={setComposeOtherReasonText}
-          onSubmit={handleSubmitComposeFollowup}
         />
       )}
     </div>

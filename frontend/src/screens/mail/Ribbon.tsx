@@ -19,12 +19,10 @@ import type { ActionType } from "../../types";
 interface Props {
   pendingAction: ActionType | null;
   disabled: boolean;
-  composeDisabled: boolean;
   // Individually disabled regardless of `disabled` - used by the practice
   // tutorial to take an action out of scope entirely.
   disabledActions?: ActionType[];
   onSelectAction: (action: ActionType) => void;
-  onCompose: () => void;
 }
 
 const ACTION_DESCRIPTIONS: Record<ActionType, string> = {
@@ -38,8 +36,6 @@ const ACTION_DESCRIPTIONS: Record<ActionType, string> = {
   click_link: "Open a link contained in this email.",
   open_attachment: "Open a file attached to this email.",
 };
-
-const COMPOSE_DESCRIPTION = "Start a new email";
 
 interface TooltipState {
   description: string;
@@ -69,10 +65,8 @@ function DecorativeButton({
 export function Ribbon({
   pendingAction,
   disabled,
-  composeDisabled,
   disabledActions = [],
   onSelectAction,
-  onCompose,
 }: Props) {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const tooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -107,16 +101,7 @@ export function Ribbon({
 
   return (
     <div className="mail-ribbon">
-      <button
-        className="ribbon-btn primary"
-        disabled={composeDisabled}
-        onClick={onCompose}
-        onMouseEnter={(e) => showTooltip(e, COMPOSE_DESCRIPTION)}
-        onMouseLeave={hideTooltip}
-        data-tour="compose"
-      >
-        <MailAdd20Regular /> New mail
-      </button>
+      <DecorativeButton icon={<MailAdd20Regular />} label="New mail" dataTour="decorative-new-mail" />
 
       <div className="ribbon-divider" />
 

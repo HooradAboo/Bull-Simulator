@@ -439,10 +439,6 @@ export function TutorialScreen({ onFinish }: Props) {
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
   const [selectedSentItem, setSelectedSentItem] = useState<SentItem | null>(null);
-  const [composeOpen, setComposeOpen] = useState(false);
-  const [composeRecipient, setComposeRecipient] = useState("");
-  const [composeSubject, setComposeSubject] = useState("");
-  const [composeBody, setComposeBody] = useState("");
 
   const isMidFlow = selectedEmail !== null && !processed.has(selectedEmail.id) && phase !== "idle";
 
@@ -520,10 +516,6 @@ export function TutorialScreen({ onFinish }: Props) {
     setCurrentFolder("inbox");
     setSentItems([]);
     setSelectedSentItem(null);
-    setComposeOpen(false);
-    setComposeRecipient("");
-    setComposeSubject("");
-    setComposeBody("");
     setJudgmentStep("trust");
     setPerceivedLegitimacy(null);
     setJudgmentConfidenceValue(null);
@@ -550,7 +542,7 @@ export function TutorialScreen({ onFinish }: Props) {
   };
 
   const handleSelectEmail = (email: DummyEmail) => {
-    if (tourActive || isMidFlow || composeOpen) return;
+    if (tourActive || isMidFlow) return;
     if (guidedActive && email.id !== guidedTargetEmailId) return;
 
     if (processed.has(email.id)) {
@@ -686,36 +678,6 @@ export function TutorialScreen({ onFinish }: Props) {
     commitAction(action, null);
   };
 
-  const handleStartCompose = () => {
-    if (tourActive) return;
-    setComposeRecipient("");
-    setComposeSubject("");
-    setComposeBody("");
-    setComposeOpen(true);
-  };
-
-  const handleComposeSend = () => {
-    if (composeRecipient.trim().length === 0) return;
-    setSentItems((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        originalEmailId: "",
-        kind: "compose",
-        subject: composeSubject.trim(),
-        body: composeBody.trim(),
-        originalSender: "",
-        link: null,
-        attachment: null,
-        recipient: composeRecipient.trim(),
-        sentAt: Date.now(),
-      },
-    ]);
-    setComposeOpen(false);
-  };
-
-  const handleComposeDiscard = () => setComposeOpen(false);
-
   const handleConfirmDestructiveAction = () => {
     if (!confirmingAction) return;
     commitAction(confirmingAction, null);
@@ -765,10 +727,8 @@ export function TutorialScreen({ onFinish }: Props) {
       <Ribbon
         pendingAction={pendingAction}
         disabled={ribbonDisabled}
-        composeDisabled
         disabledActions={guidedDisabledActions}
         onSelectAction={handleSelectAction}
-        onCompose={handleStartCompose}
       />
       <div className="mail-body">
         <FolderSidebar
@@ -777,7 +737,7 @@ export function TutorialScreen({ onFinish }: Props) {
           deletedCount={deletedCount}
           junkCount={junkCount}
           sentCount={sentItems.length}
-          draftsCount={composeOpen ? 1 : 0}
+          draftsCount={0}
           participantEmail={PRACTICE_EMAIL}
           onSelectFolder={handleSelectFolder}
         />
@@ -792,18 +752,12 @@ export function TutorialScreen({ onFinish }: Props) {
           </>
         ) : currentFolder === "drafts" ? (
           <>
-            <DraftsPane
-              hasDraft={composeOpen}
-              recipient={composeRecipient}
-              subject={composeSubject}
-              onSelect={() => setComposeOpen(true)}
-            />
+            <DraftsPane />
             <ReadingPane
               email={null}
               processedInfo={null}
               replyMode={false}
               forwardMode={false}
-              composeMode={composeOpen}
               contacts={PRACTICE_CONTACTS}
               participantEmail={PRACTICE_EMAIL}
               judgmentStep="done"
@@ -818,14 +772,6 @@ export function TutorialScreen({ onFinish }: Props) {
               onReplyDiscard={() => {}}
               onForwardSubmit={() => {}}
               onForwardDiscard={() => {}}
-              composeRecipient={composeRecipient}
-              onComposeRecipientChange={setComposeRecipient}
-              composeSubject={composeSubject}
-              onComposeSubjectChange={setComposeSubject}
-              composeBody={composeBody}
-              onComposeBodyChange={setComposeBody}
-              onComposeSend={handleComposeSend}
-              onComposeDiscard={handleComposeDiscard}
             />
           </>
         ) : (
@@ -844,7 +790,6 @@ export function TutorialScreen({ onFinish }: Props) {
               processedInfo={processedInfo}
               replyMode={phase === "replying"}
               forwardMode={phase === "forwarding"}
-              composeMode={composeOpen}
               contacts={PRACTICE_CONTACTS}
               participantEmail={PRACTICE_EMAIL}
               judgmentStep={judgmentStep}
@@ -859,14 +804,6 @@ export function TutorialScreen({ onFinish }: Props) {
               onReplyDiscard={handleReplyCancel}
               onForwardSubmit={handleForwardSubmit}
               onForwardDiscard={handleForwardCancel}
-              composeRecipient={composeRecipient}
-              onComposeRecipientChange={setComposeRecipient}
-              composeSubject={composeSubject}
-              onComposeSubjectChange={setComposeSubject}
-              composeBody={composeBody}
-              onComposeBodyChange={setComposeBody}
-              onComposeSend={handleComposeSend}
-              onComposeDiscard={handleComposeDiscard}
             />
           </>
         )}
