@@ -15,6 +15,11 @@ class SessionStart(BaseModel):
     session_start_ts: int
 
 
+class SessionEnd(BaseModel):
+    participant_id: str
+    ended_at: int
+
+
 class CompletedInteractionSummary(BaseModel):
     email_id: str
     action_taken: str

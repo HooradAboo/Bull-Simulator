@@ -171,6 +171,13 @@ export function startSession(
   });
 }
 
+export function endSession(participantId: string, endedAt: number) {
+  return post("/session/end", {
+    participant_id: participantId,
+    ended_at: endedAt,
+  });
+}
+
 export function submitPostSelfEfficacy(participantId: string, ratings: SelfEfficacyRatings) {
   return patch(`/participants/${participantId}/self-efficacy-post`, {
     self_efficacy_post_recognize_links: ratings.recognizeLinks,

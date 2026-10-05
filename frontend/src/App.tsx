@@ -14,6 +14,7 @@ import { PlainTitleBar } from "./screens/browser/PlainTitleBar";
 import { LoginScreen } from "./screens/login/LoginScreen";
 import {
   createCredential,
+  endSession,
   getContacts,
   getEmails,
   startSession,
@@ -207,6 +208,7 @@ function App() {
           continueLabel="Finish"
           onContinue={async (ratings) => {
             await submitPostSelfEfficacy(participantId, ratings);
+            await endSession(participantId, Date.now());
             setScreen("debrief");
           }}
         />

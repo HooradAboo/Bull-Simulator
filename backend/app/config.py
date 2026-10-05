@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     action_reasons_config_path: Path = REPO_ROOT / "config" / "action_reasons.json"
     cue_options_config_path: Path = REPO_ROOT / "config" / "cue_options.json"
     contact_roles_config_path: Path = REPO_ROOT / "config" / "contact_roles.json"
+    recording_base_dir: Path = Path("/home/ciber/Desktop/MuSES")
+    obs_host: str = "localhost"
+    obs_port: int = 4455
+    obs_password: str = ""
 
 
 settings = Settings()

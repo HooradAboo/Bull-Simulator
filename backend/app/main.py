@@ -10,6 +10,7 @@ from app.cue_options import CueOption, load_cue_options
 from app.database import Base, engine, get_db
 from app.emails import EmailPublic, build_template_context, load_public_emails
 from app.participant_profile import ParticipantProfile, load_participant_profile
+from app.recording import RecordingError, start_recording, stop_recording
 from app.report import PerformanceReport, build_performance_report
 from app.self_efficacy import SelfEfficacyQuestion, load_self_efficacy_questions
 
@@ -171,15 +172,48 @@ def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
         session_start_ts=payload.session_start_ts,
     )
     db.add(participant)
+
+    recording_metadata: dict = {}
+    try:
+        recording_metadata = start_recording(payload.netid, payload.session_start_ts)
+    except RecordingError as e:
+        print(f"[recording] failed to start OBS recording: {e}")
+        recording_metadata = {"recording_error": str(e)}
+
     db.add(
         models.SessionEvent(
             participant_id=payload.participant_id,
             event_type="session_start",
             timestamp_ms=payload.session_start_ts,
+            event_metadata=recording_metadata or None,
         )
     )
     db.commit()
-    return {"status": "ok"}
+    return {"status": "ok", **recording_metadata}
+
+
+@app.post("/session/end")
+def end_session(payload: schemas.SessionEnd, db: Session = Depends(get_db)):
+    if not db.get(models.Participant, payload.participant_id):
+        raise HTTPException(status_code=404, detail="unknown participant_id")
+
+    recording_metadata: dict = {}
+    try:
+        recording_metadata = stop_recording()
+    except RecordingError as e:
+        print(f"[recording] failed to stop OBS recording: {e}")
+        recording_metadata = {"recording_error": str(e)}
+
+    db.add(
+        models.SessionEvent(
+            participant_id=payload.participant_id,
+            event_type="session_end",
+            timestamp_ms=payload.ended_at,
+            event_metadata=recording_metadata or None,
+        )
+    )
+    db.commit()
+    return {"status": "ok", **recording_metadata}
 
 
 @app.patch("/participants/{participant_id}/self-efficacy-post")
