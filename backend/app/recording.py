@@ -225,14 +225,22 @@ def stop_recording() -> dict:
         if p.stat().st_mtime >= start_unix_s:
             p.rename(session_dir / p.name)
 
+    # start_record()/stop_record() also produces OBS's own main canvas
+    # recording (the 3 per-source filters are configured to key off that
+    # call, so it can't be skipped) - it's redundant with the 3 per-source
+    # files above, so delete it rather than keep a 4th copy of the session.
+    if resp.output_path:
+        main_output = Path(resp.output_path)
+        if not main_output.exists():
+            main_output = session_dir / main_output.name
+        if main_output.exists():
+            main_output.unlink()
+
     files = sorted(p for p in session_dir.glob("*.mkv") if p.stat().st_mtime >= start_unix_s)
     result = {
         "recording_dir": str(session_dir),
         "recording_stop_unix_ms": stop_ns // 1_000_000,
         "recording_duration_s": (stop_ns - start_ns) / 1e9,
-        "main_output_path": (
-            str(session_dir / Path(resp.output_path).name) if resp.output_path else None
-        ),
         "files": {p.name: _probe(p) for p in files},
     }
     _state.clear()
