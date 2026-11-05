@@ -84,21 +84,7 @@ class ActionBreakdown(BaseModel):
     phishing_count: int
 
 
-class GroundTruthBreakdown(BaseModel):
-    total: int
-    caught: int  # phishing the participant flagged as suspicious
-    missed: int  # phishing the participant trusted
-
-
-class LegitBreakdown(BaseModel):
-    total: int
-    handled_well: int  # legitimate email the participant trusted
-    false_positive: int  # legitimate email the participant flagged as suspicious
-
-
 class PerformanceReport(BaseModel):
-    phishing: GroundTruthBreakdown
-    legit: LegitBreakdown
     action_breakdown: dict[str, ActionBreakdown]
 
 
@@ -127,8 +113,6 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
         interactions_by_email[interaction.email_id] = interaction
     interactions = list(interactions_by_email.values())
 
-    phishing_total = phishing_caught = phishing_missed = 0
-    legit_total = legit_handled_well = legit_false_positive = 0
     action_breakdown: dict[str, ActionBreakdown] = {
         category: ActionBreakdown(legit_count=0, phishing_count=0) for category in matrix
     }
@@ -140,36 +124,9 @@ def build_performance_report(db: Session, participant: models.Participant) -> Pe
 
         category = _category_for(interaction.action_taken, interaction.recipient, it_email)
 
-        # Caught/missed/false-alarm/handled-well are about whether the
-        # participant's stated judgment matched reality - not the action
-        # they went on to take. Flagging a legitimate email as suspicious is
-        # a false alarm even if the action they then took (e.g. archiving)
-        # happened to be harmless.
-        flagged_suspicious = interaction.perceived_legitimacy == "suspicious"
-
         if email.is_phishing:
-            phishing_total += 1
-            if flagged_suspicious:
-                phishing_caught += 1
-            else:
-                phishing_missed += 1
             action_breakdown[category].phishing_count += 1
         else:
-            legit_total += 1
-            if flagged_suspicious:
-                legit_false_positive += 1
-            else:
-                legit_handled_well += 1
             action_breakdown[category].legit_count += 1
 
-    return PerformanceReport(
-        phishing=GroundTruthBreakdown(
-            total=phishing_total, caught=phishing_caught, missed=phishing_missed
-        ),
-        legit=LegitBreakdown(
-            total=legit_total,
-            handled_well=legit_handled_well,
-            false_positive=legit_false_positive,
-        ),
-        action_breakdown=action_breakdown,
-    )
+    return PerformanceReport(action_breakdown=action_breakdown)

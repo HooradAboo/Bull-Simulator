@@ -12,15 +12,23 @@
     { "key": "declutter_after_reading", "label": "To declutter after reading" },
     { "key": "seemed_junk", "label": "It seemed junk or irrelevant" },
     { "key": "unfamiliar_sender", "label": "The sender looked unfamiliar" },
+    { "key": "seemed_suspicious", "label": "It seemed suspicious" },
     { "key": "other", "label": "Something else" }
   ],
   "report_phishing": [
     { "key": "seemed_suspicious", "label": "It seemed suspicious" },
+    { "key": "seemed_junk", "label": "It seemed junk or irrelevant" },
+    { "key": "unfamiliar_sender", "label": "The sender looked unfamiliar" },
+    { "key": "phishing_attempt", "label": "I was concerned it might be a phishing attempt" },
+    { "key": "asking_for_personal_info", "label": "It was asking for personal information" },
+    { "key": "too_many", "label": "I was receiving too many of these" },
     { "key": "other", "label": "Something else" }
   ],
   "reply": [
     { "key": "to_respond", "label": "To respond" },
     { "key": "to_follow_up", "label": "To follow up" },
+    { "key": "to_question", "label": "To ask a question" },
+    { "key": "to_provide_info", "label": "To provide information" },
     { "key": "other", "label": "Something else" }
   ],
   "forward": [
@@ -28,6 +36,7 @@
     { "key": "ask_a_question", "label": "To ask a question" },
     { "key": "relevant_to_recipient", "label": "It seemed relevant to the recipient" },
     { "key": "worth_sharing", "label": "It's worth sharing" },
+    { "key": "confirm_legitimacy", "label": "To confirm the legitimacy of the email" },
     { "key": "other", "label": "Something else" }
   ],
   "click_link": [

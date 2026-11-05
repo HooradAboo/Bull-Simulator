@@ -310,82 +310,6 @@
   line-height: 1.5;
 }
 
-/* confusion matrix */
-.confusion-matrix-wrap {
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  overflow: hidden;
-  width: fit-content;
-  margin: 0 auto;
-}
-.confusion-matrix {
-  table-layout: fixed;
-  border-collapse: collapse;
-}
-.confusion-matrix th,
-.confusion-matrix td {
-  border: 1px solid var(--card-border);
-}
-.confusion-matrix th:first-child,
-.confusion-matrix td:first-child {
-  width: 150px;
-}
-.confusion-matrix th:not(:first-child),
-.confusion-matrix td:not(:first-child) {
-  width: 140px;
-}
-.confusion-matrix thead th {
-  background: #fafafb;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 10px 12px;
-  text-align: center;
-}
-.confusion-matrix tbody th {
-  background: #fafafb;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-  padding: 10px 12px;
-  text-align: left;
-  white-space: nowrap;
-}
-.confusion-cell {
-  text-align: center;
-  padding: 14px 10px;
-}
-.confusion-cell.good {
-  background: rgba(47, 158, 110, 0.08);
-}
-.confusion-cell.bad {
-  background: rgba(194, 96, 74, 0.08);
-}
-.confusion-cell.warn {
-  background: rgba(217, 160, 40, 0.1);
-}
-.confusion-cell-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.1;
-}
-.confusion-cell.good .confusion-cell-value {
-  color: var(--sync);
-}
-.confusion-cell.bad .confusion-cell-value {
-  color: var(--oversold);
-}
-.confusion-cell.warn .confusion-cell-value {
-  color: #b8860b;
-}
-.confusion-cell-label {
-  font-size: 11.5px;
-  color: var(--text-muted);
-  margin-top: 3px;
-}
-
 /* action bar chart */
 .action-chart-legend {
   display: flex;
@@ -534,9 +458,9 @@
    of just whatever fit in the visible scroll area. */
 @media print {
   /* Browsers strip background colors/images by default when printing
-     unless a page opts in explicitly - without this, the confusion matrix
-     cells, action-chart bars, and calibration state tags would all print
-     as plain white/black instead of their actual colors. */
+     unless a page opts in explicitly - without this, the action-chart bars
+     and calibration state tags would all print as plain white/black
+     instead of their actual colors. */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

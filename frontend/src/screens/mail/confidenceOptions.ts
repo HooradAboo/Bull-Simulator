@@ -1,7 +1,6 @@
-// Shared by the decision-sureness rating (JudgmentPanel done-state label,
-// ConfidenceModal step 1) and the action-sureness rating (ConfidenceModal
-// step 1) - same 1-5 scale and wording for both, kept in one place so a
-// future wording/scale change can't update one and silently miss the other.
+// Used for the action-sureness rating (ConfidenceModal step 1) - a 1-5
+// scale kept in one place so a future wording/scale change has one spot
+// to update.
 export interface SurenessOption {
   value: number;
   label: string;

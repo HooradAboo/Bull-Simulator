@@ -129,7 +129,6 @@ def lookup_participant_by_netid(netid: str, db: Session = Depends(get_db)):
         if (
             interaction.action_taken is not None
             and interaction.confirmed_at is not None
-            and interaction.perceived_legitimacy is not None
             and interaction.confidence_rating is not None
         ):
             completed_by_email[interaction.email_id] = interaction
@@ -285,8 +284,6 @@ def set_interaction_ratings(
     if not interaction:
         raise HTTPException(status_code=404, detail="unknown interaction_id")
 
-    interaction.perceived_legitimacy = payload.perceived_legitimacy
-    interaction.judgment_confidence_rating = payload.judgment_confidence_rating
     interaction.confidence_rating = payload.confidence_rating
     interaction.difficulty_rating = payload.difficulty_rating
     interaction.cues_noticed = payload.cues_noticed

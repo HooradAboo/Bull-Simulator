@@ -219,35 +219,29 @@ export function confirmInteraction(
   });
 }
 
-export type PerceivedLegitimacy = "trust" | "suspicious";
-
 export interface InteractionRatings {
-  perceivedLegitimacy: PerceivedLegitimacy;
-  judgmentConfidenceRating: number;
   confidenceRating: number;
+  actionReasons: string[];
+  actionReasonsOtherText: string | null;
   cuesNoticed: string[];
   cuesOtherText: string | null;
 }
 
 export function submitInteractionRatings(interactionId: number, ratings: InteractionRatings) {
   return patch(`/interactions/${interactionId}/ratings`, {
-    perceived_legitimacy: ratings.perceivedLegitimacy,
-    judgment_confidence_rating: ratings.judgmentConfidenceRating,
     confidence_rating: ratings.confidenceRating,
+    action_reasons: ratings.actionReasons,
+    action_reasons_other_text: ratings.actionReasonsOtherText,
     cues_noticed: ratings.cuesNoticed,
     cues_other_text: ratings.cuesOtherText,
   });
 }
 
 export interface PerformanceReport {
-  phishing: { total: number; caught: number; missed: number };
-  legit: { total: number; handledWell: number; falsePositive: number };
   actionBreakdown: Record<string, { legitCount: number; phishingCount: number }>;
 }
 
 interface PerformanceReportResponse {
-  phishing: { total: number; caught: number; missed: number };
-  legit: { total: number; handled_well: number; false_positive: number };
   action_breakdown: Record<string, { legit_count: number; phishing_count: number }>;
 }
 
@@ -256,12 +250,6 @@ export async function getPerformanceReport(participantId: string): Promise<Perfo
     `/participants/${encodeURIComponent(participantId)}/report`
   );
   return {
-    phishing: data.phishing,
-    legit: {
-      total: data.legit.total,
-      handledWell: data.legit.handled_well,
-      falsePositive: data.legit.false_positive,
-    },
     actionBreakdown: Object.fromEntries(
       Object.entries(data.action_breakdown).map(([key, value]) => [
         key,

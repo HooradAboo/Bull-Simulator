@@ -1,26 +1,17 @@
 import { useState } from "react";
-import type { PerceivedLegitimacy } from "../../api";
 import { SURENESS_OPTIONS } from "./confidenceOptions";
+import type { ActionReasonOption, CueOption } from "../../api";
 
 const TOTAL_STEPS = 3;
 
-const LEGITIMACY_OPTIONS: { value: PerceivedLegitimacy; title: string; desc: string }[] = [
-  { value: "trust", title: "Legitimate", desc: "Appears to be a genuine, non-phishing email" },
-  {
-    value: "suspicious",
-    title: "Phishing",
-    desc: "Appears to be a deceptive email intended to trick the recipient",
-  },
-];
-
 interface Props {
   actionLabel: string;
-  cueOptions: { key: string; label: string }[];
-  perceivedLegitimacy: PerceivedLegitimacy | null;
-  onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
-  legitimacyLabel: string | null;
-  judgmentConfidenceValue: number | null;
-  onJudgmentConfidenceChange: (value: number) => void;
+  actionReasonOptions: ActionReasonOption[];
+  selectedActionReasons: string[];
+  onToggleActionReason: (reasonKey: string) => void;
+  actionReasonsOtherText: string;
+  onActionReasonsOtherTextChange: (text: string) => void;
+  cueOptions: CueOption[];
   confidenceValue: number | null;
   onConfidenceChange: (value: number) => void;
   selectedCues: string[];
@@ -32,12 +23,12 @@ interface Props {
 
 export function ConfidenceModal({
   actionLabel,
+  actionReasonOptions,
+  selectedActionReasons,
+  onToggleActionReason,
+  actionReasonsOtherText,
+  onActionReasonsOtherTextChange,
   cueOptions,
-  perceivedLegitimacy,
-  onSelectLegitimacy,
-  legitimacyLabel,
-  judgmentConfidenceValue,
-  onJudgmentConfidenceChange,
   confidenceValue,
   onConfidenceChange,
   selectedCues,
@@ -47,13 +38,16 @@ export function ConfidenceModal({
   onSubmit,
 }: Props) {
   const [step, setStep] = useState(1);
+  const isOtherReasonSelected = selectedActionReasons.includes("other");
   const isOtherCueSelected = selectedCues.includes("other");
   // Every step requires an explicit answer before moving on - none of these
   // questions have a default, so Next/Submit stays disabled until at least
   // one option is picked, and picking "Something else" also requires
   // actually writing it down.
-  const canLeaveStep1 = perceivedLegitimacy !== null;
-  const canLeaveStep2 = judgmentConfidenceValue !== null && confidenceValue !== null;
+  const canLeaveStep1 = confidenceValue !== null;
+  const canLeaveStep2 =
+    selectedActionReasons.length > 0 &&
+    (!isOtherReasonSelected || actionReasonsOtherText.trim().length > 0);
   const canLeaveStep3 =
     selectedCues.length > 0 && (!isOtherCueSelected || otherCueText.trim().length > 0);
   const canLeaveCurrentStep =
@@ -68,42 +62,7 @@ export function ConfidenceModal({
 
         {step === 1 && (
           <>
-            <h3>How would you classify this email?</h3>
-            <div className="judgment-buttons">
-              {LEGITIMACY_OPTIONS.map((option) => (
-                <button
-                  type="button"
-                  key={option.value}
-                  className={`judgment-button${perceivedLegitimacy === option.value ? " selected" : ""}`}
-                  onClick={() => onSelectLegitimacy(option.value)}
-                >
-                  <span className="judgment-button-title">{option.title}</span>
-                  <span className="judgment-button-desc">{option.desc}</span>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        {step === 2 && (
-          <>
             <h3>
-              How sure are you that this email is "{legitimacyLabel ?? "what you said"}"?
-            </h3>
-            <div className="likert-options">
-              {SURENESS_OPTIONS.map((option) => (
-                <button
-                  type="button"
-                  key={option.value}
-                  className={`likert-option${judgmentConfidenceValue === option.value ? " selected" : ""}`}
-                  onClick={() => onJudgmentConfidenceChange(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-
-            <h3 className="confidence-second-h3">
               How sure are you that {actionLabel ? `"${actionLabel}"` : "this"} was the right response?
             </h3>
             <div className="likert-options">
@@ -117,6 +76,46 @@ export function ConfidenceModal({
                   {option.label}
                 </button>
               ))}
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <h3>
+              Why did you choose to {actionLabel ? `"${actionLabel}"` : "do that"}? Select all that apply.
+            </h3>
+            <div className="cue-options">
+              {actionReasonOptions.filter((reason) => reason.key !== "other").map((reason) => (
+                <label key={reason.key} className="cue-option">
+                  <input
+                    type="checkbox"
+                    checked={selectedActionReasons.includes(reason.key)}
+                    onChange={() => onToggleActionReason(reason.key)}
+                  />
+                  {reason.label}
+                </label>
+              ))}
+              <label className="cue-option cue-option-other">
+                <input
+                  type="checkbox"
+                  checked={isOtherReasonSelected}
+                  onChange={() => onToggleActionReason("other")}
+                />
+                {isOtherReasonSelected ? (
+                  <input
+                    type="text"
+                    className="cue-other-inline-input"
+                    placeholder="Something else..."
+                    value={actionReasonsOtherText}
+                    onChange={(e) => onActionReasonsOtherTextChange(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    autoFocus
+                  />
+                ) : (
+                  "Something else"
+                )}
+              </label>
             </div>
           </>
         )}

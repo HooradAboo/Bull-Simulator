@@ -32,46 +32,6 @@ const ACTION_CHART_LABELS: Record<string, string> = {
   verify_independently: "Verify Independently",
 };
 
-function ConfusionMatrix({ report }: { report: PerformanceReport }) {
-  return (
-    <div className="confusion-matrix-wrap">
-      <table className="confusion-matrix">
-        <thead>
-          <tr>
-            <th />
-            <th>Suspected it</th>
-            <th>Trusted it</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>Actually phishing</th>
-            <td className="confusion-cell good">
-              <div className="confusion-cell-value">{report.phishing.caught}</div>
-              <div className="confusion-cell-label">Caught</div>
-            </td>
-            <td className="confusion-cell bad">
-              <div className="confusion-cell-value">{report.phishing.missed}</div>
-              <div className="confusion-cell-label">Missed</div>
-            </td>
-          </tr>
-          <tr>
-            <th>Actually legitimate</th>
-            <td className="confusion-cell warn">
-              <div className="confusion-cell-value">{report.legit.falsePositive}</div>
-              <div className="confusion-cell-label">False alarm</div>
-            </td>
-            <td className="confusion-cell good">
-              <div className="confusion-cell-value">{report.legit.handledWell}</div>
-              <div className="confusion-cell-label">Trusted correctly</div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 interface ActionChartRow {
   key: string;
   label: string;
@@ -197,13 +157,8 @@ export function ReportScreen({ participantId }: Props) {
             <section className="report-section">
               <h2 className="report-section-title">Performance</h2>
               <p className="report-section-desc">
-                How the emails you classified compared to what they actually were.
+                Which actions you took on legitimate emails versus phishing emails.
               </p>
-
-              <p className="chart-intro">
-                This shows how you classified each email compared to what it actually was.
-              </p>
-              <ConfusionMatrix report={report} />
 
               <p className="chart-intro">
                 This shows which actions you took on legitimate emails versus phishing emails.

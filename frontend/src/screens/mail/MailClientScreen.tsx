@@ -6,7 +6,6 @@ import { Ribbon } from "./Ribbon";
 import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
-import { LEGITIMACY_LABELS } from "./JudgmentPanel";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
@@ -17,12 +16,13 @@ import { HelpButton } from "./HelpButton";
 import { extractEmail } from "./avatar";
 import {
   confirmInteraction,
+  getActionReasons,
   getCueOptions,
   logHover,
   openInteraction,
   submitInteractionRatings,
+  type ActionReasonOption,
   type CueOption,
-  type PerceivedLegitimacy,
 } from "../../api";
 import type {
   ActionType,
@@ -139,12 +139,13 @@ export function MailClientScreen({
   const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
-  const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
-  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState<number | null>(null);
   const [confidenceValue, setConfidenceValueState] = useState<number | null>(null);
+  const [selectedActionReasons, setSelectedActionReasons] = useState<string[]>([]);
+  const [otherActionReasonText, setOtherActionReasonText] = useState("");
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
   const [cueOptions, setCueOptions] = useState<CueOption[]>([]);
+  const [actionReasons, setActionReasons] = useState<Record<string, ActionReasonOption[]>>({});
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(
     () => new Map(initialProcessed)
   );
@@ -167,6 +168,7 @@ export function MailClientScreen({
 
   useEffect(() => {
     getCueOptions().then(setCueOptions);
+    getActionReasons().then(setActionReasons);
   }, []);
 
   const folderOf = (emailId: string) => folderForAction(processed.get(emailId)?.action);
@@ -195,14 +197,11 @@ export function MailClientScreen({
     if (isMidFlow) return;
 
     if (processed.has(email.id)) {
-      const info = processed.get(email.id)!;
       setSelectedEmail(email);
       setInteractionId(null);
       setOpenedAt(null);
       setPendingAction(null);
       setPhase("idle");
-      setPerceivedLegitimacy(info.perceivedLegitimacy ?? null);
-      setJudgmentConfidenceValue(info.judgmentConfidenceRating ?? null);
       return;
     }
 
@@ -213,13 +212,10 @@ export function MailClientScreen({
     setOpenedAt(now);
     setPendingAction(null);
     setPhase("idle");
-    setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(null);
   };
 
   // The first response to an email is always the real action - there's no
-  // decision gate beforehand. Classifying the email as legitimate/phishing
-  // happens afterward instead, as the first step of ConfidenceModal.
+  // decision gate beforehand.
   //
   // Most actions commit immediately (no separate confirm step), so
   // answer_changed is always false - there's no window to revise them.
@@ -230,10 +226,6 @@ export function MailClientScreen({
   // Attachment, and Verify Independently show a "this action has been
   // recorded" popup first (rather than actually opening a tab or download)
   // and commit once the participant dismisses it.
-  const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
-    setPerceivedLegitimacy(value);
-  };
-
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
 
@@ -295,6 +287,8 @@ export function MailClientScreen({
     setPendingRecipient(recipient);
     setPhase("confidence");
     setConfidenceValueState(null);
+    setSelectedActionReasons([]);
+    setOtherActionReasonText("");
     setSelectedCues([]);
     setOtherCueText("");
 
@@ -355,6 +349,12 @@ export function MailClientScreen({
     setPhase("idle");
   };
 
+  const handleToggleActionReason = (reasonKey: string) => {
+    setSelectedActionReasons((prev) =>
+      prev.includes(reasonKey) ? prev.filter((r) => r !== reasonKey) : [...prev, reasonKey]
+    );
+  };
+
   const handleToggleCue = (cueKey: string) => {
     setSelectedCues((prev) =>
       prev.includes(cueKey) ? prev.filter((c) => c !== cueKey) : [...prev, cueKey]
@@ -362,19 +362,12 @@ export function MailClientScreen({
   };
 
   const handleSubmitConfidence = async () => {
-    if (
-      !selectedEmail ||
-      !pendingAction ||
-      interactionId === null ||
-      !perceivedLegitimacy ||
-      judgmentConfidenceValue === null ||
-      confidenceValue === null
-    )
+    if (!selectedEmail || !pendingAction || interactionId === null || confidenceValue === null)
       return;
     await submitInteractionRatings(interactionId, {
-      perceivedLegitimacy,
-      judgmentConfidenceRating: judgmentConfidenceValue,
       confidenceRating: confidenceValue,
+      actionReasons: selectedActionReasons,
+      actionReasonsOtherText: selectedActionReasons.includes("other") ? otherActionReasonText : null,
       cuesNoticed: selectedCues,
       cuesOtherText: selectedCues.includes("other") ? otherCueText : null,
     });
@@ -384,8 +377,6 @@ export function MailClientScreen({
       action: pendingAction,
       confidence: confidenceValue,
       recipient: pendingRecipient,
-      perceivedLegitimacy,
-      judgmentConfidenceRating: judgmentConfidenceValue,
     });
     setProcessed(updated);
     setPhase("idle");
@@ -434,19 +425,22 @@ export function MailClientScreen({
         const cueKeys = cueOptions.map((option) => option.key).filter((key) => key !== "other");
         const numCues = Math.floor(Math.random() * 3);
         const cuesNoticed = [...cueKeys].sort(() => Math.random() - 0.5).slice(0, numCues);
+        const reasonKeys = (actionReasons[action] ?? [])
+          .map((option) => option.key)
+          .filter((key) => key !== "other");
+        const numReasons = Math.max(1, Math.floor(Math.random() * 3));
+        const reasonsChosen = [...reasonKeys].sort(() => Math.random() - 0.5).slice(0, numReasons);
         const confidence = 1 + Math.floor(Math.random() * 5);
-        const perceivedLegitimacy: PerceivedLegitimacy = Math.random() < 0.5 ? "trust" : "suspicious";
-        const judgmentConfidenceRating = 1 + Math.floor(Math.random() * 5);
 
         await submitInteractionRatings(id, {
-          perceivedLegitimacy,
-          judgmentConfidenceRating,
           confidenceRating: confidence,
+          actionReasons: reasonsChosen,
+          actionReasonsOtherText: null,
           cuesNoticed,
           cuesOtherText: null,
         });
 
-        updated.set(email.id, { action, confidence, recipient, perceivedLegitimacy, judgmentConfidenceRating });
+        updated.set(email.id, { action, confidence, recipient });
       }
       setProcessed(updated);
       onAllProcessed();
@@ -585,12 +579,12 @@ export function MailClientScreen({
       {phase === "confidence" && (
         <ConfidenceModal
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
+          actionReasonOptions={pendingAction ? actionReasons[pendingAction] ?? [] : []}
+          selectedActionReasons={selectedActionReasons}
+          onToggleActionReason={handleToggleActionReason}
+          actionReasonsOtherText={otherActionReasonText}
+          onActionReasonsOtherTextChange={setOtherActionReasonText}
           cueOptions={cueOptions}
-          perceivedLegitimacy={perceivedLegitimacy}
-          onSelectLegitimacy={handleSelectLegitimacy}
-          legitimacyLabel={perceivedLegitimacy ? LEGITIMACY_LABELS[perceivedLegitimacy] : null}
-          judgmentConfidenceValue={judgmentConfidenceValue}
-          onJudgmentConfidenceChange={setJudgmentConfidenceValue}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
           selectedCues={selectedCues}

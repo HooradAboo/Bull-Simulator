@@ -15,11 +15,15 @@ import { SentItemsPane } from "./SentItemsPane";
 import { SentItemReadingPane } from "./SentItemReadingPane";
 import { DraftsPane } from "./DraftsPane";
 import { HelpButton } from "./HelpButton";
-import { LEGITIMACY_LABELS } from "./JudgmentPanel";
 import { TutorialSpotlight, type TutorialStep } from "./TutorialSpotlight";
 import { GuidedCaption } from "./GuidedCaption";
 import { extractEmail } from "./avatar";
-import { getCueOptions, type CueOption, type PerceivedLegitimacy } from "../../api";
+import {
+  getActionReasons,
+  getCueOptions,
+  type ActionReasonOption,
+  type CueOption,
+} from "../../api";
 import type {
   ActionType,
   Contact,
@@ -131,7 +135,7 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "task-explainer",
     title: "What You'll Be Doing",
     description:
-      "In the real task, you'll work through your inbox one email at a time: read it, take the action that fits, then tell us a bit more about your call, including whether you thought it was legitimate or phishing.",
+      "In the real task, you'll work through your inbox one email at a time: read it, take the action that fits, then tell us how confident you were, why you chose it, and what caught your attention.",
     targetSelector: null,
   },
   {
@@ -276,7 +280,7 @@ const TOUR_STEPS: TutorialStep[] = [
     key: "after-act",
     title: "After You Act",
     description:
-      "Once you act, we'll ask a few quick follow-up questions: whether you think the email was legitimate or phishing, how sure you are about that and about the action you just took, and what caught your attention. It's the same questions after every email, and it only takes a few seconds.",
+      "Once you act, we'll ask a few quick follow-up questions: how sure you are about the action you just took, why you chose it, and what caught your attention. It's the same questions after every email, and it only takes a few seconds.",
     targetSelector: ".confidence-box",
   },
   {
@@ -348,7 +352,7 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
     stepLabel: "Email 1 of 2",
     title: "Tell Us More",
     description:
-      "Rate how sure you are about your call and the action you just took, then answer a couple last questions. You'll see this same set after every email in the real task.",
+      "Rate how sure you are about the action you just took, then answer a couple last questions. You'll see this same set after every email in the real task.",
     targetSelector: ".confidence-box",
   },
   "email2-open": {
@@ -369,7 +373,7 @@ const GUIDED_STEP_CONTENT: Record<GuidedStepKey, GuidedStepContent> = {
     stepLabel: "Email 2 of 2",
     title: "Tell Us More",
     description:
-      "Same questions as before: how sure you are about your call and the action, and what caught your attention.",
+      "Same questions as before: how sure you are about the action, why you chose it, and what caught your attention.",
     targetSelector: null,
     noSpotlight: true,
   },
@@ -404,12 +408,13 @@ export function TutorialScreen({ onFinish }: Props) {
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
-  const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
-  const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState<number | null>(null);
   const [confidenceValue, setConfidenceValueState] = useState<number | null>(null);
+  const [selectedActionReasons, setSelectedActionReasons] = useState<string[]>([]);
+  const [otherActionReasonText, setOtherActionReasonText] = useState("");
   const [selectedCues, setSelectedCues] = useState<string[]>([]);
   const [otherCueText, setOtherCueText] = useState("");
   const [cueOptions, setCueOptions] = useState<CueOption[]>([]);
+  const [actionReasons, setActionReasons] = useState<Record<string, ActionReasonOption[]>>({});
   const [processed, setProcessed] = useState<Map<string, ProcessedInfo>>(new Map());
   const [currentFolder, setCurrentFolder] = useState<FolderName>("inbox");
   const [sentItems, setSentItems] = useState<SentItem[]>([]);
@@ -460,6 +465,7 @@ export function TutorialScreen({ onFinish }: Props) {
 
   useEffect(() => {
     getCueOptions().then(setCueOptions);
+    getActionReasons().then(setActionReasons);
   }, []);
 
   // Guided practice hands off to the short closing tour the moment both
@@ -490,9 +496,9 @@ export function TutorialScreen({ onFinish }: Props) {
     setCurrentFolder("inbox");
     setSentItems([]);
     setSelectedSentItem(null);
-    setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(null);
     setConfidenceValueState(null);
+    setSelectedActionReasons([]);
+    setOtherActionReasonText("");
     setSelectedCues([]);
     setOtherCueText("");
     setGuidedActive(false);
@@ -518,25 +524,15 @@ export function TutorialScreen({ onFinish }: Props) {
     if (guidedActive && email.id !== guidedTargetEmailId) return;
 
     if (processed.has(email.id)) {
-      const info = processed.get(email.id)!;
       setSelectedEmail(email);
       setPendingAction(null);
       setPhase("idle");
-      setPerceivedLegitimacy(info.perceivedLegitimacy ?? null);
-      setJudgmentConfidenceValue(info.judgmentConfidenceRating ?? null);
       return;
     }
 
     setSelectedEmail(email);
     setPendingAction(null);
     setPhase("idle");
-    setPerceivedLegitimacy(null);
-    setJudgmentConfidenceValue(null);
-  };
-
-  const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
-    if (tourActive) return;
-    setPerceivedLegitimacy(value);
   };
 
   const commitAction = (action: ActionType, recipient: string | null, composedBody?: string) => {
@@ -547,6 +543,8 @@ export function TutorialScreen({ onFinish }: Props) {
     setPendingRecipient(recipient);
     setPhase("confidence");
     setConfidenceValueState(null);
+    setSelectedActionReasons([]);
+    setOtherActionReasonText("");
     setSelectedCues([]);
     setOtherCueText("");
 
@@ -590,6 +588,12 @@ export function TutorialScreen({ onFinish }: Props) {
     }
   };
 
+  const handleToggleActionReason = (reasonKey: string) => {
+    setSelectedActionReasons((prev) =>
+      prev.includes(reasonKey) ? prev.filter((r) => r !== reasonKey) : [...prev, reasonKey]
+    );
+  };
+
   const handleToggleCue = (cueKey: string) => {
     setSelectedCues((prev) =>
       prev.includes(cueKey) ? prev.filter((c) => c !== cueKey) : [...prev, cueKey]
@@ -604,8 +608,6 @@ export function TutorialScreen({ onFinish }: Props) {
       action: pendingAction,
       confidence: confidenceValue,
       recipient: pendingRecipient,
-      perceivedLegitimacy,
-      judgmentConfidenceRating: judgmentConfidenceValue,
     });
     setProcessed(updated);
     setPhase("idle");
@@ -776,12 +778,12 @@ export function TutorialScreen({ onFinish }: Props) {
       {phase === "confidence" && (
         <ConfidenceModal
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
+          actionReasonOptions={pendingAction ? actionReasons[pendingAction] ?? [] : []}
+          selectedActionReasons={selectedActionReasons}
+          onToggleActionReason={handleToggleActionReason}
+          actionReasonsOtherText={otherActionReasonText}
+          onActionReasonsOtherTextChange={setOtherActionReasonText}
           cueOptions={cueOptions}
-          perceivedLegitimacy={perceivedLegitimacy}
-          onSelectLegitimacy={handleSelectLegitimacy}
-          legitimacyLabel={perceivedLegitimacy ? LEGITIMACY_LABELS[perceivedLegitimacy] : null}
-          judgmentConfidenceValue={judgmentConfidenceValue}
-          onJudgmentConfidenceChange={setJudgmentConfidenceValue}
           confidenceValue={confidenceValue}
           onConfidenceChange={setConfidenceValueState}
           selectedCues={selectedCues}
@@ -846,12 +848,12 @@ export function TutorialScreen({ onFinish }: Props) {
         <div className="tutorial-demo-popup">
           <ConfidenceModal
             actionLabel={ACTION_LABELS.delete}
+            actionReasonOptions={[]}
+            selectedActionReasons={[]}
+            onToggleActionReason={() => {}}
+            actionReasonsOtherText=""
+            onActionReasonsOtherTextChange={() => {}}
             cueOptions={cueOptions}
-            perceivedLegitimacy={null}
-            onSelectLegitimacy={() => {}}
-            legitimacyLabel={null}
-            judgmentConfidenceValue={null}
-            onJudgmentConfidenceChange={() => {}}
             confidenceValue={null}
             onConfidenceChange={() => {}}
             selectedCues={[]}
@@ -878,8 +880,6 @@ export function TutorialScreen({ onFinish }: Props) {
             // whatever was pre-selected for the informational tour.
             setSelectedEmail(null);
             setPhase("idle");
-            setPerceivedLegitimacy(null);
-            setJudgmentConfidenceValue(null);
           }}
         />
       )}
