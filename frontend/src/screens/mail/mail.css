@@ -310,7 +310,7 @@
 
 /* ---- Folder sidebar ---- */
 .mail-folder-sidebar {
-  width: 200px;
+  width: 170px;
   flex-shrink: 0;
   border-right: 1px solid var(--border);
   overflow-y: auto;
@@ -360,7 +360,7 @@
 
 /* ---- Email list pane ---- */
 .mail-list-pane {
-  width: 380px;
+  width: 330px;
   flex-shrink: 0;
   border-right: 1px solid var(--border);
   overflow-y: auto;
