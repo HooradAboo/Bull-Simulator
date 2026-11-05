@@ -64,12 +64,14 @@ function DecorativeButton({
   dataTour,
   chevron,
   iconOnly,
+  iconColor,
 }: {
   icon: ReactNode;
   label?: string;
   dataTour: string;
   chevron?: boolean;
   iconOnly?: boolean;
+  iconColor?: string;
 }) {
   return (
     <button
@@ -78,7 +80,7 @@ function DecorativeButton({
       title="Not used in this study"
       data-tour={dataTour}
     >
-      <span className="ribbon-icon" aria-hidden="true">
+      <span className="ribbon-icon" aria-hidden="true" style={iconColor ? { color: iconColor } : undefined}>
         {icon}
       </span>
       {!iconOnly && label}
@@ -116,7 +118,8 @@ export function Ribbon({
     action: ActionType,
     icon: ReactNode,
     label: string,
-    chevron?: boolean
+    chevron?: boolean,
+    iconColor?: string
   ) => (
     <button
       className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
@@ -126,7 +129,7 @@ export function Ribbon({
       onMouseLeave={hideTooltip}
       data-tour={action}
     >
-      <span className="ribbon-icon" aria-hidden="true">
+      <span className="ribbon-icon" aria-hidden="true" style={iconColor ? { color: iconColor } : undefined}>
         {icon}
       </span>
       {label}
@@ -169,17 +172,17 @@ export function Ribbon({
         label="Report junk"
         dataTour="decorative-report-junk"
       />
-      {actionButton("report_phishing", <ShieldError20Regular />, "Report phishing")}
+      {actionButton("report_phishing", <ShieldError20Regular />, "Report phishing", false, "#c4314b")}
 
       <div className="ribbon-divider" />
 
-      {actionButton("reply", <ArrowReply20Regular />, "Reply")}
+      {actionButton("reply", <ArrowReply20Regular />, "Reply", false, "#8764b8")}
       <DecorativeButton
         icon={<ArrowReplyAll20Regular />}
         label="Reply all"
         dataTour="decorative-reply-all"
       />
-      {actionButton("forward", <ArrowForward20Regular />, "Forward")}
+      {actionButton("forward", <ArrowForward20Regular />, "Forward", false, "#0078d4")}
 
       <div className="ribbon-divider" />
 
