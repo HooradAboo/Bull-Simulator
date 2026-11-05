@@ -118,26 +118,33 @@ export function Ribbon({
     label: string,
     chevron?: boolean,
     iconColor?: string
-  ) => (
-    <button
-      className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
-      disabled={disabled || disabledActions.includes(action)}
-      onClick={() => onSelectAction(action)}
-      onMouseEnter={(e) => showTooltip(e, ACTION_DESCRIPTIONS[action])}
-      onMouseLeave={hideTooltip}
-      data-tour={action}
-    >
-      <span className="ribbon-icon" aria-hidden="true" style={iconColor ? { color: iconColor } : undefined}>
-        {icon}
-      </span>
-      {label}
-      {chevron && (
-        <span className="ribbon-chevron" aria-hidden="true">
-          <ChevronDown20Regular />
+  ) => {
+    const isDisabled = disabled || disabledActions.includes(action);
+    return (
+      <button
+        className={`ribbon-btn ${pendingAction === action ? "selected" : ""}`}
+        disabled={isDisabled}
+        onClick={() => onSelectAction(action)}
+        onMouseEnter={(e) => showTooltip(e, ACTION_DESCRIPTIONS[action])}
+        onMouseLeave={hideTooltip}
+        data-tour={action}
+      >
+        <span
+          className="ribbon-icon"
+          aria-hidden="true"
+          style={iconColor && !isDisabled ? { color: iconColor } : undefined}
+        >
+          {icon}
         </span>
-      )}
-    </button>
-  );
+        {label}
+        {chevron && (
+          <span className="ribbon-chevron" aria-hidden="true">
+            <ChevronDown20Regular />
+          </span>
+        )}
+      </button>
+    );
+  };
 
   return (
     <div className="mail-ribbon">
