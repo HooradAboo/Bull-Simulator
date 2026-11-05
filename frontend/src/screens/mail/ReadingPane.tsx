@@ -35,7 +35,6 @@ const ACTION_LABELS: Record<ActionType, string> = {
   report_phishing: "Report as Phishing",
   delete: "Delete",
   ignore: "Mark as read",
-  verify_independently: "Verify Independently",
 };
 
 interface Props {

@@ -9,13 +9,11 @@ import {
   Link20Regular,
   MailRead20Regular,
   QuestionCircle24Filled,
-  SearchShield20Regular,
   ShieldError20Regular,
 } from "@fluentui/react-icons";
 
 const SUMMARY_STEPS: { term: string; description: string }[] = [
   { term: "Read", description: "the email." },
-  { term: "Decide", description: "whether you trust it or find it suspicious." },
   { term: "Act", description: "with whichever response fits, from the actions below." },
   { term: "Answer", description: "a few short questions about your call." },
 ];
@@ -27,12 +25,6 @@ const ACTION_DEFINITIONS: { term: string; icon: ReactNode; definition: string }[
     definition: "Download or open a file attached to the email.",
   },
   { term: "Click a link", icon: <Link20Regular />, definition: "Open a link included in the email." },
-  {
-    term: "Verify Independently",
-    icon: <SearchShield20Regular />,
-    definition:
-      "Confirm you'd check the sender or claim through a separate, trusted channel (e.g. calling the company or visiting their official site) rather than relying on anything in the email.",
-  },
   {
     term: "Report as Phishing",
     icon: <ShieldError20Regular />,

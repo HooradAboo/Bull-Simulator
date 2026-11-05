@@ -67,7 +67,6 @@ const ACTION_LABELS: Record<ActionType, string> = {
   report_phishing: "Report as Phishing",
   delete: "Delete",
   ignore: "Mark as read",
-  verify_independently: "Verify Independently",
 };
 
 const ALL_ACTIONS: ActionType[] = [
@@ -78,7 +77,6 @@ const ALL_ACTIONS: ActionType[] = [
   "report_phishing",
   "delete",
   "ignore",
-  "verify_independently",
 ];
 
 function randomOf<T>(arr: T[]): T {
@@ -222,10 +220,10 @@ export function MailClientScreen({
   // Delete/Report ask for a yes/no confirmation first since they're
   // destructive (move the email out of Inbox). Forward and Reply need
   // more input first (a recipient, or a composed reply), so they open
-  // a modal and only commit once that's submitted. Click Link, Open
-  // Attachment, and Verify Independently show a "this action has been
-  // recorded" popup first (rather than actually opening a tab or download)
-  // and commit once the participant dismisses it.
+  // a modal and only commit once that's submitted. Click Link and Open
+  // Attachment show a "this action has been recorded" popup first (rather
+  // than actually opening a tab or download) and commit once the
+  // participant dismisses it.
   const handleSelectAction = (action: ActionType) => {
     if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
 
@@ -237,11 +235,6 @@ export function MailClientScreen({
     }
     if (action === "open_attachment") {
       if (!selectedEmail.attachment) return;
-      setPendingAction(action);
-      setPhase("action-recorded");
-      return;
-    }
-    if (action === "verify_independently") {
       setPendingAction(action);
       setPhase("action-recorded");
       return;

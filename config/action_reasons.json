@@ -50,10 +50,5 @@
     { "key": "needed_file_info", "label": "I needed the information in the file" },
     { "key": "it_was_requested", "label": "It was requested" },
     { "key": "other", "label": "Something else" }
-  ],
-  "verify_independently": [
-    { "key": "verify_sender_identity", "label": "To verify the sender's identity" },
-    { "key": "check_before_acting", "label": "To check before taking action" },
-    { "key": "other", "label": "Something else" }
   ]
 }

@@ -19,7 +19,6 @@ REQUIRED_CATEGORIES = {
     "report",
     "click_link",
     "open_attachment",
-    "verify_independently",
 }
 
 
@@ -59,7 +58,6 @@ ACTION_TAKEN_TO_CATEGORY = {
     "delete": "delete",
     "click_link": "click_link",
     "open_attachment": "open_attachment",
-    "verify_independently": "verify_independently",
     # "forward" resolves to "forward" or "forward_to_it" - handled separately.
 }
 

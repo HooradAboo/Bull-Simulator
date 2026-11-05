@@ -5,8 +5,7 @@ export type ActionType =
   | "forward"
   | "report_phishing"
   | "delete"
-  | "ignore"
-  | "verify_independently";
+  | "ignore";
 
 export interface DummyEmail {
   id: string;

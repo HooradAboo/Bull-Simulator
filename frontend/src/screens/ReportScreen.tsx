@@ -17,7 +17,6 @@ const ACTION_CHART_ORDER = [
   "report",
   "click_link",
   "open_attachment",
-  "verify_independently",
 ];
 
 const ACTION_CHART_LABELS: Record<string, string> = {
@@ -29,7 +28,6 @@ const ACTION_CHART_LABELS: Record<string, string> = {
   report: "Report",
   click_link: "Click Link",
   open_attachment: "Open Attachment",
-  verify_independently: "Verify Independently",
 };
 
 interface ActionChartRow {

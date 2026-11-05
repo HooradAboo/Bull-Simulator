@@ -57,7 +57,6 @@ const ACTION_LABELS: Record<ActionType, string> = {
   report_phishing: "Report as Phishing",
   delete: "Delete",
   ignore: "Mark as read",
-  verify_independently: "Verify Independently",
 };
 
 function folderForAction(action: ActionType | undefined): FolderName {
@@ -162,14 +161,13 @@ const TOUR_STEPS: TutorialStep[] = [
   {
     key: "all-actions",
     title: "Your Actions",
-    description: "Here are your 6 tools for handling an email. We'll walk through what each one does.",
+    description: "Here are your 5 tools for handling an email. We'll walk through what each one does.",
     targetSelector: [
       '[data-tour="delete"]',
       '[data-tour="report_phishing"]',
       '[data-tour="reply"]',
       '[data-tour="forward"]',
       '[data-tour="ignore"]',
-      '[data-tour="verify_independently"]',
     ],
   },
   {
@@ -214,13 +212,6 @@ const TOUR_STEPS: TutorialStep[] = [
     title: "Mark as Read",
     description: "Dismisses the email without taking any other action.",
     targetSelector: '[data-tour="ignore"]',
-  },
-  {
-    key: "verify_independently",
-    title: "Verify Independently",
-    description:
-      "Use this when you'd rather check things out yourself first, like searching up the sender before replying.",
-    targetSelector: '[data-tour="verify_independently"]',
   },
   {
     key: "click_link",
@@ -390,7 +381,6 @@ const TOOLBAR_ACTIONS: ActionType[] = [
   "reply",
   "forward",
   "ignore",
-  "verify_independently",
 ];
 
 export function TutorialScreen({ onFinish }: Props) {
@@ -622,7 +612,7 @@ export function TutorialScreen({ onFinish }: Props) {
       return;
     if (guidedRequiredAction && action !== guidedRequiredAction) return;
 
-    if (action === "click_link" || action === "open_attachment" || action === "verify_independently") {
+    if (action === "click_link" || action === "open_attachment") {
       setPendingAction(action);
       setPhase("action-recorded");
       return;

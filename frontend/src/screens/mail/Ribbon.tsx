@@ -11,7 +11,6 @@ import {
   MailAdd20Regular,
   MailRead20Regular,
   PeopleTeam20Regular,
-  SearchShield20Regular,
   ShieldError20Regular,
 } from "@fluentui/react-icons";
 import type { ActionType } from "../../types";
@@ -31,8 +30,6 @@ const ACTION_DESCRIPTIONS: Record<ActionType, string> = {
   reply: "Reply to this message",
   forward: "Forward this message",
   ignore: "Mark this message as read",
-  verify_independently:
-    "Confirm the sender or request through a separate, trusted channel before acting on it.",
   click_link: "Open a link contained in this email.",
   open_attachment: "Open a file attached to this email.",
 };
@@ -133,10 +130,6 @@ export function Ribbon({
 
       <DecorativeButton icon={<Flash20Regular />} label="Quick steps" dataTour="decorative-quick-steps" />
       {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
-
-      <div className="ribbon-divider" />
-
-      {actionButton("verify_independently", <SearchShield20Regular />, "Verify")}
 
       {tooltip && (
         <div className="ribbon-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
