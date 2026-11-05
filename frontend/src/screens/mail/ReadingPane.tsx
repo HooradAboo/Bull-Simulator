@@ -8,10 +8,9 @@ import {
   MailInbox48Regular,
   Send20Regular,
 } from "@fluentui/react-icons";
-import type { PerceivedLegitimacy } from "../../api";
 import type { ActionType, Contact, DummyEmail, ProcessedInfo } from "../../types";
 import { avatarColor, initials, senderName } from "./avatar";
-import { JudgmentPanel, type JudgmentStep } from "./JudgmentPanel";
+import { JudgmentPanel } from "./JudgmentPanel";
 
 function attachmentVisual(filename: string): { icon: ReactNode; color: string } {
   const ext = filename.split(".").pop()?.toLowerCase();
@@ -46,10 +45,6 @@ interface Props {
   forwardMode: boolean;
   contacts: Contact[];
   participantEmail: string;
-  judgmentStep: JudgmentStep;
-  perceivedLegitimacy: PerceivedLegitimacy | null;
-  judgmentConfidenceValue: number | null;
-  onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
   onLinkClick: () => void;
   onLinkHoverStart: () => void;
   onLinkHoverEnd: () => void;
@@ -91,10 +86,6 @@ export function ReadingPane({
   forwardMode,
   contacts,
   participantEmail,
-  judgmentStep,
-  perceivedLegitimacy,
-  judgmentConfidenceValue,
-  onSelectLegitimacy,
   onLinkClick,
   onLinkHoverStart,
   onLinkHoverEnd,
@@ -348,12 +339,8 @@ export function ReadingPane({
       </div>
 
       <JudgmentPanel
-        step={judgmentStep}
-        perceivedLegitimacy={perceivedLegitimacy}
-        judgmentConfidenceValue={judgmentConfidenceValue}
         processedInfo={processedInfo}
         actionLabel={processedInfo ? ACTION_LABELS[processedInfo.action] : null}
-        onSelectLegitimacy={onSelectLegitimacy}
       />
 
       {hoveredLinkUrl && linkHoverPos && (

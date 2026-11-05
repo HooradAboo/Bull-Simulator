@@ -6,7 +6,7 @@ import { Ribbon } from "./Ribbon";
 import { FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
-import { LEGITIMACY_LABELS, type JudgmentStep } from "./JudgmentPanel";
+import { LEGITIMACY_LABELS } from "./JudgmentPanel";
 import { ConfidenceModal } from "./ConfidenceModal";
 import { ConfirmActionModal } from "./ConfirmActionModal";
 import { ActionRecordedModal } from "./ActionRecordedModal";
@@ -139,7 +139,6 @@ export function MailClientScreen({
   const [confirmingAction, setConfirmingAction] = useState<ActionType | null>(null);
   const [pendingRecipient, setPendingRecipient] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
-  const [judgmentStep, setJudgmentStep] = useState<JudgmentStep>("done");
   const [perceivedLegitimacy, setPerceivedLegitimacy] = useState<PerceivedLegitimacy | null>(null);
   const [judgmentConfidenceValue, setJudgmentConfidenceValue] = useState<number | null>(null);
   const [confidenceValue, setConfidenceValueState] = useState<number | null>(null);
@@ -181,7 +180,6 @@ export function MailClientScreen({
     setOpenedAt(null);
     setPendingAction(null);
     setPhase("idle");
-    setJudgmentStep("done");
   };
 
   const handleTogglePin = (emailId: string) => {
@@ -203,7 +201,6 @@ export function MailClientScreen({
       setOpenedAt(null);
       setPendingAction(null);
       setPhase("idle");
-      setJudgmentStep("done");
       setPerceivedLegitimacy(info.perceivedLegitimacy ?? null);
       setJudgmentConfidenceValue(info.judgmentConfidenceRating ?? null);
       return;
@@ -218,9 +215,12 @@ export function MailClientScreen({
     setPhase("idle");
     setPerceivedLegitimacy(null);
     setJudgmentConfidenceValue(null);
-    setJudgmentStep("trust");
   };
 
+  // The first response to an email is always the real action - there's no
+  // decision gate beforehand. Classifying the email as legitimate/phishing
+  // happens afterward instead, as the first step of ConfidenceModal.
+  //
   // Most actions commit immediately (no separate confirm step), so
   // answer_changed is always false - there's no window to revise them.
   // Delete/Report ask for a yes/no confirmation first since they're
@@ -232,17 +232,10 @@ export function MailClientScreen({
   // and commit once the participant dismisses it.
   const handleSelectLegitimacy = (value: PerceivedLegitimacy) => {
     setPerceivedLegitimacy(value);
-    setJudgmentStep("done");
   };
 
   const handleSelectAction = (action: ActionType) => {
-    if (
-      !selectedEmail ||
-      processed.has(selectedEmail.id) ||
-      phase !== "idle" ||
-      judgmentStep !== "done"
-    )
-      return;
+    if (!selectedEmail || processed.has(selectedEmail.id) || phase !== "idle") return;
 
     if (action === "click_link") {
       if (!selectedEmail.link) return;
@@ -477,11 +470,7 @@ export function MailClientScreen({
   };
 
   const processedInfo = selectedEmail ? processed.get(selectedEmail.id) ?? null : null;
-  const ribbonDisabled =
-    !selectedEmail ||
-    processed.has(selectedEmail.id) ||
-    phase !== "idle" ||
-    judgmentStep !== "done";
+  const ribbonDisabled = !selectedEmail || processed.has(selectedEmail.id) || phase !== "idle";
   const visibleEmails = emails
     .filter((e) => folderOf(e.id) === currentFolder)
     .sort((a, b) => Number(pinnedIds.has(b.id)) - Number(pinnedIds.has(a.id)));
@@ -540,10 +529,6 @@ export function MailClientScreen({
               forwardMode={false}
               contacts={contacts}
               participantEmail={participantEmail}
-              judgmentStep="done"
-              perceivedLegitimacy={null}
-              judgmentConfidenceValue={null}
-              onSelectLegitimacy={() => {}}
               onLinkClick={() => {}}
               onLinkHoverStart={() => {}}
               onLinkHoverEnd={() => {}}
@@ -572,10 +557,6 @@ export function MailClientScreen({
               forwardMode={phase === "forwarding"}
               contacts={contacts}
               participantEmail={participantEmail}
-              judgmentStep={judgmentStep}
-              perceivedLegitimacy={perceivedLegitimacy}
-              judgmentConfidenceValue={judgmentConfidenceValue}
-              onSelectLegitimacy={handleSelectLegitimacy}
               onLinkClick={() => handleSelectAction("click_link")}
               onLinkHoverStart={handleLinkHoverStart}
               onLinkHoverEnd={handleLinkHoverEnd}
@@ -605,6 +586,8 @@ export function MailClientScreen({
         <ConfidenceModal
           actionLabel={pendingAction ? ACTION_LABELS[pendingAction] : ""}
           cueOptions={cueOptions}
+          perceivedLegitimacy={perceivedLegitimacy}
+          onSelectLegitimacy={handleSelectLegitimacy}
           legitimacyLabel={perceivedLegitimacy ? LEGITIMACY_LABELS[perceivedLegitimacy] : null}
           judgmentConfidenceValue={judgmentConfidenceValue}
           onJudgmentConfidenceChange={setJudgmentConfidenceValue}

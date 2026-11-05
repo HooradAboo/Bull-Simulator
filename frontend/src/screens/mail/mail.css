@@ -779,6 +779,7 @@
   gap: 10px;
   margin-bottom: 32px;
 }
+.confidence-box .judgment-button,
 .judgment-panel .judgment-button {
   flex: 1;
   height: 76px;
@@ -810,9 +811,22 @@
   color: var(--text-muted);
   opacity: 0.85;
 }
-.judgment-panel .judgment-button:hover {
+.confidence-box .judgment-button:hover:not(.selected),
+.judgment-panel .judgment-button:hover:not(.selected) {
   background: var(--hover);
   border-color: var(--usf-green);
+}
+.confidence-box .judgment-button.selected,
+.judgment-panel .judgment-button.selected {
+  background: var(--usf-green);
+  border-color: var(--usf-green);
+}
+.confidence-box .judgment-button.selected .judgment-button-title,
+.confidence-box .judgment-button.selected .judgment-button-desc,
+.judgment-panel .judgment-button.selected .judgment-button-title,
+.judgment-panel .judgment-button.selected .judgment-button-desc {
+  color: #fff;
+  opacity: 0.95;
 }
 
 .confidence-box h3.confidence-second-h3 {
@@ -870,8 +884,8 @@
   padding: 14px 16px;
   margin: 12px 20px 20px;
   box-sizing: border-box;
-  /* Floor for the done state, so it doesn't shrink relative to the trust
-     step's fixed 76px button row plus its two-line question text. */
+  /* Fixed floor so the reading pane doesn't visibly resize once this panel
+     first appears after an email is processed. */
   min-height: 142px;
   display: flex;
   flex-direction: column;

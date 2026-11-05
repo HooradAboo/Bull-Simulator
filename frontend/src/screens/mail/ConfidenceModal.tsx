@@ -1,11 +1,23 @@
 import { useState } from "react";
+import type { PerceivedLegitimacy } from "../../api";
 import { SURENESS_OPTIONS } from "./confidenceOptions";
 
-const TOTAL_STEPS = 2;
+const TOTAL_STEPS = 3;
+
+const LEGITIMACY_OPTIONS: { value: PerceivedLegitimacy; title: string; desc: string }[] = [
+  { value: "trust", title: "Legitimate", desc: "Appears to be a genuine, non-phishing email" },
+  {
+    value: "suspicious",
+    title: "Phishing",
+    desc: "Appears to be a deceptive email intended to trick the recipient",
+  },
+];
 
 interface Props {
   actionLabel: string;
   cueOptions: { key: string; label: string }[];
+  perceivedLegitimacy: PerceivedLegitimacy | null;
+  onSelectLegitimacy: (value: PerceivedLegitimacy) => void;
   legitimacyLabel: string | null;
   judgmentConfidenceValue: number | null;
   onJudgmentConfidenceChange: (value: number) => void;
@@ -21,6 +33,8 @@ interface Props {
 export function ConfidenceModal({
   actionLabel,
   cueOptions,
+  perceivedLegitimacy,
+  onSelectLegitimacy,
   legitimacyLabel,
   judgmentConfidenceValue,
   onJudgmentConfidenceChange,
@@ -38,10 +52,12 @@ export function ConfidenceModal({
   // questions have a default, so Next/Submit stays disabled until at least
   // one option is picked, and picking "Something else" also requires
   // actually writing it down.
-  const canLeaveStep1 = judgmentConfidenceValue !== null && confidenceValue !== null;
-  const canLeaveStep2 =
+  const canLeaveStep1 = perceivedLegitimacy !== null;
+  const canLeaveStep2 = judgmentConfidenceValue !== null && confidenceValue !== null;
+  const canLeaveStep3 =
     selectedCues.length > 0 && (!isOtherCueSelected || otherCueText.trim().length > 0);
-  const canLeaveCurrentStep = step === 1 ? canLeaveStep1 : canLeaveStep2;
+  const canLeaveCurrentStep =
+    step === 1 ? canLeaveStep1 : step === 2 ? canLeaveStep2 : canLeaveStep3;
 
   return (
     <div className="modal-backdrop">
@@ -51,6 +67,25 @@ export function ConfidenceModal({
         </div>
 
         {step === 1 && (
+          <>
+            <h3>How would you classify this email?</h3>
+            <div className="judgment-buttons">
+              {LEGITIMACY_OPTIONS.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`judgment-button${perceivedLegitimacy === option.value ? " selected" : ""}`}
+                  onClick={() => onSelectLegitimacy(option.value)}
+                >
+                  <span className="judgment-button-title">{option.title}</span>
+                  <span className="judgment-button-desc">{option.desc}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
           <>
             <h3>
               How sure are you that this email is "{legitimacyLabel ?? "what you said"}"?
@@ -86,7 +121,7 @@ export function ConfidenceModal({
           </>
         )}
 
-        {step === 2 && (
+        {step === 3 && (
           <>
             <h3>Which parts of the message influenced your decision? Select all that apply.</h3>
             <div className="cue-options">
