@@ -1,0 +1,11 @@
+{
+  "id": "email_006_quick_favor",
+  "is_phishing": true,
+  "sender_name": "Shaun Canavan",
+  "sender_address": "dr.shaun.canavan.usf@gmail.com",
+  "days_before": 1,
+  "received_time": "11:47",
+  "subject": "Available?",
+  "attachment": null,
+  "body": "<div style='text-align:left;font-family:Arial,sans-serif;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hi {{firstName}},</div><div style='margin-bottom:14px;'>Are you available at the moment? I'm heading into a meeting and can't take calls, but I need you to take care of something quickly on my behalf. Let me know as soon as you get this.</div><div style='margin-bottom:14px;'>I need to get a few gift cards for a student recognition event this afternoon and I'm tied up until then. Could you pick up four $100 Amazon gift cards from the store? I'll reimburse you in full tomorrow. Once you have them, just scratch off the back and send me photos of the codes so I can forward them before the event starts.</div><div style='margin-bottom:14px;'>Keep this between us for now, I want it to be a surprise for the department.</div><div style='margin-bottom:2px;'>Thanks,</div><div>Shaun</div><div style='color:#605e5c;font-size:13px;margin-top:8px;'>Sent from my iPhone</div></div>"
+}

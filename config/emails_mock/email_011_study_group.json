@@ -1,0 +1,11 @@
+{
+  "id": "email_011_study_group",
+  "is_phishing": false,
+  "sender_name": "Sayde King",
+  "sender_address": "sking@usf.edu",
+  "days_before": 3,
+  "received_time": "18:44",
+  "subject": "Study group this weekend?",
+  "attachment": null,
+  "body": "<div style='text-align:left;font-family:Arial,sans-serif;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hey {{firstName}},</div><div style='margin-bottom:14px;'>A few of us are getting together Saturday afternoon to go over the machine learning problem set before it's due Monday. Wilson is coming too. Want to join?</div><div style='margin-bottom:14px;'>We were thinking the group study rooms on the 2nd floor of the library around 1pm. I'll reserve one of the bigger rooms if enough people are in. Bring your laptop and the lecture notes from week 9, that's where I'm most stuck.</div><div style='margin-bottom:14px;'>Let me know if that time works for you!</div><div style='margin-bottom:2px;'>Thanks,</div><div>Sayde</div></div>"
+}

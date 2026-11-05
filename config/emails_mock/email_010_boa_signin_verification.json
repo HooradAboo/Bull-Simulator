@@ -1,0 +1,11 @@
+{
+  "id": "email_010_boa_signin_verification",
+  "is_phishing": true,
+  "sender_name": "Bank of America Security",
+  "sender_address": "alert@secure-bofa-verify.com",
+  "days_before": 0,
+  "received_time": "02:17",
+  "subject": "Unusual sign-in detected - your account has been limited",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='background:#012169;padding:16px 0;margin-bottom:24px;'><img src='/boa-logo.svg' alt='Bank of America' style='height:26px;' /></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Dear Valued Customer,</div><div style='margin-bottom:14px;'>We detected a sign-in to your Online Banking account from an <strong>unrecognized device</strong> in Lagos, Nigeria. For your protection, we have temporarily <strong>limited access</strong> to your account.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:120px;'>Date:</td><td style='padding:4px 0;'>Today, 2:11 AM EST</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Device:</td><td style='padding:4px 0;'>Unknown Android</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Location:</td><td style='padding:4px 0;color:#da291c;'>Lagos, NG</td></tr></table><div style='margin-bottom:14px;'>You must verify your identity within <strong>12 hours</strong> to restore full access. Please have your card number, online ID, and the last four digits of your SSN ready.</div><div style='text-align:center;margin:22px 0;'><a href='http://secure-bofa-verify.com/restore-access' style='background:#e31837;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:4px;font-weight:700;display:inline-block;'>Verify My Identity Now</a></div><div style='color:#605e5c;font-size:12px;'>Bank of America, N.A. Member FDIC.</div></div></div>"
+}

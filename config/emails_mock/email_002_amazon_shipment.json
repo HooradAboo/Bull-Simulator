@@ -1,0 +1,11 @@
+{
+  "id": "email_002_amazon_shipment",
+  "is_phishing": false,
+  "sender_name": "Amazon.com",
+  "sender_address": "shipment-tracking@amazon.com",
+  "days_before": 2,
+  "received_time": "16:38",
+  "subject": "Your package has shipped",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='background:#232f3e;padding:14px 0;margin-bottom:24px;'><img src='/amazon-logo.webp' alt='Amazon' style='height:28px;' /></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hello {{firstName}},</div><div style='margin-bottom:14px;'>Your package is on the way. You can track your shipment or view your order details at any time in Your Orders.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:150px;'>Order #:</td><td style='padding:4px 0;'>112-4458073-6692145</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Arriving:</td><td style='padding:4px 0;'><strong>Thursday, by 9 PM</strong></td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Carrier:</td><td style='padding:4px 0;'>Amazon Logistics</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Items:</td><td style='padding:4px 0;'>Anker USB-C Charging Cable (6 ft)</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Ship to:</td><td style='padding:4px 0;'>Tampa, FL 33620</td></tr></table><div style='text-align:center;margin:22px 0;'><a href='https://www.amazon.com/gp/css/order-history' style='background:#ffd814;color:#0f1111;text-decoration:none;padding:11px 26px;border-radius:8px;font-weight:600;display:inline-block;border:1px solid #fcd200;'>Track your package</a></div><div style='margin-bottom:14px;color:#605e5c;font-size:13px;'>We hope to see you again soon.</div><div style='font-weight:700;'>Amazon.com</div></div></div>"
+}

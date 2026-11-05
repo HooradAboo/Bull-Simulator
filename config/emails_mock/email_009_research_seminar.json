@@ -1,0 +1,11 @@
+{
+  "id": "email_009_research_seminar",
+  "is_phishing": false,
+  "sender_name": "Bellini College Events",
+  "sender_address": "bellini-events@usf.edu",
+  "days_before": 4,
+  "received_time": "15:02",
+  "subject": "Colloquium: \"Adversarial Robustness in Biometric Systems\" - Fri Nov 14",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='height:4px;background:#006747;width:100%;margin-bottom:22px;'></div><img src='/ciber-horizontal.png' alt='Bellini College of Computing, Cybersecurity, and AI' style='height:52px;margin-bottom:22px;' /><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Dear {{firstName}},</div><div style='margin-bottom:14px;'>The Bellini College of Computing, Cybersecurity, and AI invites you to this week's research colloquium. Light refreshments will be served, and graduate students are strongly encouraged to attend.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:110px;'>Title:</td><td style='padding:4px 0;'><strong>Adversarial Robustness in Biometric Systems</strong></td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Speaker:</td><td style='padding:4px 0;'>Dr. Lena Ortiz, Georgia Tech</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>When:</td><td style='padding:4px 0;'>Friday, Nov 14, 2:00 - 3:00 PM</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Where:</td><td style='padding:4px 0;'>ENB 118 (Tampa campus)</td></tr></table><div style='margin-bottom:14px;'>No RSVP is required. A recording will be shared with the department afterward for those who cannot attend in person.</div><div style='margin-bottom:2px;'>Best regards,</div><div style='font-weight:700;color:#006747;'>Bellini College Events Committee</div><div style='color:#605e5c;font-size:12px;margin-top:2px;'>University of South Florida</div></div></div>"
+}

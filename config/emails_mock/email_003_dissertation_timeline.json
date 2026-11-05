@@ -1,0 +1,11 @@
+{
+  "id": "email_003_dissertation_timeline",
+  "is_phishing": false,
+  "sender_name": "Tempestt Neal",
+  "sender_address": "tjneal@usf.edu",
+  "days_before": 3,
+  "received_time": "10:21",
+  "subject": "Re: Dissertation proposal timeline",
+  "attachment": null,
+  "body": "<div style='text-align:left;font-family:Arial,sans-serif;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hi {{firstName}},</div><div style='margin-bottom:14px;'>Thanks for sending over the revised outline. I read through it last night and I think the framing of the second research question is much stronger now.</div><div style='margin-bottom:14px;'>Let's aim to have the full proposal draft to the committee by the first week of December so everyone has time to review before the holidays. A few things on my end before then:</div><ul style='margin:0 0 14px 20px;padding:0;'><li style='margin-bottom:4px;'>I'll email Dr. Canavan to confirm he can serve on the committee.</li><li style='margin-bottom:4px;'>Can you tighten the related-work section to around 8 pages? Right now it runs a little long.</li><li>Let's meet next Tuesday at 2pm in ENB 314 to go over the methodology.</li></ul><div style='margin-bottom:14px;'>Does Tuesday work for you? If not, send me a couple of times that do and I'll adjust.</div><div style='margin-bottom:2px;'>Best,</div><div>Tempestt</div><div style='color:#605e5c;font-size:13px;margin-top:10px;'>Tempestt Neal, Ph.D.<br/>Associate Professor, Bellini College of Computing, Cybersecurity, and AI<br/>University of South Florida</div></div>"
+}

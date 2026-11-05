@@ -1,0 +1,11 @@
+{
+  "id": "email_019_library_pickup",
+  "is_phishing": false,
+  "sender_name": "USF Libraries",
+  "sender_address": "circulation@usf.edu",
+  "days_before": 4,
+  "received_time": "10:48",
+  "subject": "Your requested item is ready for pickup",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='height:4px;background:#006747;width:100%;margin-bottom:22px;'></div><img src='/usf-logo.png' alt='University of South Florida' style='height:46px;margin-bottom:22px;' /><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hello {{firstName}},</div><div style='margin-bottom:14px;'>Good news, the item you requested through interlibrary loan has arrived and is now ready for pickup at the <strong>Tampa Library Service Desk</strong>.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:140px;'>Title:</td><td style='padding:4px 0;'><em>Deep Learning for Biometrics</em></td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Hold location:</td><td style='padding:4px 0;'>Tampa Library, 1st floor</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Hold expires:</td><td style='padding:4px 0;'>Nov 19, 2026</td></tr></table><div style='margin-bottom:14px;'>Please bring your USF ID card to collect the item. If you no longer need it, you can cancel the hold from your library account so it can be returned to the lending library.</div><div style='margin-bottom:14px;'>Questions? Contact the circulation desk at (813) 974-2729.</div><div style='margin-bottom:2px;'>Thank you,</div><div style='font-weight:700;color:#006747;'>USF Libraries</div></div></div>"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "email_020_scholarship_award",
+  "is_phishing": true,
+  "sender_name": "USF Financial Aid Office",
+  "sender_address": "awards@usf-financialaid-portal.org",
+  "days_before": 0,
+  "received_time": "11:03",
+  "subject": "Congratulations! You have been selected for a $2,500 award - sign to accept",
+  "attachment": "Award_Acceptance_Form.pdf",
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='height:4px;background:#006747;width:100%;margin-bottom:22px;'></div><img src='/usf-world-logo.png' alt='University of South Florida' style='height:48px;margin-bottom:22px;' /><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Dear {{firstName}},</div><div style='margin-bottom:14px;'>Congratulations! After a review of enrolled graduate students, you have been selected to receive a <strong>$2,500 Merit Achievement Award</strong> for the current academic year. No prior application was necessary, you were nominated automatically based on your academic standing.</div><div style='margin-bottom:14px;'>To release the funds to your account, you must accept the award and verify your student banking details before <strong>today at 5:00 PM</strong>. Awards not claimed by the deadline will be reassigned to another student.</div><div style='text-align:center;margin:22px 0;'><a href='http://usf-financialaid-portal.org/accept-award' style='background:#006747;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:4px;font-weight:700;display:inline-block;'>Accept My Award</a></div><div style='margin-bottom:14px;'>Please review and sign the attached acceptance form. Enter your student ID and the bank account where you would like the funds deposited.</div><div style='margin-bottom:2px;'>Warm regards,</div><div style='font-weight:700;color:#006747;'>USF Financial Aid Office</div></div></div>"
+}

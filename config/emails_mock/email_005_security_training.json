@@ -1,0 +1,11 @@
+{
+  "id": "email_005_security_training",
+  "is_phishing": false,
+  "sender_name": "USF Office of Technology Services",
+  "sender_address": "security@usf.edu",
+  "days_before": 5,
+  "received_time": "08:55",
+  "subject": "Reminder: Complete your Annual Security Awareness Training by Nov 30",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='height:4px;background:#006747;width:100%;margin-bottom:24px;'></div><img src='/usf-it-logo.png' alt='USF Information Technology' style='height:46px;margin-bottom:24px;' /><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hello {{firstName}},</div><div style='margin-bottom:14px;'>This is a friendly reminder that your <strong>Annual Security Awareness Training</strong> is due by <strong>November 30</strong>. All faculty, staff, and graduate assistants are required to complete the training each year to maintain access to university systems.</div><div style='margin-bottom:14px;'>The training takes about 30 minutes and covers phishing recognition, data handling, and password hygiene. You can access it through the training dashboard in MyUSF:</div><div style='text-align:center;margin:22px 0;'><a href='https://www.usf.edu/it/security/awareness-training.aspx' style='background:#006747;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:4px;font-weight:700;display:inline-block;'>Go to Training Dashboard</a></div><div style='margin-bottom:14px;'>If you have already completed this year's training, please disregard this message. Questions can be directed to the OTS Help Desk at (813) 974-1234.</div><div style='margin-bottom:14px;'>Thank you for doing your part to protect the USF community.</div><div style='font-weight:700;color:#006747;'>USF Office of Technology Services</div></div></div>"
+}

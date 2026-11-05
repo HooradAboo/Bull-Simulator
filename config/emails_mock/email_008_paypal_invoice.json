@@ -1,0 +1,11 @@
+{
+  "id": "email_008_paypal_invoice",
+  "is_phishing": true,
+  "sender_name": "PayPal",
+  "sender_address": "service@paypal-invoice-center.com",
+  "days_before": 1,
+  "received_time": "20:14",
+  "subject": "Receipt for your payment of $629.99 to Coinbase Pro",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='background:#ffffff;padding:16px 0;margin-bottom:10px;border-bottom:1px solid #eee;'><img src='/paypal-logo.png' alt='PayPal' style='height:34px;' /></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:14px;'>Hello,</div><div style='margin-bottom:14px;'>This email confirms that your payment has been sent. The amount will be deducted from your account balance or linked card.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:150px;'>Merchant:</td><td style='padding:4px 0;'>Coinbase Pro</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Invoice ID:</td><td style='padding:4px 0;'>INV-8841-20931</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Amount:</td><td style='padding:4px 0;font-weight:700;'>$629.99 USD</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Status:</td><td style='padding:4px 0;color:#2e7d32;'>Completed</td></tr></table><div style='margin-bottom:14px;'>If you did not authorize this transaction, you must contact our billing department <strong>immediately</strong> to dispute the charge and prevent the funds from being released. Our team is available 24/7 at the number below.</div><div style='text-align:center;margin:18px 0;font-size:16px;font-weight:700;color:#003087;'>Dispute Line: +1 (888) 402-7739</div><div style='margin-bottom:14px;color:#605e5c;'>Do not reply to this email. For your security, this transaction can only be cancelled by phone.</div><div style='color:#605e5c;font-size:12px;'>&copy; 2026 PayPal, Inc. All rights reserved.</div></div></div>"
+}

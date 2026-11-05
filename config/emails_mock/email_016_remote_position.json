@@ -1,0 +1,11 @@
+{
+  "id": "email_016_remote_position",
+  "is_phishing": true,
+  "sender_name": "USF Student Employment",
+  "sender_address": "usf.student.jobs2026@gmail.com",
+  "days_before": 2,
+  "received_time": "22:09",
+  "subject": "Part-Time Remote Position for USF Students - $450/week",
+  "attachment": null,
+  "body": "<div style='text-align:left;font-family:Arial,sans-serif;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hello {{firstName}},</div><div style='margin-bottom:14px;'>Your resume was selected from the USF career database for a flexible, work-from-home position as a <strong>Administrative Research Assistant</strong>. This role is open to currently enrolled students only and requires just 2-3 hours per day.</div><div style='margin-bottom:8px;'>Compensation and details:</div><ul style='margin:0 0 14px 20px;padding:0;'><li style='margin-bottom:4px;'>Weekly pay of <strong>$450</strong>, direct deposit</li><li style='margin-bottom:4px;'>No experience or interview required to start</li><li>Immediate start after onboarding</li></ul><div style='margin-bottom:14px;'>To begin, reply to this email with your <strong>full name, home address, phone number, and the bank you use</strong> so we can set up your payroll. Your first week's equipment check will be mailed to you, which you will deposit and use to purchase supplies from our approved vendor.</div><div style='margin-bottom:14px;'>Positions are limited and filled on a first-come basis, so please respond within 24 hours to secure your spot.</div><div style='margin-bottom:2px;'>Regards,</div><div>Mr. David Coleman<br/>Hiring Coordinator, Student Employment</div></div>"
+}

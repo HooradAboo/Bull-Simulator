@@ -1,0 +1,11 @@
+{
+  "id": "email_015_insurance_eob",
+  "is_phishing": false,
+  "sender_name": "UnitedHealthcare StudentResources",
+  "sender_address": "noreply@uhcsr.com",
+  "days_before": 8,
+  "received_time": "14:12",
+  "subject": "A new Explanation of Benefits is available in your account",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='padding:16px 0;margin-bottom:18px;border-bottom:1px solid #eee;'><img src='/uhcsr-logo.png' alt='UnitedHealthcare StudentResources' style='height:40px;' /></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hello {{firstName}},</div><div style='margin-bottom:14px;'>A new <strong>Explanation of Benefits (EOB)</strong> has been posted to your UnitedHealthcare StudentResources account. An EOB is not a bill; it summarizes how a recent claim was processed.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:150px;'>Claim date:</td><td style='padding:4px 0;'>Oct 22, 2026</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Provider:</td><td style='padding:4px 0;'>USF Student Health Services</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Document:</td><td style='padding:4px 0;'>Explanation of Benefits</td></tr></table><div style='margin-bottom:14px;'>For your privacy, EOBs are not attached to email. Please sign in to your account to view the full document.</div><div style='text-align:center;margin:22px 0;'><a href='https://www.uhcsr.com/login' style='background:#002677;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:4px;font-weight:700;display:inline-block;'>Sign In to View</a></div><div style='color:#605e5c;font-size:12px;'>&copy; 2026 UnitedHealthcare Services, Inc.</div></div></div>"
+}

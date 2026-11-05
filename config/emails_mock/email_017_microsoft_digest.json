@@ -1,0 +1,11 @@
+{
+  "id": "email_017_microsoft_digest",
+  "is_phishing": false,
+  "sender_name": "Microsoft Viva",
+  "sender_address": "viva-insights@microsoft.com",
+  "days_before": 5,
+  "received_time": "07:00",
+  "subject": "Your weekly digest is ready",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='padding:18px 0 8px;margin-bottom:14px;'><img src='/microsoft-logo.svg' alt='Microsoft' style='height:28px;' /></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hi {{firstName}},</div><div style='margin-bottom:14px;'>Here's a look back at your week in Microsoft 365. These insights are private to you and are only visible in your own account.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:6px 0;color:#605e5c;width:220px;'>Focus time available next week:</td><td style='padding:6px 0;font-weight:700;'>11 hours</td></tr><tr><td style='padding:6px 0;color:#605e5c;'>Meetings attended:</td><td style='padding:6px 0;font-weight:700;'>6</td></tr><tr><td style='padding:6px 0;color:#605e5c;'>People you collaborated with:</td><td style='padding:6px 0;font-weight:700;'>9</td></tr></table><div style='margin-bottom:14px;'>Want to protect time for deep work? You can book focus time directly on your calendar.</div><div style='text-align:center;margin:22px 0;'><a href='https://insights.viva.office.com' style='background:#0078d4;color:#ffffff;text-decoration:none;padding:11px 26px;border-radius:4px;font-weight:600;display:inline-block;'>Open Viva Insights</a></div><div style='color:#605e5c;font-size:12px;'>You're receiving this because Viva Insights is enabled for your organization. Manage your email preferences in settings.</div></div></div>"
+}

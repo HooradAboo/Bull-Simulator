@@ -1,0 +1,11 @@
+{
+  "id": "email_012_mailbox_storage",
+  "is_phishing": true,
+  "sender_name": "Microsoft Outlook",
+  "sender_address": "postmaster@mail-quota-service.net",
+  "days_before": 2,
+  "received_time": "05:58",
+  "subject": "Your mailbox is almost full - messages will be blocked",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='padding:18px 0 8px;margin-bottom:14px;'><img src='/microsoft-logo.svg' alt='Microsoft' style='height:30px;' /></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:14px;'>Dear {{email}},</div><div style='margin-bottom:14px;'>Your mailbox has reached <strong>99% of its storage limit</strong>. Once the limit is reached you will no longer be able to send or receive new messages, and incoming mail will be returned to the sender.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:150px;'>Current usage:</td><td style='padding:4px 0;'>14.82 GB of 15 GB</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Pending messages:</td><td style='padding:4px 0;color:#d13438;font-weight:700;'>7 held</td></tr></table><div style='margin-bottom:14px;'>To continue using your email without interruption, please re-validate your account and upgrade your storage for free using the secure portal below.</div><div style='text-align:center;margin:22px 0;'><a href='http://mail-quota-service.net/outlook/upgrade-storage' style='background:#0078d4;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:4px;font-weight:700;display:inline-block;'>Release Pending Messages</a></div><div style='color:#605e5c;font-size:12px;'>This is an automated message from the Mail Delivery System. &copy; Microsoft Corporation.</div></div></div>"
+}

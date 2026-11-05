@@ -1,0 +1,11 @@
+{
+  "id": "email_007_boa_statement",
+  "is_phishing": false,
+  "sender_name": "Bank of America",
+  "sender_address": "onlinebanking@ealerts.bankofamerica.com",
+  "days_before": 6,
+  "received_time": "06:30",
+  "subject": "Your October statement is ready to view",
+  "attachment": null,
+  "body": "<div style='text-align:center;font-family:Arial,sans-serif;'><div style='background:#012169;padding:16px 0;margin-bottom:24px;'><img src='/boa-logo.svg' alt='Bank of America' style='height:26px;' /></div><div style='border:1px solid #e1dfdd;border-radius:8px;padding:24px;text-align:left;font-size:14px;color:#1a1a1a;'><div style='margin-bottom:12px;'>Hello {{firstName}},</div><div style='margin-bottom:14px;'>Your monthly statement for the account ending in <strong>4471</strong> is now available to view in Online Banking.</div><table style='width:100%;border-collapse:collapse;margin-bottom:16px;font-size:14px;'><tr><td style='padding:4px 0;color:#605e5c;width:170px;'>Statement period:</td><td style='padding:4px 0;'>Oct 1 - Oct 31, 2026</td></tr><tr><td style='padding:4px 0;color:#605e5c;'>Account:</td><td style='padding:4px 0;'>Advantage Banking (...4471)</td></tr></table><div style='margin-bottom:14px;'>To protect your privacy, we do not include your balance or account details in this email. Please sign in to Online Banking or the Mobile Banking app to view your full statement.</div><div style='text-align:center;margin:22px 0;'><a href='https://www.bankofamerica.com/online-banking/sign-in/' style='background:#e31837;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:4px;font-weight:700;display:inline-block;'>View Statement</a></div><div style='color:#605e5c;font-size:12px;'>Bank of America, N.A. Member FDIC. &copy; 2026 Bank of America Corporation.</div></div></div>"
+}
