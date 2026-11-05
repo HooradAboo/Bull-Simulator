@@ -32,6 +32,21 @@ interface Props {
   onSelectFolder: (folder: FolderName) => void;
 }
 
+// Rendered outside `mail-body` (directly beside `TopBar`) so it spans the
+// full window height and stays flush against the green banner, matching
+// real Outlook's left app rail instead of only starting below the ribbon.
+export function FolderIconRail() {
+  return (
+    <div className="mail-icon-rail">
+      {RAIL_ICONS.map((item, i) => (
+        <div key={i} className={`rail-icon ${item.active ? "active" : ""}`} aria-hidden="true">
+          {item.icon}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function FolderSidebar({
   currentFolder,
   unreadCount,
@@ -43,15 +58,6 @@ export function FolderSidebar({
   onSelectFolder,
 }: Props) {
   return (
-    <>
-      <div className="mail-icon-rail">
-        {RAIL_ICONS.map((item, i) => (
-          <div key={i} className={`rail-icon ${item.active ? "active" : ""}`} aria-hidden="true">
-            {item.icon}
-          </div>
-        ))}
-      </div>
-
       <div className="mail-folder-sidebar">
         <div className="folder-section-title">
           <ChevronDown12Regular /> Favorites
@@ -104,6 +110,5 @@ export function FolderSidebar({
 
         <div className="account-row">{participantEmail}</div>
       </div>
-    </>
   );
 }

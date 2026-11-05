@@ -4,7 +4,7 @@ import "./tutorial.css";
 import { TopBar } from "./TopBar";
 import { TabBar } from "./TabBar";
 import { Ribbon } from "./Ribbon";
-import { FolderSidebar } from "./FolderSidebar";
+import { FolderIconRail, FolderSidebar } from "./FolderSidebar";
 import { EmailListPane } from "./EmailListPane";
 import { ReadingPane } from "./ReadingPane";
 import { ConfidenceModal } from "./ConfidenceModal";
@@ -675,82 +675,87 @@ export function TutorialScreen({ onFinish }: Props) {
     <div className="mail-shell mail-shell-tutorial">
       <HelpButton />
       <TopBar participantEmail={PRACTICE_EMAIL} />
-      <TabBar />
-      <Ribbon
-        pendingAction={pendingAction}
-        disabled={ribbonDisabled}
-        disabledActions={guidedDisabledActions}
-        onSelectAction={handleSelectAction}
-      />
-      <div className="mail-body">
-        <FolderSidebar
-          currentFolder={currentFolder}
-          unreadCount={unreadInboxCount}
-          deletedCount={deletedCount}
-          junkCount={junkCount}
-          sentCount={sentItems.length}
-          draftsCount={0}
-          participantEmail={PRACTICE_EMAIL}
-          onSelectFolder={handleSelectFolder}
-        />
-        {currentFolder === "sent" ? (
-          <>
-            <SentItemsPane
-              sentItems={sentItems}
-              selectedId={selectedSentItem?.id ?? null}
-              onSelect={setSelectedSentItem}
-            />
-            <SentItemReadingPane item={selectedSentItem} />
-          </>
-        ) : currentFolder === "drafts" ? (
-          <>
-            <DraftsPane />
-            <ReadingPane
-              email={null}
-              processedInfo={null}
-              replyMode={false}
-              forwardMode={false}
-              contacts={PRACTICE_CONTACTS}
+      <div className="mail-main-area">
+        <FolderIconRail />
+        <div className="mail-main-column">
+          <TabBar />
+          <Ribbon
+            pendingAction={pendingAction}
+            disabled={ribbonDisabled}
+            disabledActions={guidedDisabledActions}
+            onSelectAction={handleSelectAction}
+          />
+          <div className="mail-body">
+            <FolderSidebar
+              currentFolder={currentFolder}
+              unreadCount={unreadInboxCount}
+              deletedCount={deletedCount}
+              junkCount={junkCount}
+              sentCount={sentItems.length}
+              draftsCount={0}
               participantEmail={PRACTICE_EMAIL}
-              onLinkClick={() => {}}
-              onLinkHoverStart={() => {}}
-              onLinkHoverEnd={() => {}}
-              onAttachmentClick={() => {}}
-              onReplySubmit={() => {}}
-              onReplyDiscard={() => {}}
-              onForwardSubmit={() => {}}
-              onForwardDiscard={() => {}}
+              onSelectFolder={handleSelectFolder}
             />
-          </>
-        ) : (
-          <>
-            <EmailListPane
-              folder={currentFolder}
-              emails={visibleEmails}
-              selectedId={selectedEmail?.id ?? null}
-              processed={processed}
-              pinnedIds={EMPTY_PINNED_IDS}
-              onSelect={handleSelectEmail}
-              onTogglePin={() => {}}
-            />
-            <ReadingPane
-              email={selectedEmail}
-              processedInfo={processedInfo}
-              replyMode={phase === "replying"}
-              forwardMode={phase === "forwarding"}
-              contacts={PRACTICE_CONTACTS}
-              participantEmail={PRACTICE_EMAIL}
-              onLinkClick={() => handleSelectAction("click_link")}
-              onLinkHoverStart={() => {}}
-              onLinkHoverEnd={() => {}}
-              onAttachmentClick={() => handleSelectAction("open_attachment")}
-              onReplySubmit={handleReplySubmit}
-              onReplyDiscard={handleReplyCancel}
-              onForwardSubmit={handleForwardSubmit}
-              onForwardDiscard={handleForwardCancel}
-            />
-          </>
-        )}
+            {currentFolder === "sent" ? (
+              <>
+                <SentItemsPane
+                  sentItems={sentItems}
+                  selectedId={selectedSentItem?.id ?? null}
+                  onSelect={setSelectedSentItem}
+                />
+                <SentItemReadingPane item={selectedSentItem} />
+              </>
+            ) : currentFolder === "drafts" ? (
+              <>
+                <DraftsPane />
+                <ReadingPane
+                  email={null}
+                  processedInfo={null}
+                  replyMode={false}
+                  forwardMode={false}
+                  contacts={PRACTICE_CONTACTS}
+                  participantEmail={PRACTICE_EMAIL}
+                  onLinkClick={() => {}}
+                  onLinkHoverStart={() => {}}
+                  onLinkHoverEnd={() => {}}
+                  onAttachmentClick={() => {}}
+                  onReplySubmit={() => {}}
+                  onReplyDiscard={() => {}}
+                  onForwardSubmit={() => {}}
+                  onForwardDiscard={() => {}}
+                />
+              </>
+            ) : (
+              <>
+                <EmailListPane
+                  folder={currentFolder}
+                  emails={visibleEmails}
+                  selectedId={selectedEmail?.id ?? null}
+                  processed={processed}
+                  pinnedIds={EMPTY_PINNED_IDS}
+                  onSelect={handleSelectEmail}
+                  onTogglePin={() => {}}
+                />
+                <ReadingPane
+                  email={selectedEmail}
+                  processedInfo={processedInfo}
+                  replyMode={phase === "replying"}
+                  forwardMode={phase === "forwarding"}
+                  contacts={PRACTICE_CONTACTS}
+                  participantEmail={PRACTICE_EMAIL}
+                  onLinkClick={() => handleSelectAction("click_link")}
+                  onLinkHoverStart={() => {}}
+                  onLinkHoverEnd={() => {}}
+                  onAttachmentClick={() => handleSelectAction("open_attachment")}
+                  onReplySubmit={handleReplySubmit}
+                  onReplyDiscard={handleReplyCancel}
+                  onForwardSubmit={handleForwardSubmit}
+                  onForwardDiscard={handleForwardCancel}
+                />
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       {phase === "confirming" && confirmingAction && (
