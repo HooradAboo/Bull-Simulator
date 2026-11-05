@@ -14,13 +14,11 @@ import {
   Folder20Regular,
   Grid20Regular,
   MailAdd20Regular,
-  MailArrowDoubleBack20Regular,
-  MailProhibited20Regular,
   MailRead20Regular,
   MoreHorizontal20Regular,
   PeopleTeam20Regular,
-  Pin20Regular,
   Print20Regular,
+  Prohibited20Regular,
   ShieldError20Regular,
   Tag20Regular,
 } from "@fluentui/react-icons";
@@ -168,7 +166,7 @@ export function Ribbon({
       <div className="ribbon-divider" />
 
       <DecorativeButton
-        icon={<MailProhibited20Regular />}
+        icon={<Prohibited20Regular />}
         label="Report junk"
         dataTour="decorative-report-junk"
       />
@@ -202,13 +200,7 @@ export function Ribbon({
       {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
       <DecorativeButton icon={<Tag20Regular />} dataTour="decorative-tag" iconOnly />
       <DecorativeButton icon={<Flag20Regular />} dataTour="decorative-flag" iconOnly />
-      <DecorativeButton icon={<Pin20Regular />} dataTour="decorative-pin" iconOnly />
       <DecorativeButton icon={<Clock20Regular />} dataTour="decorative-snooze" iconOnly />
-      <DecorativeButton
-        icon={<MailArrowDoubleBack20Regular />}
-        dataTour="decorative-move-to-folder"
-        iconOnly
-      />
 
       <div className="ribbon-divider" />
 
