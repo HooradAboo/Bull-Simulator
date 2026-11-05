@@ -12,13 +12,13 @@ import {
   Flag20Regular,
   Flash20Regular,
   Folder20Regular,
-  Gift20Regular,
   Grid20Regular,
   MailAdd20Regular,
   MailArrowDoubleBack20Regular,
   MailProhibited20Regular,
   MailRead20Regular,
   MoreHorizontal20Regular,
+  PeopleTeam20Regular,
   Pin20Regular,
   Print20Regular,
   ShieldError20Regular,
@@ -152,7 +152,7 @@ export function Ribbon({
 
       <div className="ribbon-divider" />
 
-      {actionButton("delete", <Delete20Regular />, "Delete", true)}
+      {actionButton("delete", <Delete20Regular />, "Delete")}
       <DecorativeButton icon={<Archive20Regular />} label="Archive" dataTour="decorative-archive" />
       <DecorativeButton icon={<Broom20Regular />} label="Sweep" dataTour="decorative-sweep" />
       <DecorativeButton
@@ -179,11 +179,14 @@ export function Ribbon({
         label="Reply all"
         dataTour="decorative-reply-all"
       />
-      {actionButton("forward", <ArrowForward20Regular />, "Forward", true)}
+      {actionButton("forward", <ArrowForward20Regular />, "Forward")}
 
       <div className="ribbon-divider" />
 
-      <DecorativeButton icon={<Gift20Regular />} dataTour="decorative-app-icon" iconOnly />
+      <DecorativeButton icon={<PeopleTeam20Regular />} dataTour="decorative-share-to-teams" iconOnly />
+
+      <div className="ribbon-divider" />
+
       <DecorativeButton
         icon={<Flash20Regular />}
         label="Quick steps"
@@ -193,24 +196,35 @@ export function Ribbon({
 
       <div className="ribbon-divider" />
 
-      {actionButton("ignore", <MailRead20Regular />, "Read / Unread", true)}
-      <DecorativeButton icon={<Tag20Regular />} dataTour="decorative-tag" iconOnly chevron />
-      <DecorativeButton icon={<Flag20Regular />} dataTour="decorative-flag" iconOnly chevron />
-      <DecorativeButton icon={<Pin20Regular />} dataTour="decorative-pin" iconOnly chevron />
-      <DecorativeButton icon={<Clock20Regular />} dataTour="decorative-snooze" iconOnly chevron />
+      {actionButton("ignore", <MailRead20Regular />, "Mark as read")}
+      <DecorativeButton icon={<Tag20Regular />} dataTour="decorative-tag" iconOnly />
+      <DecorativeButton icon={<Flag20Regular />} dataTour="decorative-flag" iconOnly />
+      <DecorativeButton icon={<Pin20Regular />} dataTour="decorative-pin" iconOnly />
+      <DecorativeButton icon={<Clock20Regular />} dataTour="decorative-snooze" iconOnly />
       <DecorativeButton
         icon={<MailArrowDoubleBack20Regular />}
         dataTour="decorative-move-to-folder"
         iconOnly
-        chevron
       />
 
       <div className="ribbon-divider" />
 
       <DecorativeButton icon={<Print20Regular />} dataTour="decorative-print" iconOnly />
+
+      <div className="ribbon-divider" />
+
       <DecorativeButton icon={<ArrowUndo20Regular />} dataTour="decorative-undo" iconOnly />
+
+      <div className="ribbon-divider" />
+
       <DecorativeButton icon={<Grid20Regular />} dataTour="decorative-layout" iconOnly />
+
+      <div className="ribbon-divider" />
+
       <DecorativeButton icon={<MoreHorizontal20Regular />} dataTour="decorative-more" iconOnly />
+
+      <div className="ribbon-divider" />
+
       <DecorativeButton
         icon={<ChevronDown20Regular />}
         dataTour="decorative-collapse-ribbon"
