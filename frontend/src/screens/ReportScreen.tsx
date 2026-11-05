@@ -15,6 +15,7 @@ const ACTION_CHART_ORDER = [
   "forward_to_it",
   "delete",
   "report",
+  "report_junk",
   "click_link",
   "open_attachment",
 ];
@@ -26,6 +27,7 @@ const ACTION_CHART_LABELS: Record<string, string> = {
   forward_to_it: "Forward to IT",
   delete: "Delete",
   report: "Report",
+  report_junk: "Report as Junk",
   click_link: "Click Link",
   open_attachment: "Open Attachment",
 };

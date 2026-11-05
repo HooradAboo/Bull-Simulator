@@ -11,6 +11,11 @@ const CONFIRM_COPY: Partial<Record<ActionType, { title: string; body: string; co
     body: "This email will be moved to Junk Email.",
     confirmLabel: "Report",
   },
+  report_junk: {
+    title: "Report this email as junk?",
+    body: "This email will be moved to Junk Email.",
+    confirmLabel: "Report",
+  },
 };
 
 interface Props {

@@ -4,6 +4,7 @@ export type ActionType =
   | "reply"
   | "forward"
   | "report_phishing"
+  | "report_junk"
   | "delete"
   | "ignore";
 

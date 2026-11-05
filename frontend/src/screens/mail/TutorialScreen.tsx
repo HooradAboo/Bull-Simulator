@@ -55,13 +55,14 @@ const ACTION_LABELS: Record<ActionType, string> = {
   reply: "Reply",
   forward: "Forward",
   report_phishing: "Report as Phishing",
+  report_junk: "Report as Junk",
   delete: "Delete",
   ignore: "Mark as read",
 };
 
 function folderForAction(action: ActionType | undefined): FolderName {
   if (action === "delete") return "deleted";
-  if (action === "report_phishing") return "junk";
+  if (action === "report_phishing" || action === "report_junk") return "junk";
   return "inbox";
 }
 
@@ -161,9 +162,10 @@ const TOUR_STEPS: TutorialStep[] = [
   {
     key: "all-actions",
     title: "Your Actions",
-    description: "Here are your 5 tools for handling an email. We'll walk through what each one does.",
+    description: "Here are your 6 tools for handling an email. We'll walk through what each one does.",
     targetSelector: [
       '[data-tour="delete"]',
+      '[data-tour="report_junk"]',
       '[data-tour="report_phishing"]',
       '[data-tour="reply"]',
       '[data-tour="forward"]',
@@ -188,6 +190,12 @@ const TOUR_STEPS: TutorialStep[] = [
     title: "Delete",
     description: "Moves the email straight to Deleted Items.",
     targetSelector: '[data-tour="delete"]',
+  },
+  {
+    key: "report_junk",
+    title: "Report as Junk",
+    description: "Flags the email as junk and sends it to Junk Email.",
+    targetSelector: '[data-tour="report_junk"]',
   },
   {
     key: "report_phishing",
@@ -377,6 +385,7 @@ const GUIDED_REQUIRED_ACTION: Partial<Record<GuidedStepKey, ActionType>> = {
 
 const TOOLBAR_ACTIONS: ActionType[] = [
   "delete",
+  "report_junk",
   "report_phishing",
   "reply",
   "forward",
@@ -617,7 +626,7 @@ export function TutorialScreen({ onFinish }: Props) {
       setPhase("action-recorded");
       return;
     }
-    if (action === "delete" || action === "report_phishing") {
+    if (action === "delete" || action === "report_phishing" || action === "report_junk") {
       setConfirmingAction(action);
       setPhase("confirming");
       return;

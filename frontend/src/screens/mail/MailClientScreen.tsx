@@ -55,7 +55,7 @@ interface Props {
 
 function folderForAction(action: ActionType | undefined): FolderName {
   if (action === "delete") return "deleted";
-  if (action === "report_phishing") return "junk";
+  if (action === "report_phishing" || action === "report_junk") return "junk";
   return "inbox";
 }
 
@@ -65,6 +65,7 @@ const ACTION_LABELS: Record<ActionType, string> = {
   reply: "Reply",
   forward: "Forward",
   report_phishing: "Report as Phishing",
+  report_junk: "Report as Junk",
   delete: "Delete",
   ignore: "Mark as read",
 };
@@ -75,6 +76,7 @@ const ALL_ACTIONS: ActionType[] = [
   "reply",
   "forward",
   "report_phishing",
+  "report_junk",
   "delete",
   "ignore",
 ];
@@ -239,7 +241,7 @@ export function MailClientScreen({
       setPhase("action-recorded");
       return;
     }
-    if (action === "delete" || action === "report_phishing") {
+    if (action === "delete" || action === "report_phishing" || action === "report_junk") {
       setConfirmingAction(action);
       setPhase("confirming");
       return;

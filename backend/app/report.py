@@ -17,6 +17,7 @@ REQUIRED_CATEGORIES = {
     "forward_to_it",
     "delete",
     "report",
+    "report_junk",
     "click_link",
     "open_attachment",
 }
@@ -55,6 +56,7 @@ ACTION_TAKEN_TO_CATEGORY = {
     "ignore": "mark_as_read",
     "reply": "reply",
     "report_phishing": "report",
+    "report_junk": "report_junk",
     "delete": "delete",
     "click_link": "click_link",
     "open_attachment": "open_attachment",

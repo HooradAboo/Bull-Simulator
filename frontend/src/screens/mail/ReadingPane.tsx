@@ -33,6 +33,7 @@ const ACTION_LABELS: Record<ActionType, string> = {
   reply: "Reply",
   forward: "Forward",
   report_phishing: "Report as Phishing",
+  report_junk: "Report as Junk",
   delete: "Delete",
   ignore: "Mark as read",
 };

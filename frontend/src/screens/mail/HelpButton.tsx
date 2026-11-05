@@ -8,6 +8,7 @@ import {
   Dismiss20Regular,
   Link20Regular,
   MailRead20Regular,
+  Prohibited20Regular,
   QuestionCircle24Filled,
   ShieldError20Regular,
 } from "@fluentui/react-icons";
@@ -29,6 +30,11 @@ const ACTION_DEFINITIONS: { term: string; icon: ReactNode; definition: string }[
     term: "Report as Phishing",
     icon: <ShieldError20Regular />,
     definition: "Flag the email as a phishing attempt. It moves to Junk Email.",
+  },
+  {
+    term: "Report as Junk",
+    icon: <Prohibited20Regular />,
+    definition: "Flag the email as junk. It moves to Junk Email.",
   },
   {
     term: "Mark as read",

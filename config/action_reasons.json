@@ -24,6 +24,14 @@
     { "key": "too_many", "label": "I was receiving too many of these" },
     { "key": "other", "label": "Something else" }
   ],
+  "report_junk": [
+    { "key": "seemed_junk", "label": "It seemed junk or irrelevant" },
+    { "key": "unwanted_marketing", "label": "It was unwanted marketing or spam" },
+    { "key": "unfamiliar_sender", "label": "The sender looked unfamiliar" },
+    { "key": "seemed_suspicious", "label": "It seemed suspicious" },
+    { "key": "too_many", "label": "I was receiving too many of these" },
+    { "key": "other", "label": "Something else" }
+  ],
   "reply": [
     { "key": "to_respond", "label": "To respond" },
     { "key": "to_follow_up", "label": "To follow up" },

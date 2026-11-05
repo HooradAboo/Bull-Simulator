@@ -36,6 +36,7 @@ interface Props {
 const ACTION_DESCRIPTIONS: Record<ActionType, string> = {
   delete: "Delete this message",
   report_phishing: "Report this message as phishing",
+  report_junk: "Report this message as junk",
   reply: "Reply to this message",
   forward: "Forward this message",
   ignore: "Mark this message as read",
@@ -172,11 +173,7 @@ export function Ribbon({
 
       <div className="ribbon-divider" />
 
-      <DecorativeButton
-        icon={<Prohibited20Regular />}
-        label="Report junk"
-        dataTour="decorative-report-junk"
-      />
+      {actionButton("report_junk", <Prohibited20Regular />, "Report junk", false, "#c19c00")}
       {actionButton("report_phishing", <ShieldError20Regular />, "Report phishing", false, "#c4314b")}
 
       <div className="ribbon-divider" />
