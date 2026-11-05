@@ -144,36 +144,54 @@
   flex: 1;
 }
 
-/* ---- Ribbon ---- */
+/* ---- Ribbon ----
+   Compact single-row command bar - icon beside its label rather than
+   stacked above it, matching the simplified ribbon in current Outlook. */
 .mail-ribbon {
-  min-height: 52px;
+  height: 40px;
   flex-shrink: 0;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  flex-wrap: wrap;
+  gap: 2px;
+  padding: 0 10px;
+  overflow: hidden;
 }
 
 .ribbon-btn {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 2px;
+  gap: 5px;
   border: 1px solid transparent;
   background: transparent;
-  padding: 5px 10px;
+  padding: 6px 8px;
   border-radius: 4px;
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--text);
   cursor: pointer;
-  min-width: 52px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .ribbon-btn .ribbon-icon {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.ribbon-btn .ribbon-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  margin-left: -2px;
+  transform: scale(0.75);
+}
+/* Icon-only decorative buttons (tag/flag/pin/snooze/move-to-folder/print/
+   undo/layout/overflow) - no label to give them width, so pad them as a
+   square instead of the wider labeled-button padding. */
+.ribbon-btn.icon-only {
+  padding: 6px;
+  gap: 0;
 }
 
 .ribbon-tooltip {
@@ -208,27 +226,34 @@
 }
 
 .ribbon-btn.primary {
-  flex-direction: row;
   background: var(--usf-green);
   color: #fff;
   font-size: 13px;
   font-weight: 600;
-  padding: 8px 14px;
+  padding: 6px 10px 6px 12px;
+}
+.ribbon-btn.primary .ribbon-chevron {
+  opacity: 0.85;
 }
 .ribbon-btn.primary:hover:not(:disabled) {
-  background: var(--usf-green-dark);
+  background: var(--usf-green-hover);
 }
+/* Unlike other decorative buttons, New mail stays visually "live" (vibrant
+   green, not greyed) even though it's non-functional in this study - it's
+   the one button real Outlook always shows as the primary action, and
+   greying it out would stand out as obviously wrong next to the reference
+   screenshot. */
 .ribbon-btn.primary:disabled {
-  background: #e1dfdd;
-  color: #a19f9d;
+  color: #fff;
   cursor: not-allowed;
 }
 
 .ribbon-divider {
   width: 1px;
   align-self: stretch;
+  margin: 7px 5px;
   background: var(--border);
-  margin: 4px 6px;
+  flex-shrink: 0;
 }
 
 /* ---- Body layout ---- */
