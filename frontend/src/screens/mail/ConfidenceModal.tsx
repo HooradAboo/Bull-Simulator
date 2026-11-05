@@ -85,7 +85,7 @@ export function ConfidenceModal({
             <h3>
               Why did you choose to {actionLabel ? `"${actionLabel}"` : "do that"}? Select all that apply.
             </h3>
-            <div className="cue-options">
+            <div className="cue-options cue-options-single-column">
               {actionReasonOptions.filter((reason) => reason.key !== "other").map((reason) => (
                 <label key={reason.key} className="cue-option">
                   <input
