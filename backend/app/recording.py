@@ -39,27 +39,34 @@ def _now_ns() -> int:
 def _load_cameras() -> dict[str, dict]:
     """Reads config/cameras.json fresh on every call (not cached at import
     time) so tuning zoom/focus/white-balance only requires editing the JSON
-    and starting the next session - no backend restart. A camera's
-    "controls" overrides "default_controls" entirely when set; order
-    matters within a control list (auto modes must be disabled before
-    manual values are set).
+    and starting the next session - no backend restart.
+
+    Each camera's controls are shared_controls (room-wide: exposure, gain,
+    white balance - same for every camera since they're all in the same
+    room under the same lights) followed by that camera's own
+    position_controls (zoom/focus - different per camera since Cam_Front
+    and Cam_Below sit at different distances/angles from the participant).
+    Order matters: auto modes must be disabled before manual values are set.
     """
     path = settings.camera_config_path
     if not path.exists():
         raise RecordingError(f"camera config not found: {path}")
 
-    data = json.loads(path.read_text())
-    default_controls = [(c["control"], c["value"]) for c in data["default_controls"]]
+    try:
+        data = json.loads(path.read_text())
+        shared_controls = [(c["control"], c["value"]) for c in data["shared_controls"]]
 
-    cameras = {}
-    for name, cam in data["cameras"].items():
-        controls = (
-            [(c["control"], c["value"]) for c in cam["controls"]]
-            if cam.get("controls")
-            else default_controls
-        )
-        cameras[name] = {"path": cam["path"], "controls": controls}
-    return cameras
+        cameras = {}
+        for name, cam in data["cameras"].items():
+            position_controls = [(c["control"], c["value"]) for c in cam["position_controls"]]
+            cameras[name] = {"path": cam["path"], "controls": shared_controls + position_controls}
+        return cameras
+    except (json.JSONDecodeError, KeyError, TypeError) as e:
+        # JSON has no comments - a stray /* ... */ or trailing comma here
+        # will break parsing (invalid JSON doesn't raise RecordingError on
+        # its own), so surface it the same way as any other recording
+        # failure instead of crashing /session/start outright.
+        raise RecordingError(f"camera config at {path} is invalid: {e}")
 
 
 def _apply_camera_settings() -> dict:
