@@ -36,59 +36,6 @@ def _now_ns() -> int:
     return time.time_ns()
 
 
-def _load_cameras() -> dict[str, dict]:
-    """Reads config/cameras.json fresh on every call (not cached at import
-    time) so tuning zoom/focus/white-balance only requires editing the JSON
-    and starting the next session - no backend restart.
-
-    Each camera's controls are shared_controls (room-wide: exposure, gain,
-    white balance - same for every camera since they're all in the same
-    room under the same lights) followed by that camera's own
-    position_controls (zoom/focus - different per camera since Cam_Front
-    and Cam_Below sit at different distances/angles from the participant).
-    Order matters: auto modes must be disabled before manual values are set.
-    """
-    path = settings.camera_config_path
-    if not path.exists():
-        raise RecordingError(f"camera config not found: {path}")
-
-    try:
-        data = json.loads(path.read_text())
-        shared_controls = [(c["control"], c["value"]) for c in data["shared_controls"]]
-
-        cameras = {}
-        for name, cam in data["cameras"].items():
-            position_controls = [(c["control"], c["value"]) for c in cam["position_controls"]]
-            cameras[name] = {"path": cam["path"], "controls": shared_controls + position_controls}
-        return cameras
-    except (json.JSONDecodeError, KeyError, TypeError) as e:
-        # JSON has no comments - a stray /* ... */ or trailing comma here
-        # will break parsing (invalid JSON doesn't raise RecordingError on
-        # its own), so surface it the same way as any other recording
-        # failure instead of crashing /session/start outright.
-        raise RecordingError(f"camera config at {path} is invalid: {e}")
-
-
-def _apply_camera_settings() -> dict:
-    applied = {}
-    for name, cam in _load_cameras().items():
-        for ctrl, val in cam["controls"]:
-            r = subprocess.run(
-                ["v4l2-ctl", "-d", cam["path"], "-c", f"{ctrl}={val}"],
-                capture_output=True, text=True,
-            )
-            if r.returncode != 0:
-                print(f"[recording] WARN {name}: could not set {ctrl}={val}: {r.stderr.strip()}")
-
-        names = ",".join(c for c, _ in cam["controls"])
-        out = subprocess.run(
-            ["v4l2-ctl", "-d", cam["path"], "-C", names], capture_output=True, text=True
-        ).stdout
-        values = dict(line.split(": ", 1) for line in out.strip().splitlines() if ": " in line)
-        applied[name] = values
-    return applied
-
-
 def _connect_req():
     try:
         return obs.ReqClient(
@@ -170,8 +117,6 @@ def start_recording(netid: str, session_start_ts_ms: int) -> dict:
 
     session_dir = settings.recording_base_dir / session_dir_name(netid, session_start_ts_ms)
     session_dir.mkdir(parents=True, exist_ok=True)
-
-    _apply_camera_settings()
 
     cl = _connect_req()
     filter_names = _check_obs(cl)
