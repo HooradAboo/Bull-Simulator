@@ -59,13 +59,28 @@ def export_participants(db, output_dir: Path):
 
 
 def export_email_interactions(db, output_dir: Path):
-    emails_by_id = {e.id: e for e in load_emails()}
+    # Different sessions can use different email sets (see
+    # resolve_email_set_dir), so is_phishing has to be looked up per
+    # participant's own session rather than from one global email list.
+    session_number_by_participant = {
+        p.id: p.session_number for p in db.query(models.Participant).all()
+    }
+    emails_by_id_by_session: dict[str | None, dict] = {}
+
+    def emails_by_id_for(session_number):
+        if session_number not in emails_by_id_by_session:
+            emails_by_id_by_session[session_number] = {
+                e.id: e for e in load_emails(session_number)
+            }
+        return emails_by_id_by_session[session_number]
+
     interactions = (
         db.query(models.EmailInteraction).order_by(models.EmailInteraction.id).all()
     )
     rows = []
     for i in interactions:
-        email_config = emails_by_id.get(i.email_id)
+        session_number = session_number_by_participant.get(i.participant_id)
+        email_config = emails_by_id_for(session_number).get(i.email_id)
         is_phishing = email_config.is_phishing if email_config else ""
         rows.append([
             i.id, i.participant_id, i.email_id, is_phishing,

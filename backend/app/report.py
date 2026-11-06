@@ -89,7 +89,7 @@ class PerformanceReport(BaseModel):
 
 
 def build_performance_report(db: Session, participant: models.Participant) -> PerformanceReport:
-    emails_by_id = {e.id: e for e in load_emails()}
+    emails_by_id = {e.id: e for e in load_emails(participant.session_number)}
 
     it_email = _it_contact_email()
     matrix = load_safe_action_matrix()

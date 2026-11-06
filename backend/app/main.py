@@ -36,12 +36,14 @@ def get_emails(participant_id: str | None = None, db: Session = Depends(get_db))
     try:
         context = None
         session_start_ts = None
+        session_number = None
         if participant_id is not None:
             participant = db.get(models.Participant, participant_id)
             if not participant:
                 raise HTTPException(status_code=404, detail="unknown participant_id")
             profile = load_participant_profile(participant.netid)
             session_start_ts = participant.session_start_ts
+            session_number = participant.session_number
             context = build_template_context(
                 participant.first_name,
                 participant.last_name,
@@ -50,7 +52,7 @@ def get_emails(participant_id: str | None = None, db: Session = Depends(get_db))
                 variables=profile.variables if profile else None,
                 email=profile.email if profile else None,
             )
-        return load_public_emails(context, session_start_ts)
+        return load_public_emails(context, session_start_ts, session_number)
     except (FileNotFoundError, ValueError) as e:
         raise HTTPException(status_code=500, detail=str(e))
 

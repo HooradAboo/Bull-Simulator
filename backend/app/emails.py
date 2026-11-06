@@ -36,13 +36,24 @@ class EmailPublic(BaseModel):
     received_at: int | None = None
 
 
-def load_emails() -> list[EmailConfig]:
-    """Load and validate every *.json file in config/emails/.
+def resolve_email_set_dir(session_number: str | None) -> str:
+    """Session "1" gets email set A, session "2" gets set B - any other
+    value (blank, "3", unset) falls back to set A so a session always has
+    a valid set to load.
+    """
+    if session_number is not None and session_number.strip() == "2":
+        return "set_b"
+    return "set_a"
+
+
+def load_emails(session_number: str | None = None) -> list[EmailConfig]:
+    """Load and validate every *.json file in config/emails/<set>/, where
+    <set> is resolved from session_number (see resolve_email_set_dir).
 
     Includes is_phishing ground truth. Used server-side only (backend
     logging joins, CSV export) - never sent to the frontend.
     """
-    emails_dir = settings.emails_config_dir
+    emails_dir = settings.emails_config_dir / resolve_email_set_dir(session_number)
     if not emails_dir.exists():
         raise FileNotFoundError(f"Email config directory not found: {emails_dir}")
 
@@ -131,7 +142,9 @@ def render_template(text: str, context: dict[str, str]) -> str:
 
 
 def load_public_emails(
-    context: dict[str, str] | None = None, session_start_ts: int | None = None
+    context: dict[str, str] | None = None,
+    session_start_ts: int | None = None,
+    session_number: str | None = None,
 ) -> list[EmailPublic]:
     """Same as load_emails() but strips is_phishing before it reaches the client.
 
@@ -142,7 +155,7 @@ def load_public_emails(
     received_at timestamp for sorting/display.
     """
     result = []
-    for email in load_emails():
+    for email in load_emails(session_number):
         data = email.model_dump(exclude={"is_phishing", "days_before", "received_time"})
         if context:
             data["sender"] = render_template(data["sender"], context)
