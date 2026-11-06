@@ -13,6 +13,10 @@ class Participant(Base):
     first_name: Mapped[str] = mapped_column(String)
     last_name: Mapped[str] = mapped_column(String)
     netid: Mapped[str] = mapped_column(String)
+    # Researcher-entered label (e.g. "1", "2") identifying which attempt/visit
+    # this is for the netid - shown back on the resume-confirmation screen so
+    # the researcher can confirm they're resuming the session they expect.
+    session_number: Mapped[str | None] = mapped_column(String, nullable=True)
     # Pre-task self-efficacy ratings (Bandura 0-100 scale), one per statement
     # on the self-efficacy screen shown right after consent.
     self_efficacy_recognize_links: Mapped[int] = mapped_column(Integer)

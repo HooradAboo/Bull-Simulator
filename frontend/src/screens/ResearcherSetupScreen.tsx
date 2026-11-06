@@ -14,12 +14,14 @@ interface Props {
     participantEmail: string,
     firstName: string,
     lastName: string,
-    netid: string
+    netid: string,
+    sessionNumber: string
   ) => void;
   onResume: (lookup: ParticipantLookup, profile: ResolvedProfile) => void;
 }
 
 export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
+  const [sessionNumber, setSessionNumber] = useState("");
   const [netid, setNetid] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
     profile: ResolvedProfile;
   } | null>(null);
 
-  const isValid = netid.trim().length > 0;
+  const isValid = sessionNumber.trim().length > 0 && netid.trim().length > 0;
 
   const handleSubmit = async () => {
     const trimmed = netid.trim();
@@ -53,7 +55,13 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
         setPendingChoice({ lookup, profile: resolvedProfile });
         return;
       }
-      onContinue(resolvedProfile.email, resolvedProfile.firstName, resolvedProfile.lastName, resolvedProfile.netid);
+      onContinue(
+        resolvedProfile.email,
+        resolvedProfile.firstName,
+        resolvedProfile.lastName,
+        resolvedProfile.netid,
+        sessionNumber.trim()
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load participant profile.");
     } finally {
@@ -66,8 +74,10 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
     return (
       <PageTemplate
         title="In-Progress Session Found"
-        subtitle={`A session for ${profile.firstName} ${profile.lastName} (${profile.netid}) didn't complete properly. 
-        ${lookup.completedInteractions.length} email${lookup.completedInteractions.length === 1 ? "" : "s"} already 
+        subtitle={`A session for ${profile.firstName} ${profile.lastName} (${profile.netid})${
+          lookup.sessionNumber ? `, session ${lookup.sessionNumber},` : ""
+        } didn't complete properly.
+        ${lookup.completedInteractions.length} email${lookup.completedInteractions.length === 1 ? "" : "s"} already
         processed. Resume where they left off, or start over from the beginning.`}
       >
         <div className="page-actions">
@@ -77,7 +87,13 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
           <button
             className="page-button-secondary"
             onClick={() =>
-              onContinue(profile.email, profile.firstName, profile.lastName, profile.netid)
+              onContinue(
+                profile.email,
+                profile.firstName,
+                profile.lastName,
+                profile.netid,
+                sessionNumber.trim()
+              )
             }
           >
             Start Over
@@ -90,11 +106,27 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
   return (
     <PageTemplate
       title="Researcher Setup"
-      subtitle="Enter the participant's NetID before handing over the laptop. Their
-        profile (name, email, and personalization details) is loaded from a
-        confidential file that never leaves this machine. None of this is
-        shown to the participant beforehand."
+      subtitle="Enter the session number and the participant's NetID before handing
+        over the laptop. Their profile (name, email, and personalization
+        details) is loaded from a confidential file that never leaves this
+        machine. None of this is shown to the participant beforehand."
     >
+      <div className="page-field">
+        <label className="page-label" htmlFor="session-number">
+          Session Number
+        </label>
+        <input
+          id="session-number"
+          className="page-input"
+          type="text"
+          placeholder="1"
+          value={sessionNumber}
+          onChange={(e) => setSessionNumber(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && isValid && !loading) handleSubmit();
+          }}
+        />
+      </div>
       <div className="page-field">
         <label className="page-label" htmlFor="participant-netid">
           Participant's NetID

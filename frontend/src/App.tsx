@@ -49,6 +49,7 @@ function App() {
   const [participantFirstName, setParticipantFirstName] = useState("");
   const [participantLastName, setParticipantLastName] = useState("");
   const [participantNetid, setParticipantNetid] = useState("");
+  const [participantSessionNumber, setParticipantSessionNumber] = useState("");
   const [selfEfficacy, setSelfEfficacy] = useState<SelfEfficacyRatings | null>(null);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -72,6 +73,7 @@ function App() {
       participantFirstName,
       participantLastName,
       participantNetid,
+      participantSessionNumber,
       selfEfficacy!,
       startTs
     );
@@ -106,6 +108,7 @@ function App() {
     setParticipantFirstName(profile.firstName);
     setParticipantLastName(profile.lastName);
     setParticipantNetid(profile.netid);
+    setParticipantSessionNumber(lookup.sessionNumber ?? "");
 
     const derivedPassword = profile.email.split("@")[0];
     const [allEmails, allContacts, credential] = await Promise.all([
@@ -180,11 +183,12 @@ function App() {
       <PlainTitleBar />
       {screen === "researcher-setup" && (
         <ResearcherSetupScreen
-          onContinue={(email, firstName, lastName, netid) => {
+          onContinue={(email, firstName, lastName, netid, sessionNumber) => {
             setParticipantEmail(email);
             setParticipantFirstName(firstName);
             setParticipantLastName(lastName);
             setParticipantNetid(netid);
+            setParticipantSessionNumber(sessionNumber);
             setScreen("welcome");
           }}
           onResume={handleResume}

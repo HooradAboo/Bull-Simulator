@@ -6,6 +6,7 @@ class SessionStart(BaseModel):
     participant_first_name: str
     participant_last_name: str
     netid: str
+    session_number: str | None = None
     self_efficacy_recognize_links: int
     self_efficacy_verify_legitimacy: int
     self_efficacy_avoid_suspicious: int
@@ -32,6 +33,7 @@ class ParticipantLookup(BaseModel):
     first_name: str
     last_name: str
     netid: str
+    session_number: str | None = None
     self_efficacy_post_submitted: bool
     completed_interactions: list[CompletedInteractionSummary]
 

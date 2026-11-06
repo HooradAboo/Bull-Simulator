@@ -138,6 +138,7 @@ def lookup_participant_by_netid(netid: str, db: Session = Depends(get_db)):
         first_name=participant.first_name,
         last_name=participant.last_name,
         netid=participant.netid,
+        session_number=participant.session_number,
         self_efficacy_post_submitted=participant.self_efficacy_post_recognize_links is not None,
         completed_interactions=[
             schemas.CompletedInteractionSummary(
@@ -162,6 +163,7 @@ def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
         first_name=payload.participant_first_name,
         last_name=payload.participant_last_name,
         netid=payload.netid,
+        session_number=payload.session_number,
         self_efficacy_recognize_links=payload.self_efficacy_recognize_links,
         self_efficacy_verify_legitimacy=payload.self_efficacy_verify_legitimacy,
         self_efficacy_avoid_suspicious=payload.self_efficacy_avoid_suspicious,

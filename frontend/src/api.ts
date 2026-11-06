@@ -81,6 +81,7 @@ export interface ParticipantLookup {
   firstName: string;
   lastName: string;
   netid: string;
+  sessionNumber: string | null;
   selfEfficacyPostSubmitted: boolean;
   completedInteractions: CompletedInteractionSummary[];
 }
@@ -90,6 +91,7 @@ interface ParticipantLookupResponse {
   first_name: string;
   last_name: string;
   netid: string;
+  session_number: string | null;
   self_efficacy_post_submitted: boolean;
   completed_interactions: {
     email_id: string;
@@ -109,6 +111,7 @@ export async function lookupParticipantByNetid(netid: string): Promise<Participa
     firstName: data.first_name,
     lastName: data.last_name,
     netid: data.netid,
+    sessionNumber: data.session_number,
     selfEfficacyPostSubmitted: data.self_efficacy_post_submitted,
     completedInteractions: data.completed_interactions.map((c) => ({
       emailId: c.email_id,
@@ -153,6 +156,7 @@ export function startSession(
   participantFirstName: string,
   participantLastName: string,
   netid: string,
+  sessionNumber: string,
   selfEfficacy: SelfEfficacyRatings,
   sessionStartTs: number
 ) {
@@ -161,6 +165,7 @@ export function startSession(
     participant_first_name: participantFirstName,
     participant_last_name: participantLastName,
     netid: netid,
+    session_number: sessionNumber,
     self_efficacy_recognize_links: selfEfficacy.recognizeLinks,
     self_efficacy_verify_legitimacy: selfEfficacy.verifyLegitimacy,
     self_efficacy_avoid_suspicious: selfEfficacy.avoidSuspicious,

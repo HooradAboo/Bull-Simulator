@@ -31,7 +31,7 @@ def export_participants(db, output_dir: Path):
     participants = db.query(models.Participant).order_by(models.Participant.id).all()
     rows = [
         [
-            p.id, p.first_name, p.last_name, p.netid,
+            p.id, p.first_name, p.last_name, p.netid, p.session_number,
             p.self_efficacy_recognize_links, p.self_efficacy_verify_legitimacy,
             p.self_efficacy_avoid_suspicious, p.self_efficacy_verify_trusted_source,
             p.self_efficacy_report_phishing, p.self_efficacy_recovery_steps,
@@ -45,7 +45,7 @@ def export_participants(db, output_dir: Path):
     export_table(
         db, output_dir, "participants.csv",
         [
-            "participant_id", "first_name", "last_name", "netid",
+            "participant_id", "first_name", "last_name", "netid", "session_number",
             "self_efficacy_recognize_links", "self_efficacy_verify_legitimacy",
             "self_efficacy_avoid_suspicious", "self_efficacy_verify_trusted_source",
             "self_efficacy_report_phishing", "self_efficacy_recovery_steps",
