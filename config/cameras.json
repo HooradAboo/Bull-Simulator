@@ -1,0 +1,24 @@
+{
+  "default_controls": [
+    { "control": "auto_exposure", "value": 1 },
+    { "control": "exposure_dynamic_framerate", "value": 0 },
+    { "control": "exposure_time_absolute", "value": 166 },
+    { "control": "gain", "value": 0 },
+    { "control": "white_balance_automatic", "value": 0 },
+    { "control": "focus_automatic_continuous", "value": 0 },
+    { "control": "backlight_compensation", "value": 0 },
+    { "control": "zoom_absolute", "value": 180 },
+    { "control": "focus_absolute", "value": 40 },
+    { "control": "white_balance_temperature", "value": 5000 }
+  ],
+  "cameras": {
+    "Cam_Front": {
+      "path": "/dev/v4l/by-id/usb-046d_Logitech_BRIO_2F7E54B1-video-index0",
+      "controls": null
+    },
+    "Cam_Below": {
+      "path": "/dev/v4l/by-id/usb-046d_Logitech_BRIO_F36C01B9-video-index0",
+      "controls": null
+    }
+  }
+}

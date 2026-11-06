@@ -21,33 +21,6 @@ from app.config import settings
 
 SOURCES = ["Cam_Front", "Cam_Below", "Screen"]
 
-DEFAULT_CONTROLS = [  # order matters: disable auto modes before setting manual values
-    ("auto_exposure", 1),
-    ("exposure_dynamic_framerate", 0),
-    ("exposure_time_absolute", 166),
-    ("gain", 0),
-    ("white_balance_automatic", 0),
-    ("focus_automatic_continuous", 0),
-    ("backlight_compensation", 0),
-    # Position-dependent - these are starting points from the OBS setup doc,
-    # not final: re-tune per camera while watching the OBS preview (see
-    # Step 6 of the doc), then update per-camera here once dialed in.
-    ("zoom_absolute", 180),
-    ("focus_absolute", 40),
-    ("white_balance_temperature", 5000),
-]
-
-CAMERAS = {
-    "Cam_Front": {
-        "path": "/dev/v4l/by-id/usb-046d_Logitech_BRIO_2F7E54B1-video-index0",
-        "controls": DEFAULT_CONTROLS,
-    },
-    "Cam_Below": {
-        "path": "/dev/v4l/by-id/usb-046d_Logitech_BRIO_F36C01B9-video-index0",
-        "controls": DEFAULT_CONTROLS,
-    },
-}
-
 # Holds the in-progress recording's session dir / start time between the
 # start_recording() and stop_recording() calls, which happen on separate
 # HTTP requests. A module-level singleton is fine: this app serves one
@@ -63,9 +36,35 @@ def _now_ns() -> int:
     return time.time_ns()
 
 
+def _load_cameras() -> dict[str, dict]:
+    """Reads config/cameras.json fresh on every call (not cached at import
+    time) so tuning zoom/focus/white-balance only requires editing the JSON
+    and starting the next session - no backend restart. A camera's
+    "controls" overrides "default_controls" entirely when set; order
+    matters within a control list (auto modes must be disabled before
+    manual values are set).
+    """
+    path = settings.camera_config_path
+    if not path.exists():
+        raise RecordingError(f"camera config not found: {path}")
+
+    data = json.loads(path.read_text())
+    default_controls = [(c["control"], c["value"]) for c in data["default_controls"]]
+
+    cameras = {}
+    for name, cam in data["cameras"].items():
+        controls = (
+            [(c["control"], c["value"]) for c in cam["controls"]]
+            if cam.get("controls")
+            else default_controls
+        )
+        cameras[name] = {"path": cam["path"], "controls": controls}
+    return cameras
+
+
 def _apply_camera_settings() -> dict:
     applied = {}
-    for name, cam in CAMERAS.items():
+    for name, cam in _load_cameras().items():
         for ctrl, val in cam["controls"]:
             r = subprocess.run(
                 ["v4l2-ctl", "-d", cam["path"], "-c", f"{ctrl}={val}"],
