@@ -106,26 +106,15 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
   return (
     <PageTemplate
       title="Researcher Setup"
-      subtitle="Enter the session number and the participant's NetID before handing
+      subtitle="Enter the participant's NetID and the session number before handing
         over the laptop. Their profile (name, email, and personalization
         details) is loaded from a confidential file that never leaves this
         machine. None of this is shown to the participant beforehand."
     >
-      <div className="page-field">
-        <label className="page-label" htmlFor="session-number">
-          Session Number
-        </label>
-        <input
-          id="session-number"
-          className="page-input"
-          type="text"
-          placeholder="1"
-          value={sessionNumber}
-          onChange={(e) => setSessionNumber(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && isValid && !loading) handleSubmit();
-          }}
-        />
+      <div className="page-warning">
+        <strong>Before continuing:</strong>
+        Open OBS Studio and run the camera lock commands for both webcams.
+        See RECORDING.md ("Before each session") for the exact commands.
       </div>
       <div className="page-field">
         <label className="page-label" htmlFor="participant-netid">
@@ -142,6 +131,25 @@ export function ResearcherSetupScreen({ onContinue, onResume }: Props) {
             if (e.key === "Enter" && isValid && !loading) handleSubmit();
           }}
         />
+      </div>
+      <div className="page-field">
+        <label className="page-label">Session Number</label>
+        <div className="page-option-group">
+          <button
+            type="button"
+            className={`page-option-button ${sessionNumber === "1" ? "selected" : ""}`}
+            onClick={() => setSessionNumber("1")}
+          >
+            Session 1
+          </button>
+          <button
+            type="button"
+            className={`page-option-button ${sessionNumber === "2" ? "selected" : ""}`}
+            onClick={() => setSessionNumber("2")}
+          >
+            Session 2
+          </button>
+        </div>
       </div>
       {error && <p className="page-error">{error}</p>}
       <div className="page-actions">
