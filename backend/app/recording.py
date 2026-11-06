@@ -22,21 +22,28 @@ from app.config import settings
 SOURCES = ["Cam_Front", "Cam_Below", "Screen"]
 
 DEFAULT_CONTROLS = [  # order matters: disable auto modes before setting manual values
-    ("exposure_dynamic_framerate", 0),
     ("auto_exposure", 1),
-    ("exposure_time_absolute", 250),
-    ("gain", 128),
+    ("exposure_dynamic_framerate", 0),
+    ("exposure_time_absolute", 166),
+    ("gain", 0),
     ("white_balance_automatic", 0),
-    ("white_balance_temperature", 4000),
+    ("focus_automatic_continuous", 0),
+    ("backlight_compensation", 0),
+    # Position-dependent - these are starting points from the OBS setup doc,
+    # not final: re-tune per camera while watching the OBS preview (see
+    # Step 6 of the doc), then update per-camera here once dialed in.
+    ("zoom_absolute", 180),
+    ("focus_absolute", 40),
+    ("white_balance_temperature", 5000),
 ]
 
 CAMERAS = {
     "Cam_Front": {
-        "path": "/dev/v4l/by-id/usb-046d_C505_HD_Webcam_8E340D50-video-index0",
+        "path": "/dev/v4l/by-id/usb-046d_Logitech_BRIO_2F7E54B1-video-index0",
         "controls": DEFAULT_CONTROLS,
     },
     "Cam_Below": {
-        "path": "/dev/v4l/by-id/usb-046d_0825_CC6FCBA0-video-index0",
+        "path": "/dev/v4l/by-id/usb-046d_Logitech_BRIO_F36C01B9-video-index0",
         "controls": DEFAULT_CONTROLS,
     },
 }
